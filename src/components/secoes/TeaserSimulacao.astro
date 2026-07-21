@@ -4,13 +4,14 @@
 // no próprio FaceViewer3D — não duplicar aqui.
 import FaceViewer3D from "../FaceViewer3D.astro";
 import Button from "../Button.astro";
+import GradientTitle from "../GradientTitle.astro";
 ---
 
 <section class="teaser-simulacao">
   <div class="teaser-simulacao__inner">
     <div class="teaser-simulacao__texto" data-bl-reveal>
       <p class="teaser-simulacao__eyebrow">SIMULAÇÃO 3D</p>
-      <h2 class="teaser-simulacao__titulo">Veja com clareza</h2>
+      <GradientTitle as="h2" size="2xl" align="left">Veja com clareza</GradientTitle>
       <p class="teaser-simulacao__corpo">
         Uma peça ilustrativa em 3D — não uma previsão do seu rosto — para
         você entender visualmente o raciocínio por trás de cada avaliação,
@@ -55,21 +56,12 @@ import Button from "../Button.astro";
     margin: 0 0 var(--space-stack-xs);
   }
 
-  .teaser-simulacao__titulo {
-    font-family: var(--type-display-font);
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-2xl);
-    letter-spacing: var(--type-display-tracking);
-    color: var(--text-heading);
-    margin: 0 0 var(--space-stack-sm);
-  }
-
   .teaser-simulacao__corpo {
     font-size: var(--font-size-md);
     line-height: var(--type-body-leading);
     color: var(--text-muted);
     max-width: 46ch;
-    margin: 0 0 var(--space-stack-md);
+    margin: var(--space-stack-sm) 0 var(--space-stack-md);
   }
 
   .teaser-simulacao__nota {

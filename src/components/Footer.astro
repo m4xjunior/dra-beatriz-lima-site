@@ -7,7 +7,7 @@ const ano = new Date().getFullYear();
 
 <footer class="footer">
   <div class="footer__inner">
-    <div class="footer__lockup">
+    <div class="footer__lockup" data-bl-reveal>
       <span class="footer__mono">BL</span>
       <div class="footer__nome">
         <span>Dra. Beatriz Lima</span>
@@ -15,7 +15,7 @@ const ano = new Date().getFullYear();
       </div>
     </div>
 
-    <ul class="footer__pilares" aria-label="Pilares da prática">
+    <ul class="footer__pilares" aria-label="Pilares da prática" data-bl-reveal>
       {
         pilares.map((pilar) => (
           <li>
@@ -26,7 +26,7 @@ const ano = new Date().getFullYear();
       }
     </ul>
 
-    <div class="footer__contato">
+    <div class="footer__contato" data-bl-reveal>
       <a
         href="https://www.instagram.com/biomedica.beatrizz"
         target="_blank"
@@ -63,6 +63,15 @@ const ano = new Date().getFullYear();
     display: flex;
     flex-direction: column;
     gap: var(--space-stack-md);
+    border-top: var(--border-width-hairline) solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        transparent,
+        var(--footer-accent) 20%,
+        var(--footer-accent) 80%,
+        transparent
+      )
+      1;
   }
 
   .footer__lockup {
@@ -76,7 +85,7 @@ const ano = new Date().getFullYear();
     font-weight: var(--font-weight-medium);
     font-size: var(--font-size-3xl);
     letter-spacing: var(--letter-spacing-normal);
-    background: var(--gradient-gold-text);
+    background: var(--gradient-gold-text-on-inverse);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

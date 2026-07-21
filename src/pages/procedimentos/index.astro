@@ -4,6 +4,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ServiceCard from "../../components/ServiceCard.astro";
 import Divider from "../../components/Divider.astro";
+import GradientTitle from "../../components/GradientTitle.astro";
 import { getCollection } from "astro:content";
 
 const procedimentos = (
@@ -17,15 +18,18 @@ const procedimentos = (
   theme="brand"
 >
   <section class="pagina-procedimentos">
-    <div class="pagina-procedimentos__cabecalho" data-bl-reveal>
-      <p class="pagina-procedimentos__eyebrow">CATÁLOGO</p>
-      <h1 class="pagina-procedimentos__titulo">Procedimentos</h1>
-      <p class="pagina-procedimentos__corpo">
-        Cada procedimento começa por uma avaliação individual. As
-        indicações e contraindicações abaixo são gerais — a decisão sobre
-        o que é adequado para você é sempre clínica, conversada em
-        consulta.
-      </p>
+    <div class="pagina-procedimentos__cabecalho-wrap">
+      <div class="pagina-procedimentos__fundo" data-bl-parallax="0.12" aria-hidden="true"></div>
+      <div class="pagina-procedimentos__cabecalho" data-bl-reveal>
+        <p class="pagina-procedimentos__eyebrow">CATÁLOGO</p>
+        <GradientTitle as="h1" size="4xl">Procedimentos</GradientTitle>
+        <p class="pagina-procedimentos__corpo">
+          Cada procedimento começa por uma avaliação individual. As
+          indicações e contraindicações abaixo são gerais — a decisão sobre
+          o que é adequado para você é sempre clínica, conversada em
+          consulta.
+        </p>
+      </div>
     </div>
 
     <Divider fade />
@@ -53,8 +57,28 @@ const procedimentos = (
     padding: var(--space-section) var(--space-container-pad);
   }
 
+  .pagina-procedimentos__cabecalho-wrap {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+  }
+
+  /* overflow:hidden fica só neste wrapper do cabeçalho — NUNCA na
+     <section> inteira, que contém o grid de ServiceCard logo abaixo:
+     o tilt deles (data-bl-tilt) usa scale()+box-shadow que seriam
+     cortados por um ancestral com overflow:hidden. */
+  .pagina-procedimentos__fundo {
+    position: absolute;
+    inset: -15% -5%;
+    background-color: var(--surface-sunken);
+    background-image: var(--surface-mesh);
+    opacity: 0.55;
+    z-index: -1;
+  }
+
   .pagina-procedimentos__cabecalho {
     max-width: var(--container-prose);
+    padding: var(--space-stack-md) var(--space-inline-md);
     margin-bottom: var(--space-stack-lg);
   }
 
@@ -67,20 +91,11 @@ const procedimentos = (
     margin: 0 0 var(--space-stack-xs);
   }
 
-  .pagina-procedimentos__titulo {
-    font-family: var(--type-display-font);
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-4xl);
-    letter-spacing: var(--type-display-tracking);
-    color: var(--text-heading);
-    margin: 0 0 var(--space-stack-sm);
-  }
-
   .pagina-procedimentos__corpo {
     font-size: var(--font-size-md);
     line-height: var(--type-body-leading);
     color: var(--text-muted);
-    margin: 0;
+    margin-top: var(--space-stack-sm);
   }
 
   .pagina-procedimentos__grade {

@@ -90,13 +90,23 @@ const pilares = [
     display: flex;
     gap: var(--space-inline-md);
     align-items: flex-start;
+    padding-bottom: var(--space-stack-sm);
+    border-bottom: var(--border-width-hairline) solid var(--border-hairline);
+  }
+
+  .pilares__item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
   .pilares__chave {
     font-family: var(--type-display-font);
     font-size: var(--font-size-2xl);
-    color: var(--text-accent);
     line-height: 1;
+    background: var(--gradient-gold-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .pilares__nome {

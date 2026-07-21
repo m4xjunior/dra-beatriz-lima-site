@@ -1,0 +1,102 @@
+---
+// GradientTitle — título com gradiente metálico em texto + reveal por
+// caractere (data-bl-split). Existe pra não repetir o bloco de CSS que
+// já vive hardcoded em Hero.astro — incluindo o contorno do bug real
+// documentado lá (Hero.astro:86-99): SplitText reconstrói o texto em
+// <span class="bl-char"> no runtime, pós-build — não herda `background`
+// (propriedade não-herdável) nem ganha data-astro-cid-*, então o clip
+// do gradiente precisa ser replicado em :global(.bl-char), senão o
+// texto some (opacity 0, sem nada atrás).
+//
+// O gradiente "gold-text" abaixo é calibrado só pro tema brand (ink-900
+// → gold-700, contraste medido 5.5:1 contra --surface-base). Só usar
+// este componente em página/seção tema="brand" — se um dia precisar
+// rodar sob tema immersive, o gradiente precisa de um par equivalente
+// calibrado pro fundo escuro (ver --gradient-gold-text-inverse como
+// ponto de partida), não reaproveitar estes valores.
+interface Props {
+  as?: "h1" | "h2" | "h3";
+  variant?: "gold-text" | "metal";
+  size?: "xl" | "2xl" | "3xl" | "4xl";
+  align?: "left" | "center";
+  split?: boolean;
+}
+
+const {
+  as: Tag = "h2",
+  variant = "gold-text",
+  size = "2xl",
+  align = "left",
+  split = true,
+} = Astro.props;
+---
+
+<Tag
+  class="titulo-metal"
+  data-variant={variant}
+  data-size={size}
+  data-align={align}
+  data-bl-split={split ? true : undefined}
+>
+  <slot />
+</Tag>
+
+<style>
+  .titulo-metal {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--type-display-tracking);
+    line-height: var(--type-display-leading);
+    margin: 0;
+  }
+
+  .titulo-metal[data-align="center"] {
+    text-align: center;
+  }
+
+  /* Fluido (clamp), não o token cru: um título de palavra única e sem
+     quebra (ex. "Procedimentos") no tamanho fixo estourava a largura
+     do container em telas ~375-390px — visualmente cortado quando o
+     ancestral tem overflow:hidden (bug real medido, não teórico: o
+     texto renderizava certo no DOM mas era clipado, "Procedimentos"
+     aparecia como "Procedimer"). Mesmo padrão que Hero.astro:71 já usa. */
+  .titulo-metal[data-size="xl"] {
+    font-size: clamp(1.125rem, 5vw, var(--font-size-xl));
+  }
+  .titulo-metal[data-size="2xl"] {
+    font-size: clamp(1.25rem, 6vw, var(--font-size-2xl));
+  }
+  .titulo-metal[data-size="3xl"] {
+    font-size: clamp(1.375rem, 7vw, var(--font-size-3xl));
+  }
+  .titulo-metal[data-size="4xl"] {
+    font-size: clamp(1.5rem, 8.5vw, var(--font-size-4xl));
+  }
+
+  /* NÃO usa --gradient-gold-text cru: a ponta dele (gold-500, "cor da
+     marca" por documentação — colors-gold.html marca 500 como "·marca",
+     não "·texto") mede ~2.7:1 contra --surface-base — abaixo mesmo do
+     3:1 de "texto grande" que o readme.md do projeto define como
+     barreira (§5.7). gold-700 é o tom que o próprio sistema documenta
+     como "·texto" (5.5:1 confirmado na tabela de contraste do readme) —
+     o gradiente do título pára nele, nunca chega em gold-500.
+     Em Hero.astro o mesmo --gradient-gold-text cru é usado, mas só num
+     ÚNICO destaque de palavra dentro de uma frase majoritariamente em
+     --text-heading (risco pontual, não o título inteiro) — não é o
+     mesmo caso de uso, por isso a diferença de tratamento aqui. */
+  .titulo-metal[data-variant="gold-text"],
+  .titulo-metal[data-variant="gold-text"] :global(.bl-char) {
+    background: linear-gradient(96deg, var(--color-ink-900) 0%, var(--color-gold-700) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .titulo-metal[data-variant="metal"],
+  .titulo-metal[data-variant="metal"] :global(.bl-char) {
+    background: var(--gradient-metal);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>

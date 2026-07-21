@@ -64,6 +64,11 @@
   /* Texto com gradiente (inverte por tema) */
   --gradient-gold-text: linear-gradient(96deg, var(--color-ink-900) 0%, var(--color-gold-700) 58%, var(--color-gold-500) 100%);
   --gradient-gold-text-inverse: linear-gradient(96deg, var(--color-sand-50) 0%, var(--color-gold-300) 60%, var(--color-gold-400) 100%);
+  /* Pro texto que fica sobre --surface-inverse (ex: Footer, que é sempre
+     o tema invertido da página) — precisa do gradiente do OUTRO tema,
+     não do próprio, senão a ponta escura do gradiente cai sobre fundo
+     escuro (ou clara sobre claro) e o texto quase some. */
+  --gradient-gold-text-on-inverse: var(--gradient-gold-text-inverse);
 
   /* Tipografia semântica */
   --type-display-font: var(--font-display);
@@ -148,6 +153,10 @@
   --ring-focus: 0 0 0 3px rgba(219, 190, 124, 0.40);
 
   --gradient-gold-text: var(--gradient-gold-text-inverse);
+  /* Espelha o --gradient-gold-text default do bloco brand (linha ~65)
+     — é o gradiente "começa escuro" certo pro --surface-inverse do
+     immersive, que é claro (o inverso do escuro). */
+  --gradient-gold-text-on-inverse: linear-gradient(96deg, var(--color-ink-900) 0%, var(--color-gold-700) 58%, var(--color-gold-500) 100%);
 
   --elevation-flat: var(--shadow-none);
   --elevation-raised: var(--shadow-md-dark);

@@ -7,13 +7,20 @@ import Divider from "../Divider.astro";
   <div class="posicionamento__inner">
     <Divider fade />
     <p class="posicionamento__eyebrow" data-bl-reveal>POSICIONAMENTO</p>
-    <blockquote class="posicionamento__citacao" data-bl-reveal>
-      "Valor não é só preço. A estética deve valorizar quem você é — nunca
-      transformar você em outra pessoa."
-    </blockquote>
-    <cite class="posicionamento__atribuicao" data-bl-reveal>
-      Dra. Beatriz Lima · Biomédica Esteta
-    </cite>
+
+    <div class="posicionamento__citacao-bloco" data-bl-reveal>
+      <span class="posicionamento__chave" aria-hidden="true">{"{"}</span>
+      <div>
+        <blockquote class="posicionamento__citacao">
+          "Valor não é só preço. A estética deve valorizar quem você é —
+          nunca transformar você em outra pessoa."
+        </blockquote>
+        <cite class="posicionamento__atribuicao">
+          Dra. Beatriz Lima · Biomédica Esteta
+        </cite>
+      </div>
+    </div>
+
     <p class="posicionamento__corpo" data-bl-reveal>
       Critério clínico acima de tendência. Cada avaliação parte da sua
       individualidade, não de um padrão de rosto ou de uma referência de
@@ -44,13 +51,32 @@ import Divider from "../Divider.astro";
     margin: var(--space-stack-lg) 0 var(--space-stack-sm);
   }
 
+  .posicionamento__citacao-bloco {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: flex-start;
+    text-align: left;
+    margin: 0 0 var(--space-stack-md);
+  }
+
+  .posicionamento__chave {
+    flex-shrink: 0;
+    font-family: var(--type-display-font);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 0.8;
+    background: var(--gradient-gold-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   .posicionamento__citacao {
     font-family: var(--type-quote-font);
     font-style: italic;
     font-size: var(--font-size-2xl);
     line-height: var(--line-height-snug);
     color: var(--text-heading);
-    margin: 0 0 var(--space-stack-md);
+    margin: 0 0 var(--space-stack-sm);
   }
 
   .posicionamento__atribuicao {
@@ -61,7 +87,7 @@ import Divider from "../Divider.astro";
     text-transform: uppercase;
     letter-spacing: var(--type-eyebrow-tracking);
     color: var(--text-accent);
-    margin: 0 0 var(--space-stack-md);
+    margin: 0;
   }
 
   .posicionamento__corpo {

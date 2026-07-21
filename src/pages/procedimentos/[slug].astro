@@ -5,6 +5,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Badge from "../../components/Badge.astro";
 import Divider from "../../components/Divider.astro";
 import Disclaimer from "../../components/Disclaimer.astro";
+import GradientTitle from "../../components/GradientTitle.astro";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -32,7 +33,7 @@ const { Content } = await render(item);
     <header class="pagina-procedimento__cabecalho" data-bl-reveal>
       {data.carroChefe && <Badge tone="ouro">Carro-chefe</Badge>}
       <p class="pagina-procedimento__eyebrow">{data.eyebrow}</p>
-      <h1 class="pagina-procedimento__titulo">{data.titulo}</h1>
+      <GradientTitle as="h1" size="3xl">{data.titulo}</GradientTitle>
       <p class="pagina-procedimento__resumo">{data.resumo}</p>
       {
         data.duracaoMedia && (
@@ -50,15 +51,21 @@ const { Content } = await render(item);
     </div>
 
     <div class="pagina-procedimento__grade" data-bl-reveal>
-      <section>
-        <h2 class="pagina-procedimento__subtitulo">Indicações</h2>
+      <section class="pagina-procedimento__ficha">
+        <h2 class="pagina-procedimento__subtitulo">
+          <span class="pagina-procedimento__chave" aria-hidden="true">{"{"}</span>
+          Indicações
+        </h2>
         <ul class="pagina-procedimento__lista">
           {data.indicacoes.map((linha) => <li>{linha}</li>)}
         </ul>
       </section>
 
-      <section>
-        <h2 class="pagina-procedimento__subtitulo">Contraindicações</h2>
+      <section class="pagina-procedimento__ficha">
+        <h2 class="pagina-procedimento__subtitulo">
+          <span class="pagina-procedimento__chave" aria-hidden="true">{"{"}</span>
+          Contraindicações
+        </h2>
         <ul class="pagina-procedimento__lista">
           {data.contraindicacoes.map((linha) => <li>{linha}</li>)}
         </ul>
@@ -66,8 +73,11 @@ const { Content } = await render(item);
 
       {
         data.cuidadosPosProcedimento && (
-          <section>
-            <h2 class="pagina-procedimento__subtitulo">Cuidados após o procedimento</h2>
+          <section class="pagina-procedimento__ficha">
+            <h2 class="pagina-procedimento__subtitulo">
+              <span class="pagina-procedimento__chave" aria-hidden="true">{"{"}</span>
+              Cuidados após o procedimento
+            </h2>
             <ul class="pagina-procedimento__lista">
               {data.cuidadosPosProcedimento.map((linha) => <li>{linha}</li>)}
             </ul>
@@ -81,6 +91,8 @@ const { Content } = await render(item);
         <p class="pagina-procedimento__preco" data-bl-reveal>{data.notaPreco}</p>
       )
     }
+
+    <Divider fade />
 
     <Disclaimer variant="geral" extra={data.disclaimerExtra} />
   </article>
@@ -109,15 +121,6 @@ const { Content } = await render(item);
     letter-spacing: var(--type-eyebrow-tracking);
     color: var(--text-accent);
     margin: var(--space-stack-xs) 0 0;
-  }
-
-  .pagina-procedimento__titulo {
-    font-family: var(--type-display-font);
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-3xl);
-    letter-spacing: var(--type-display-tracking);
-    color: var(--text-heading);
-    margin: 0;
   }
 
   .pagina-procedimento__resumo {
@@ -149,12 +152,35 @@ const { Content } = await render(item);
     gap: var(--space-stack-lg);
   }
 
+  .pagina-procedimento__ficha {
+    /* Ficha de vidro estático — sem backdrop-filter: o fundo da página
+       é --surface-base plano, sem mesh/textura atrás; blur sem nada
+       pra desfocar é custo de composição sem ganho visual. */
+    background-color: var(--card-glass-bg);
+    border: var(--border-width-hairline) solid var(--card-glass-border);
+    border-radius: var(--card-glass-radius);
+    box-shadow: var(--card-glass-shadow);
+    padding: var(--space-stack-md);
+  }
+
   .pagina-procedimento__subtitulo {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-inline-sm);
     font-family: var(--type-display-font);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-lg);
     color: var(--text-heading);
     margin: 0 0 var(--space-stack-xs);
+  }
+
+  .pagina-procedimento__chave {
+    font-size: var(--font-size-xl);
+    line-height: 1;
+    background: var(--gradient-gold-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .pagina-procedimento__lista {
