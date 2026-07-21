@@ -266,3 +266,100 @@ async fn apagar(AxumPath(id): AxumPath<Uuid>) -> Response {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn captura_valida() -> NovaCaptura {
+        NovaCaptura {
+            versao_esquema: 1,
+            variante: "inline".to_string(),
+            fps_alvo: 30,
+            pontos_por_quadro: 478,
+            quadros: vec![vec![0.1; 478 * 3]; 20],
+        }
+    }
+
+    #[test]
+    fn validar_aceita_captura_dentro_do_contrato() {
+        assert!(validar(&captura_valida()).is_ok());
+    }
+
+    #[test]
+    fn validar_rejeita_versao_esquema_errada() {
+        let mut captura = captura_valida();
+        captura.versao_esquema = 2;
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn validar_rejeita_variante_desconhecida() {
+        let mut captura = captura_valida();
+        captura.variante = "gigante".to_string();
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn validar_rejeita_poucos_quadros() {
+        let mut captura = captura_valida();
+        captura.quadros = vec![vec![0.1; 478 * 3]; MIN_QUADROS - 1];
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn validar_rejeita_quadros_demais() {
+        let mut captura = captura_valida();
+        captura.quadros = vec![vec![0.1; 478 * 3]; MAX_QUADROS + 1];
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn validar_aceita_extremos_da_faixa_de_quadros() {
+        let mut minimo = captura_valida();
+        minimo.quadros = vec![vec![0.1; 478 * 3]; MIN_QUADROS];
+        assert!(validar(&minimo).is_ok());
+
+        let mut maximo = captura_valida();
+        maximo.quadros = vec![vec![0.1; 478 * 3]; MAX_QUADROS];
+        assert!(validar(&maximo).is_ok());
+    }
+
+    #[test]
+    fn validar_rejeita_pontos_por_quadro_fora_da_faixa() {
+        let mut captura = captura_valida();
+        captura.pontos_por_quadro = MIN_PONTOS_POR_QUADRO - 1;
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn validar_rejeita_quadro_com_tamanho_inconsistente() {
+        let mut captura = captura_valida();
+        captura.quadros[0].push(0.1); // um número a mais que pontosPorQuadro * 3
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn validar_rejeita_coordenada_nao_finita() {
+        let mut captura = captura_valida();
+        captura.quadros[0][0] = f32::NAN;
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn validar_rejeita_coordenada_fora_da_faixa_permitida() {
+        let mut captura = captura_valida();
+        captura.quadros[0][0] = LIMITE_COORDENADA + 0.01;
+        assert!(validar(&captura).is_err());
+    }
+
+    #[test]
+    fn caminho_arquivo_usa_o_id_como_nome() {
+        let id = Uuid::nil();
+        let caminho = caminho_arquivo(id);
+        assert_eq!(
+            caminho.file_name().and_then(|n| n.to_str()),
+            Some("00000000-0000-0000-0000-000000000000.json")
+        );
+    }
+}

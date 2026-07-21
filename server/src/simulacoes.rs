@@ -224,8 +224,12 @@ async fn indisponivel() -> Response {
 /// e devolve 202 imediatamente; o processamento roda em background (o
 /// provedor real também seria uma chamada de rede demorada, então o
 /// esqueleto já modela o fluxo assíncrono desde já, mesmo com o mock).
+fn procedimento_valido(slug: &str) -> bool {
+    PROCEDIMENTOS_VALIDOS.contains(&slug)
+}
+
 async fn criar(State(estado): State<Arc<AppState>>, Json(nova): Json<NovaSimulacao>) -> Response {
-    if !PROCEDIMENTOS_VALIDOS.contains(&nova.procedimento_slug.as_str()) {
+    if !procedimento_valido(&nova.procedimento_slug) {
         return erro_json(
             StatusCode::BAD_REQUEST,
             format!(
@@ -312,5 +316,38 @@ async fn buscar(State(estado): State<Arc<AppState>>, AxumPath(id): AxumPath<Uuid
                 "não foi possível buscar a simulação agora",
             )
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn procedimento_valido_aceita_os_5_procedimentos_do_catalogo() {
+        for slug in PROCEDIMENTOS_VALIDOS {
+            assert!(procedimento_valido(slug), "esperava {slug} válido");
+        }
+    }
+
+    #[test]
+    fn procedimento_valido_rejeita_slug_desconhecido() {
+        assert!(!procedimento_valido("botox-magico"));
+        assert!(!procedimento_valido(""));
+    }
+
+    #[test]
+    fn mock_se_identifica_como_mock() {
+        assert_eq!(ProvedorMock.nome(), "mock");
+    }
+
+    #[tokio::test]
+    async fn mock_processar_nao_inventa_uma_url_de_resultado() {
+        // O ProvedorMock é explícito sobre não gerar imagem nenhuma — só
+        // simula a latência de um provedor real. Trava esse comportamento
+        // contra regressão futura (ex.: alguém colar um placeholder
+        // externo "pra ficar bonito" e isso vazar como se fosse real).
+        let resultado = ProvedorMock.processar("peelings", None).await;
+        assert_eq!(resultado.unwrap(), None);
     }
 }
