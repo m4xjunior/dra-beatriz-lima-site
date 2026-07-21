@@ -47,6 +47,31 @@ O servidor escuta em `0.0.0.0:<PORT>`.
 4. Working directory do processo deve ser esta pasta (`server/`), já que o
    caminho do build é resolvido como `../dist`.
 
+## Deploy via Docker (qualquer VPS com Docker) — caminho mais simples
+
+`Dockerfile` e `docker-compose.yml` ficam na **raiz do projeto** (não aqui em
+`server/`), porque o build empacota o site Astro + este servidor numa imagem
+só. Dimensionado para a infra real do documento do projeto: 4 vCPU / 8 GB RAM,
+sem GPU — só dois serviços leves (Postgres + este binário).
+
+```bash
+# na raiz do projeto
+cp .env.example .env   # ajuste POSTGRES_PASSWORD antes de subir em produção
+docker compose up -d --build
+```
+
+Isso sobe Postgres (com `pg_isready` como healthcheck) e o app (site estático
++ `/api/capturas` + `/api/simulacoes`) na porta `APP_PORT` (default `8080`).
+Dados de captura e o banco Postgres persistem em volumes nomeados
+(`postgres_dados`, `capturas_dados`) — sobrevivem a `docker compose down`
+(sem `-v`) e a rebuilds da imagem. **Testado de verdade nesta máquina**:
+build limpo, `POST/GET /api/simulacoes` e `POST /api/capturas` respondendo
+certo, dado persistindo depois de `down`+`up` de novo.
+
+Qual VPS/provedor hospeda isto continua sendo decisão do usuário (Hetzner,
+Fly.io, Railway, um droplet qualquer com Docker) — este Dockerfile só torna
+o "como" trivial, não decide o "onde".
+
 ## API de capturas 3D (`/api/capturas`)
 
 Endpoints novos (módulo `src/capturas.rs`), mesclados no mesmo `Router` que

@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# estado local de sessões do Claude Code (não é parte do projeto)
+.claude/

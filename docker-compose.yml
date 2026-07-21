@@ -1,0 +1,45 @@
+# Deploy self-hosted, pra qualquer VPS que suporte Docker (Hetzner, Fly.io,
+# Railway, um droplet qualquer) — decisão de QUAL host fica com o usuário;
+# isto só torna o "como" trivial (docker compose up -d) quando ele decidir.
+#
+# Dimensionado para a infra real descrita no documento do projeto: 4 vCPU /
+# 8 GB RAM, sem GPU — dois serviços leves (Postgres + o binário Rust), nada
+# de worker de GPU aqui.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: estetica_beatriz
+      POSTGRES_USER: estetica_beatriz
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env antes de subir em produção}
+    volumes:
+      - postgres_dados:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U estetica_beatriz"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      RUST_LOG: info
+      DATABASE_URL: postgres://estetica_beatriz:${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env antes de subir em produção}@postgres:5432/estetica_beatriz
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      # Dados de captura (só pontos numéricos, nunca imagem) sobrevivem a um
+      # `docker compose up` novo — mesmo espírito do /dados/ no .gitignore.
+      - capturas_dados:/app/server/dados
+
+volumes:
+  postgres_dados:
+  capturas_dados:
