@@ -1,0 +1,177 @@
+---
+// RitmoLuz — fusão editorial de Espaçamento (§ space-scale.html) e
+// Efeitos & Profundidade (§ effect-glass.html): metade escala de espaço
+// em barras douradas, metade a escala de véu translúcido sobre um
+// painel escuro fixo (mesmo tratamento visual do specimen original,
+// independente do tema da página — véu precisa de fundo escuro pra ler).
+interface Escala {
+  tag: string;
+  token: string; // ex: "--size-6"
+}
+
+interface Veu {
+  nivel: 1 | 2 | 3;
+  label: string;
+  nota: string;
+}
+
+interface Props {
+  escala: Escala[];
+  veus: Veu[];
+}
+
+const { escala, veus } = Astro.props;
+---
+
+<div class="ritmo-luz">
+  <div class="ritmo-luz__coluna">
+    <h3 class="ritmo-luz__titulo">Escala de espaçamento</h3>
+    {
+      escala.map((linha) => (
+        <div class="ritmo-luz__linha" data-bl-reveal>
+          <span class="ritmo-luz__tag">{linha.tag}</span>
+          <div class="ritmo-luz__barra" style={`width:var(${linha.token})`} />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="ritmo-luz__coluna">
+    <h3 class="ritmo-luz__titulo">Escala de véu</h3>
+    <div class="ritmo-luz__veu-fundo">
+      {
+        veus.map((v) => (
+          <div class={`ritmo-luz__cartao ritmo-luz__cartao--v${v.nivel}`} data-bl-reveal>
+            <span class="ritmo-luz__veu-label">véu · {v.nivel}</span>
+            <span class="ritmo-luz__veu-nome">{v.label}</span>
+            <span class="ritmo-luz__veu-nota">{v.nota}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .ritmo-luz {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-stack-lg);
+  }
+
+  .ritmo-luz__titulo {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-sm);
+    color: var(--text-heading);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  /* --- Coluna 1: escala de espaço --- */
+  .ritmo-luz__linha {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-md);
+    padding-block: 3px;
+  }
+
+  .ritmo-luz__tag {
+    width: 5rem;
+    flex: none;
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ritmo-luz__barra {
+    height: 14px;
+    background: var(--gradient-gold);
+    border-radius: var(--radius-xs);
+  }
+
+  /* --- Coluna 2: escala de véu (painel escuro fixo, independe do tema) --- */
+  .ritmo-luz__veu-fundo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-inline-sm);
+    padding: var(--space-inline-md);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-obsidian-900);
+    background-image: var(--mesh-immersive);
+    overflow: hidden;
+  }
+
+  .ritmo-luz__cartao {
+    position: relative;
+    border-radius: var(--radius-lg);
+    border: var(--border-width-hairline) solid var(--glass-border-dark);
+    background-image: var(--glass-tint-dark);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    box-shadow: var(--glass-inner-dark), var(--shadow-md-dark);
+    padding: var(--space-inline-md);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ritmo-luz__cartao::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--glass-sheen-dark);
+    pointer-events: none;
+  }
+
+  .ritmo-luz__cartao--v1 {
+    background-color: var(--veil-dark-1);
+  }
+  .ritmo-luz__cartao--v2 {
+    background-color: var(--veil-dark-2);
+  }
+  .ritmo-luz__cartao--v3 {
+    background-color: var(--veil-dark-3);
+  }
+
+  .ritmo-luz__veu-label {
+    position: relative;
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--color-gold-300);
+  }
+
+  .ritmo-luz__veu-nome {
+    position: relative;
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-md);
+    color: var(--color-champagne);
+  }
+
+  .ritmo-luz__veu-nota {
+    position: relative;
+    font-size: var(--font-size-2xs);
+    color: var(--text-subtle);
+  }
+
+  @media (min-width: 768px) {
+    .ritmo-luz {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-gutter);
+      align-items: start;
+    }
+
+    .ritmo-luz__veu-fundo {
+      flex-direction: row;
+    }
+
+    .ritmo-luz__cartao {
+      flex: 1;
+    }
+  }
+</style>

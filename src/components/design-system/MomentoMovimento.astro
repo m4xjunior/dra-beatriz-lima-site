@@ -1,0 +1,133 @@
+---
+// MomentoMovimento — "o vidro reage": os 2 momentos GSAP ao vivo da
+// página (tilt 3D + split-text), acionados só por atributo data-bl-*
+// (BLMotion.auto() já roda globalmente via BaseLayout — zero JS aqui).
+interface Props {
+  cardEyebrow: string;
+  cardTitulo: string;
+  cardCorpo: string;
+  splitTexto: string;
+  splitLegenda: string;
+}
+
+const { cardEyebrow, cardTitulo, cardCorpo, splitTexto, splitLegenda } = Astro.props;
+---
+
+<div class="momento-movimento">
+  <div class="momento-movimento__card" data-bl-tilt data-bl-reveal>
+    <span class="momento-movimento__eyebrow">{cardEyebrow}</span>
+    <h3 class="momento-movimento__titulo">{cardTitulo}</h3>
+    <p class="momento-movimento__corpo">{cardCorpo}</p>
+    <span class="momento-movimento__hint" aria-hidden="true">Aponte ou toque para inclinar →</span>
+  </div>
+
+  <div class="momento-movimento__texto" data-bl-reveal>
+    <h3 class="momento-movimento__split" data-bl-split>{splitTexto}</h3>
+    <p class="momento-movimento__legenda">{splitLegenda}</p>
+  </div>
+</div>
+
+<style>
+  .momento-movimento {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-lg);
+    align-items: stretch;
+  }
+
+  .momento-movimento__card {
+    position: relative;
+    background-color: var(--card-service-bg);
+    background-image: var(--surface-glass-tint);
+    border: var(--border-width-hairline) solid var(--card-service-border);
+    border-radius: var(--card-service-radius);
+    padding: var(--card-service-pad);
+    -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-saturate));
+    backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-saturate));
+    box-shadow: var(--card-glass-inner), var(--card-glass-shadow);
+    transition: box-shadow var(--duration-base) var(--ease-standard);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-inline-xs);
+  }
+
+  .momento-movimento__card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--card-glass-sheen);
+    pointer-events: none;
+  }
+
+  .momento-movimento__card:hover {
+    box-shadow: var(--card-glass-inner), var(--card-glass-shadow), var(--tilt-glow);
+  }
+
+  .momento-movimento__eyebrow {
+    position: relative;
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+    color: var(--text-accent);
+  }
+
+  .momento-movimento__titulo {
+    position: relative;
+    margin: 0;
+    font-family: var(--type-display-font);
+    font-size: var(--font-size-xl);
+    color: var(--text-heading);
+  }
+
+  .momento-movimento__corpo {
+    position: relative;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--text-muted);
+  }
+
+  .momento-movimento__hint {
+    position: relative;
+    margin-top: var(--space-inline-xs);
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+
+  .momento-movimento__split {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-3xl);
+    letter-spacing: var(--letter-spacing-tighter);
+    line-height: var(--line-height-tight);
+    color: var(--text-heading);
+    background: var(--gradient-metal);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 var(--space-inline-sm);
+  }
+
+  .momento-movimento__legenda {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    line-height: var(--line-height-relaxed);
+    max-width: 42ch;
+  }
+
+  @media (min-width: 768px) {
+    .momento-movimento {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .momento-movimento__card,
+    .momento-movimento__texto {
+      flex: 1;
+    }
+  }
+</style>

@@ -1,0 +1,75 @@
+---
+// ColorRamp — rampa de swatches de cor (§ guidelines/colors-*.html).
+// Genérico: qualquer família de cor (ouro, neutros, nude) passa pelos
+// mesmos chips, só muda a lista de tokens.
+interface Props {
+  titulo: string;
+  swatches: { token: string; label: string; hex?: string }[];
+}
+
+const { titulo, swatches } = Astro.props;
+---
+
+<div class="color-ramp">
+  <h3 class="color-ramp__titulo">{titulo}</h3>
+  <div class="color-ramp__grade">
+    {
+      swatches.map((s) => (
+        <div class="color-ramp__chip" data-bl-reveal>
+          <div class="color-ramp__amostra" style={`background:var(${s.token})`} />
+          <div class="color-ramp__meta">
+            <span class="color-ramp__label">{s.label}</span>
+            {s.hex && <span class="color-ramp__hex">{s.hex}</span>}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .color-ramp__titulo {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-sm);
+    color: var(--text-heading);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .color-ramp__grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(4.5rem, 20vw, 6rem), 1fr));
+    gap: var(--space-inline-sm);
+  }
+
+  .color-ramp__chip {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: var(--border-width-hairline) solid var(--border-subtle);
+  }
+
+  .color-ramp__amostra {
+    height: 4rem;
+  }
+
+  .color-ramp__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-inline-xs) var(--space-inline-sm);
+    background: var(--surface-raised);
+  }
+
+  .color-ramp__label {
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .color-ramp__hex {
+    font-size: var(--font-size-2xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-body);
+  }
+</style>

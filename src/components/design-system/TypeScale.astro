@@ -1,0 +1,101 @@
+---
+// TypeScale — escala tipográfica viva (§ guidelines/type-scale.html),
+// reduzida a 5-6 degraus mais expressivos em vez dos 10 do specimen.
+interface Linha {
+  tag: string; // ex: "6xl · 88"
+  texto: string;
+  tamanho: string; // nome cru do token, ex: "--font-size-6xl"
+  fonte?: "display" | "body" | "serif";
+  gradiente?: boolean;
+  fluida?: boolean; // aplica clamp() nos degraus grandes (evita overflow em 375px)
+}
+
+interface Props {
+  linhas: Linha[];
+}
+
+const { linhas } = Astro.props;
+
+const fonteVar: Record<string, string> = {
+  display: "--type-display-font",
+  body: "--type-body-font",
+  serif: "--type-quote-font",
+};
+---
+
+<div class="type-scale">
+  {
+    linhas.map((linha) => {
+      const familia = fonteVar[linha.fonte ?? "display"];
+      const fontSize = linha.fluida
+        ? `clamp(2.75rem, 9vw, var(${linha.tamanho}))`
+        : `var(${linha.tamanho})`;
+      return (
+        <div class="type-scale__linha" data-bl-reveal>
+          <span class="type-scale__tag">{linha.tag}</span>
+          <span
+            class="type-scale__texto"
+            class:list={{ "type-scale__texto--gradiente": linha.gradiente }}
+            style={`font-family:var(${familia});font-size:${fontSize}`}
+          >
+            {linha.texto}
+          </span>
+        </div>
+      );
+    })
+  }
+</div>
+
+<style>
+  .type-scale {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-sm);
+  }
+
+  .type-scale__linha {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-inline-xs);
+    padding-block: var(--space-inline-xs);
+    border-bottom: var(--border-width-hairline) solid var(--border-subtle);
+  }
+
+  .type-scale__linha:last-child {
+    border-bottom: none;
+  }
+
+  .type-scale__tag {
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .type-scale__texto {
+    color: var(--text-heading);
+    line-height: var(--line-height-tight);
+  }
+
+  .type-scale__texto--gradiente {
+    background: var(--gradient-gold-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @media (min-width: 768px) {
+    .type-scale__linha {
+      flex-direction: row;
+      align-items: baseline;
+      gap: var(--space-inline-lg);
+    }
+
+    .type-scale__tag {
+      width: 6rem;
+      flex: none;
+    }
+  }
+</style>

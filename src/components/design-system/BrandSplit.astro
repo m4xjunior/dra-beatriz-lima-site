@@ -1,0 +1,191 @@
+---
+// BrandSplit — o duotom ao vivo (§ guidelines/brand-duotom.html):
+// o mesmo conteúdo em brand (claro/público) e immersive (escuro/3D),
+// lado a lado no desktop, empilhado (brand primeiro) no mobile.
+// data-theme escopado num <div> funciona porque semantic.css usa
+// seletor de atributo puro, não :root — confirmado no specimen fonte.
+import Button from "../Button.astro";
+
+interface Lado {
+  eyebrow: string;
+  titulo: string;
+  corpo: string;
+  cta: string;
+  href: string;
+}
+
+interface Props {
+  ladoBrand: Lado;
+  ladoImmersive: Lado;
+}
+
+const { ladoBrand, ladoImmersive } = Astro.props;
+---
+
+<div class="brand-split">
+  <div class="brand-split__lado" data-theme="brand" data-bl-reveal>
+    <span class="brand-split__eyebrow">{ladoBrand.eyebrow}</span>
+    <h3 class="brand-split__titulo">{ladoBrand.titulo}</h3>
+    <div class="brand-split__vidro">
+      <p class="brand-split__corpo">{ladoBrand.corpo}</p>
+      <Button href={ladoBrand.href} variante="primaria" tamanho="sm">{ladoBrand.cta}</Button>
+    </div>
+    <span class="brand-split__tag">data-theme="brand"</span>
+  </div>
+
+  <div class="brand-split__divisor" aria-hidden="true">
+    <span class="brand-split__chave">{"{"}</span>
+  </div>
+
+  <div class="brand-split__lado" data-theme="immersive" data-bl-reveal>
+    <span class="brand-split__eyebrow">{ladoImmersive.eyebrow}</span>
+    <h3 class="brand-split__titulo">{ladoImmersive.titulo}</h3>
+    <div class="brand-split__vidro">
+      <p class="brand-split__corpo">{ladoImmersive.corpo}</p>
+      <Button href={ladoImmersive.href} variante="primaria" tamanho="sm">{ladoImmersive.cta}</Button>
+    </div>
+    <span class="brand-split__tag">data-theme="immersive"</span>
+  </div>
+</div>
+
+<style>
+  .brand-split {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-md);
+  }
+
+  .brand-split__lado {
+    position: relative;
+    border-radius: var(--radius-card);
+    padding: var(--space-stack-md) var(--space-inline-lg);
+    background-color: var(--surface-base);
+    background-image: var(--surface-mesh);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-inline-sm);
+  }
+
+  .brand-split__lado::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .brand-split__eyebrow {
+    position: relative;
+    z-index: 1;
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-widest);
+    color: var(--text-accent);
+  }
+
+  .brand-split__titulo {
+    position: relative;
+    z-index: 1;
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tighter);
+    color: var(--text-heading);
+    margin: 0;
+  }
+
+  .brand-split__vidro {
+    position: relative;
+    z-index: 1;
+    background-color: var(--surface-glass);
+    background-image: var(--surface-glass-tint);
+    border: var(--border-width-hairline) solid var(--surface-glass-border);
+    border-radius: var(--radius-card);
+    padding: var(--space-inline-md) var(--space-inline-lg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    box-shadow: var(--surface-glass-inner), var(--elevation-floating);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-inline-sm);
+    align-items: flex-start;
+  }
+
+  .brand-split__vidro::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--surface-glass-sheen);
+    pointer-events: none;
+  }
+
+  .brand-split__corpo {
+    position: relative;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .brand-split__tag {
+    position: relative;
+    z-index: 1;
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-subtle);
+  }
+
+  .brand-split__divisor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-inline-sm);
+  }
+
+  .brand-split__divisor::before,
+  .brand-split__divisor::after {
+    content: "";
+    flex: 1;
+    height: var(--border-width-hairline);
+    background: var(--gradient-hairline);
+  }
+
+  .brand-split__chave {
+    font-family: var(--type-display-font);
+    font-size: var(--font-size-xl);
+    color: var(--color-gold-500);
+    line-height: 1;
+    flex: none;
+  }
+
+  @media (min-width: 768px) {
+    .brand-split {
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    .brand-split__lado {
+      flex: 1;
+    }
+
+    .brand-split__divisor {
+      flex-direction: column;
+      width: auto;
+    }
+
+    .brand-split__divisor::before,
+    .brand-split__divisor::after {
+      width: var(--border-width-hairline);
+      height: auto;
+      background: linear-gradient(180deg, transparent 0%, var(--color-gold-500) 50%, transparent 100%);
+    }
+  }
+</style>

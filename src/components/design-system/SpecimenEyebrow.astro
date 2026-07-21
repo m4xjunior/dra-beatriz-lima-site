@@ -1,0 +1,23 @@
+---
+// SpecimenEyebrow — rótulo de seção em caixa alta (mesmo padrão de
+// .pilares__eyebrow/.posicionamento__eyebrow), extraído aqui porque a
+// página /estetica tem 6 seções que repetem o mesmo rótulo.
+interface Props {
+  texto: string;
+}
+
+const { texto } = Astro.props;
+---
+
+<p class="specimen-eyebrow" data-bl-reveal>{texto}</p>
+
+<style>
+  .specimen-eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+  }
+</style>

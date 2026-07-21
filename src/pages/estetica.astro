@@ -1,0 +1,287 @@
+---
+// Estética — apresentação editorial do design system da marca. Curada,
+// não um style-guide completo (32 specimens vivem em guidelines/, fonte
+// de conteúdo desta página, mas não reconstruídos 1:1 aqui — ver
+// readme.md § Roteiro, "aba Design System").
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Divider from "../components/Divider.astro";
+import SpecimenEyebrow from "../components/design-system/SpecimenEyebrow.astro";
+import ColorRamp from "../components/design-system/ColorRamp.astro";
+import TypeScale from "../components/design-system/TypeScale.astro";
+import RitmoLuz from "../components/design-system/RitmoLuz.astro";
+import BrandSplit from "../components/design-system/BrandSplit.astro";
+import MomentoMovimento from "../components/design-system/MomentoMovimento.astro";
+---
+
+<BaseLayout
+  title="Estética — o design system da marca | Dra. Beatriz Lima"
+  description="A gramática visual por trás do consultório: paleta, tipografia, translucidez e movimento — a mesma exigência do critério clínico aplicada à forma."
+  theme="brand"
+>
+  <section class="hero-estetica">
+    <div class="hero-estetica__inner">
+      <SpecimenEyebrow texto="Sistema de Design" />
+      <h1 class="hero-estetica__titulo" data-bl-split>A gramática visual da marca</h1>
+      <p class="hero-estetica__corpo" data-bl-reveal>
+        Cada decisão visual segue o mesmo critério da avaliação clínica: nada
+        por tendência, tudo por proporção. Um véu de vidro fosco levemente
+        dourado, duas atmosferas — clara e imersiva — e um movimento contido,
+        sem excesso.
+      </p>
+    </div>
+  </section>
+
+  <section class="secao-estetica" data-bg="sunken">
+    <div class="secao-estetica__inner">
+      <SpecimenEyebrow texto="Cor" />
+      <h2 class="secao-estetica__titulo" data-bl-reveal>Uma paleta que nunca vira fundo</h2>
+      <p class="secao-estetica__intro" data-bl-reveal>
+        Dourado é acento, texto e brilho — nunca superfície inteira. A base é
+        sempre creme quente ou obsidiana quente: preto e branco puros não
+        aparecem em lugar nenhum do sistema.
+      </p>
+      <div class="secao-estetica__ramps">
+        <ColorRamp
+          titulo="Ouro — bronze ao champanhe"
+          swatches={[
+            { token: "--color-gold-100", label: "100", hex: "#F4E8CC" },
+            { token: "--color-gold-300", label: "300", hex: "#DBBE7C" },
+            { token: "--color-gold-500", label: "500 · marca", hex: "#B58E45" },
+            { token: "--color-gold-700", label: "700 · texto", hex: "#7A5B2B" },
+          ]}
+        />
+        <ColorRamp
+          titulo="Neutros quentes"
+          swatches={[
+            { token: "--color-sand-50", label: "sand 50", hex: "#FBF9F4" },
+            { token: "--color-sand-200", label: "sand 200", hex: "#EEE6D7" },
+            { token: "--color-ink-500", label: "ink 500 · muted", hex: "#635A4C" },
+            { token: "--color-ink-900", label: "ink 900 · texto", hex: "#1A1611" },
+          ]}
+        />
+        <ColorRamp
+          titulo="Nude — acento de pele"
+          swatches={[
+            { token: "--color-nude-100", label: "100", hex: "#F5E6DC" },
+            { token: "--color-nude-200", label: "200", hex: "#E9CDBC" },
+            { token: "--color-nude-300", label: "300", hex: "#D8AF9A" },
+          ]}
+        />
+      </div>
+      <p class="secao-estetica__nota" data-bl-reveal>
+        Uma quarta família — status clínico (sucesso, atenção, alerta) — fica
+        deliberadamente dessaturada. Nada de cor vibrante para comunicar
+        estado; o contexto é clínico, não um painel de produto.
+      </p>
+    </div>
+  </section>
+
+  <section class="secao-estetica">
+    <div class="secao-estetica__inner">
+      <SpecimenEyebrow texto="Tipografia" />
+      <h2 class="secao-estetica__titulo" data-bl-reveal>Duas vozes, uma hierarquia</h2>
+      <p class="secao-estetica__intro" data-bl-reveal>
+        Uma grotesca contemporânea para títulos, tracking apertado; um sans
+        humanista leve para o corpo, entrelinha alta. A serifa aparece só em
+        citações — o discurso da marca, não a interface.
+      </p>
+      <TypeScale
+        linhas={[
+          { tag: "6xl · display", texto: "Beleza com critério", tamanho: "--font-size-6xl", fonte: "display", gradiente: true, fluida: true },
+          { tag: "3xl · título", texto: "Estética que valoriza você", tamanho: "--font-size-3xl", fonte: "display", fluida: true },
+          { tag: "lg · corpo", texto: "Cada avaliação parte da sua individualidade.", tamanho: "--font-size-lg", fonte: "body" },
+          { tag: "xs · eyebrow", texto: "SIMULAÇÃO 3D", tamanho: "--font-size-xs", fonte: "body" },
+        ]}
+      />
+      <blockquote class="secao-estetica__citacao" data-bl-reveal>
+        <span class="secao-estetica__chave" aria-hidden="true">{"{"}</span>
+        <span>
+          "A estética deve valorizar quem você é, nunca transformar você em
+          outra pessoa."
+        </span>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="secao-estetica" data-bg="sunken">
+    <div class="secao-estetica__inner">
+      <SpecimenEyebrow texto="Espaço & Luz" />
+      <h2 class="secao-estetica__titulo" data-bl-reveal>Ritmo generoso, profundidade sem excesso</h2>
+      <p class="secao-estetica__intro" data-bl-reveal>
+        O espaçamento segue uma escala só, base 4px. A translucidez segue a
+        mesma lógica: quanto menos opaco o véu, mais decorativo; quanto mais
+        opaco, mais denso o conteúdo que ele sustenta.
+      </p>
+      <RitmoLuz
+        escala={[
+          { tag: "12px", token: "--size-3" },
+          { tag: "24px", token: "--size-5" },
+          { tag: "48px", token: "--size-7" },
+          { tag: "96px · seção", token: "--size-9" },
+        ]}
+        veus={[
+          { nivel: 1, label: "Transparente", nota: "decorativo" },
+          { nivel: 2, label: "Padrão", nota: "cards" },
+          { nivel: 3, label: "Legível", nota: "texto denso" },
+        ]}
+      />
+    </div>
+  </section>
+
+  <section class="secao-estetica">
+    <div class="secao-estetica__inner">
+      <SpecimenEyebrow texto="Marca" />
+      <h2 class="secao-estetica__titulo" data-bl-reveal>Um lockup, duas atmosferas</h2>
+      <p class="secao-estetica__intro" data-bl-reveal>
+        O mesmo sistema resolve dois registros: claro e público para o
+        consultório, escuro e imersivo para a simulação 3D. Nenhum token
+        muda de nome entre os dois — só de valor.
+      </p>
+      <BrandSplit
+        ladoBrand={{
+          eyebrow: "Consultório · público",
+          titulo: "Estética que valoriza você",
+          corpo: "Base clara e serena, camadas de vidro e luz. Critério clínico, muito ar.",
+          cta: "Ver procedimentos",
+          href: "/procedimentos",
+        }}
+        ladoImmersive={{
+          eyebrow: "Simulação 3D · imersivo",
+          titulo: "Veja com clareza",
+          corpo: "Obsidiana quente para o 3D brilhar. Ouro ganha bloom; vidro ganha vida.",
+          cta: "Iniciar simulação",
+          href: "/simulacao-3d",
+        }}
+      />
+    </div>
+  </section>
+
+  <section class="secao-estetica" data-bg="sunken">
+    <div class="secao-estetica__inner">
+      <SpecimenEyebrow texto="Movimento" />
+      <h2 class="secao-estetica__titulo" data-bl-reveal>O vidro reage</h2>
+      <p class="secao-estetica__intro" data-bl-reveal>
+        Movimento moderado, sem bounce, orquestrado por GSAP. Em
+        <code>prefers-reduced-motion</code>, cada recurso mostra o estado
+        final direto — sem exigir animação de ninguém.
+      </p>
+      <MomentoMovimento
+        cardEyebrow="Tilt 3D"
+        cardTitulo="Profundidade real, não sombra"
+        cardCorpo="O card inclina seguindo o ponteiro — a mesma física usada no visualizador facial 3D."
+        splitTexto="O título se revela"
+        splitLegenda="Caractere a caractere, com máscara — o recurso mais teatral do motor, reservado para aberturas."
+      />
+    </div>
+  </section>
+
+  <Divider fade />
+</BaseLayout>
+
+<style>
+  .hero-estetica {
+    padding-block: var(--space-section-lg) var(--space-section);
+    background-color: var(--surface-base);
+  }
+
+  .hero-estetica__inner {
+    max-width: var(--container-prose);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+    text-align: center;
+  }
+
+  .hero-estetica__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: clamp(2.5rem, 8vw, var(--font-size-5xl));
+    line-height: var(--type-display-leading);
+    letter-spacing: var(--letter-spacing-tighter);
+    color: var(--text-heading);
+    margin: var(--space-stack-sm) 0 var(--space-stack-md);
+  }
+
+  .hero-estetica__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+
+  .secao-estetica {
+    padding-block: var(--space-section);
+  }
+
+  .secao-estetica[data-bg="sunken"] {
+    background-color: var(--surface-sunken);
+  }
+
+  .secao-estetica__inner {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+  }
+
+  .secao-estetica__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-2xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .secao-estetica__intro {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    max-width: var(--container-prose);
+    margin: 0 0 var(--space-stack-lg);
+  }
+
+  .secao-estetica__ramps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-stack-md);
+    margin-bottom: var(--space-stack-lg);
+  }
+
+  .secao-estetica__nota {
+    font-size: var(--font-size-sm);
+    color: var(--text-subtle);
+    max-width: var(--container-prose);
+    margin: 0;
+  }
+
+  .secao-estetica__citacao {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: flex-start;
+    max-width: var(--container-prose);
+    margin: var(--space-stack-lg) 0 0;
+  }
+
+  .secao-estetica__chave {
+    font-family: var(--type-display-font);
+    font-size: var(--font-size-4xl);
+    line-height: 0.8;
+    color: var(--color-gold-500);
+    flex: none;
+  }
+
+  .secao-estetica__citacao span:last-child {
+    font-family: var(--type-quote-font);
+    font-style: italic;
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+    color: var(--text-heading);
+  }
+
+  @media (min-width: 768px) {
+    .secao-estetica__ramps {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-gutter);
+    }
+  }
+</style>
