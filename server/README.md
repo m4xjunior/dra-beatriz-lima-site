@@ -92,3 +92,44 @@ aleatórios) pode ler ou apagar aquela captura via API, de qualquer origem
 (CORS permissivo). Aceitável para dado numérico não-identificável como
 imagem num protótipo; se a feature avançar para produção, introduzir um
 token de posse por sessão.
+
+## API de simulações (`/api/simulacoes`) — esqueleto Fase 1 MVP
+
+Ver `specs/001-simulacao-mvp-skeleton.md` (raiz do projeto) para a spec
+completa. Módulo `src/simulacoes.rs` — **plugável de propósito**: hoje só
+existe `ProvedorMock` (sem custo, sem chamada de rede); trocar pelo provedor
+pago real (Perfect Corp/YouCam ou outro, decisão do usuário ainda em aberto)
+é implementar o trait `ProvedorSimulacao` numa struct nova, sem tocar nos
+handlers HTTP.
+
+- `POST /api/simulacoes` — `{procedimentoSlug, capturaId?}` → `202` com
+  `{id, status:"processando"}`. Processa em background (o provedor real
+  também seria uma chamada de rede assíncrona) e atualiza o status.
+- `GET /api/simulacoes/{id}` — estado atual (`processando`/`concluido`/
+  `falhou`), sempre com `aviso` regulatório no corpo. Front faz polling.
+
+### Postgres — **opcional**, nunca derruba o servidor
+
+- `DATABASE_URL`: string de conexão Postgres. Default (se ausente):
+  `postgres://localhost/estetica_beatriz` — o banco de desenvolvimento local
+  (Homebrew `postgresql@16`), já criado.
+- Se a conexão falhar OU exceder 5s (timeout explícito — sem ele, um host
+  que não responde pode travar a inicialização por ~2min no macOS em vez de
+  recusar na hora), o servidor sobe normalmente mesmo assim: `/api/capturas`
+  e os arquivos estáticos continuam funcionando; só `/api/simulacoes`
+  responde `503` até o Postgres voltar (precisa reiniciar o processo para
+  reconectar — não há retry automático nesta etapa).
+- Tabela `simulacoes` é criada automaticamente (`CREATE TABLE IF NOT EXISTS`)
+  na primeira conexão bem-sucedida — sem ferramenta de migração externa
+  nesta etapa (protótipo).
+
+## Variáveis de ambiente — visão geral
+
+| Variável | Usada em | Default se ausente |
+|---|---|---|
+| `PORT` | `server/` (este binário) | `8080` |
+| `DATABASE_URL` | `server/` (este binário) | `postgres://localhost/estetica_beatriz` |
+| `RUST_LOG` | `server/` (este binário) | `info` |
+| `PUBLIC_API_BASE_URL` | build do Astro (frontend) | `""` (mesma origem — só funciona quando o front e este servidor estão atrás do mesmo domínio; se o site estiver só no Cloudflare Pages, sem este backend por perto, configure a URL pública onde este servidor estiver rodando) |
+
+Ver `.env.example` na raiz do projeto.

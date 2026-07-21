@@ -1,0 +1,196 @@
+---
+// Página mínima do esqueleto de simulação (Fase 1 MVP) — ver
+// specs/001-simulacao-mvp-skeleton.md. Dispara POST /api/simulacoes,
+// faz polling de GET /api/simulacoes/:id até "concluido"/"falhou".
+// Não é uma página de produto — é o critério de aceite da spec, prova o
+// fluxo assíncrono com o ProvedorMock antes de qualquer provedor real.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const PROCEDIMENTOS = [
+  { slug: "preenchimento-labial", titulo: "Preenchimento labial" },
+  { slug: "bioestimuladores-de-colageno", titulo: "Bioestimuladores de colágeno" },
+  { slug: "toxina-botulinica-harmonizacao", titulo: "Toxina botulínica e harmonização" },
+  { slug: "peelings", titulo: "Peelings" },
+  { slug: "protocolos-de-pele", titulo: "Protocolos de pele" },
+];
+---
+
+<BaseLayout
+  title="Testar simulação (esqueleto) — Dra. Beatriz Lima"
+  description="Página de teste do esqueleto de simulação estética (protótipo)."
+  theme="brand"
+>
+  <section class="testar" data-bl-reveal>
+    <div class="testar__eyebrow">Protótipo · esqueleto</div>
+    <h1 class="testar__titulo">Testar simulação</h1>
+    <p class="testar__corpo">
+      Dispara um pedido de simulação (hoje só o provedor mock, sem custo e sem
+      chamada de rede real) e acompanha o status até concluir. Serve para
+      provar o fluxo assíncrono do backend antes de plugar um provedor pago.
+    </p>
+
+    <form class="testar__form" data-form-simulacao>
+      <label class="testar__campo">
+        <span>Procedimento</span>
+        <select name="procedimentoSlug" required>
+          {PROCEDIMENTOS.map((p) => <option value={p.slug}>{p.titulo}</option>)}
+        </select>
+      </label>
+      <button type="submit" class="testar__botao">Iniciar simulação (mock)</button>
+    </form>
+
+    <div class="testar__resultado" data-resultado role="status" aria-live="polite"></div>
+
+    <p class="testar__aviso">Ilustração / expectativa — não é uma previsão do seu resultado.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .testar {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-section) var(--space-inline-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-sm);
+  }
+
+  .testar__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+  }
+
+  .testar__titulo {
+    font-family: var(--type-display-font);
+    font-size: var(--font-size-3xl);
+    color: var(--text-heading);
+    margin: 0;
+  }
+
+  .testar__corpo {
+    color: var(--text-muted);
+    line-height: var(--type-body-leading);
+  }
+
+  .testar__form {
+    display: flex;
+    gap: var(--space-inline-sm);
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-top: var(--space-stack-sm);
+  }
+
+  .testar__campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-inline-xs);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .testar__campo select {
+    padding: var(--space-inline-sm);
+    border-radius: var(--radius-control);
+    border: var(--border-width-hairline) solid var(--border-subtle);
+    background: var(--surface-raised);
+    color: var(--text-body);
+    font-size: var(--font-size-base);
+  }
+
+  .testar__botao {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--button-primary-fg);
+    background: var(--button-primary-bg);
+    border: 0;
+    border-radius: var(--radius-control);
+    padding: var(--space-inline-sm) var(--space-inline-lg);
+    cursor: pointer;
+  }
+
+  .testar__botao:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .testar__resultado {
+    min-height: 3em;
+    padding: var(--space-inline-md);
+    border-radius: var(--radius-card);
+    background: var(--surface-sunken);
+    color: var(--text-body);
+    font-size: var(--font-size-sm);
+    white-space: pre-wrap;
+  }
+
+  .testar__aviso {
+    font-size: var(--font-size-xs);
+    color: var(--text-subtle);
+  }
+</style>
+
+<script>
+  const API_BASE = import.meta.env.PUBLIC_API_BASE_URL ?? "";
+
+  const form = document.querySelector<HTMLFormElement>("[data-form-simulacao]");
+  const botao = form?.querySelector<HTMLButtonElement>(".testar__botao");
+  const resultado = document.querySelector<HTMLElement>("[data-resultado]");
+
+  function mostrar(texto: string) {
+    if (resultado) resultado.textContent = texto;
+  }
+
+  async function aguardarConclusao(id: string) {
+    const inicio = Date.now();
+    while (Date.now() - inicio < 20000) {
+      const resposta = await fetch(`${API_BASE}/api/simulacoes/${id}`);
+      if (!resposta.ok) {
+        mostrar("Não foi possível consultar o status desta simulação.");
+        return;
+      }
+      const dados = await resposta.json();
+      mostrar(`status: ${dados.status}\nprovedor: ${dados.provedor}\nid: ${dados.id}`);
+      if (dados.status !== "processando") return;
+      await new Promise((r) => setTimeout(r, 700));
+    }
+    mostrar("Tempo de espera esgotado — tente consultar de novo.");
+  }
+
+  form?.addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    if (!botao) return;
+    botao.disabled = true;
+    mostrar("Enviando pedido de simulação...");
+
+    const dados = new FormData(form);
+    try {
+      const resposta = await fetch(`${API_BASE}/api/simulacoes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          procedimentoSlug: dados.get("procedimentoSlug"),
+          capturaId: null,
+        }),
+      });
+      if (!resposta.ok) {
+        const erro = await resposta.json().catch(() => null);
+        mostrar(erro?.erro ?? "Não foi possível iniciar a simulação agora.");
+        return;
+      }
+      const { id } = await resposta.json();
+      mostrar(`pedido registrado — id: ${id}\nstatus: processando`);
+      await aguardarConclusao(id);
+    } catch {
+      mostrar("Simulação não está disponível neste momento (backend fora do ar?).");
+    } finally {
+      if (botao) botao.disabled = false;
+    }
+  });
+</script>

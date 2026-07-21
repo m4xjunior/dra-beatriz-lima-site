@@ -20,12 +20,22 @@ use tower_http::{
 use tracing_subscriber::EnvFilter;
 
 mod capturas;
+mod simulacoes;
 
 const DEFAULT_PORT: u16 = 8080;
+const DEFAULT_DATABASE_URL: &str = "postgres://localhost/estetica_beatriz";
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     init_tracing();
+
+    // Postgres é opcional: se DATABASE_URL não estiver configurada, cai no
+    // banco local de desenvolvimento; se a conexão falhar de qualquer forma,
+    // `/api/simulacoes` responde 503 mas o resto do servidor sobe normalmente
+    // (ver simulacoes::conectar).
+    let database_url =
+        std::env::var("DATABASE_URL").unwrap_or_else(|_| DEFAULT_DATABASE_URL.to_string());
+    let pool_simulacoes = simulacoes::conectar(&database_url).await;
 
     // Caminho relativo à raiz do crate (server/), então ../dist aponta para
     // "Dra. Beatriz Lima — Design System/dist" independente do cwd de invocação
@@ -60,6 +70,7 @@ async fn main() -> anyhow::Result<()> {
     // tanto para /api/capturas quanto para os arquivos estáticos.
     let app = Router::new()
         .merge(capturas::rotas())
+        .merge(simulacoes::rotas(pool_simulacoes))
         .merge(router_estatico)
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
