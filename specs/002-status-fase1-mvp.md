@@ -32,9 +32,12 @@
 - **Provedor de simulação real** (Perfect Corp, YouCam, outro) — sem isso,
   `ProvedorMock` continua sendo a única implementação, e nenhum resultado
   visual de simulação existe de verdade (só o fluxo assíncrono, sem imagem).
-- **Onde o servidor Rust roda em produção pública** — hoje só existe local
-  nesta máquina. Sem um host público, o site publicado (Cloudflare Pages)
-  nunca vai ter `/api/*` funcionando pra visitantes reais, só localmente.
+- **Em qual VPS/provedor publicar o backend** — o "como" já está resolvido
+  (`Dockerfile` + `docker-compose.yml` na raiz, testado de verdade: build
+  limpo, API respondendo dentro do container, dado persistindo em volume
+  depois de `down`+`up`). Falta só decidir o host (Hetzner, Fly.io, Railway,
+  um droplet qualquer com Docker) — sem isso, o site publicado no Cloudflare
+  Pages continua com `/api/*` em 404 pra visitantes reais.
 
 ## O que é Fase 0/2/3 do documento do projeto, deliberadamente fora desta sessão
 
