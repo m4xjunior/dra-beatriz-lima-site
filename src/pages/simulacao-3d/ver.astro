@@ -65,6 +65,30 @@ import Button from "../../components/Button.astro";
         ></span>
       </div>
 
+      <!-- Simular um procedimento a partir desta captura (esqueleto Fase 1
+           MVP, ver specs/001-simulacao-mvp-skeleton.md) — só existe o
+           ProvedorMock hoje; é o mesmo fluxo de /simulacoes/testar, mas já
+           amarrado ao capturaId desta página em vez de null. -->
+      <form class="pagina-revisao__simular" data-form-simular>
+        <label class="pagina-revisao__simular-campo">
+          <span>Simular procedimento com esta captura</span>
+          <select name="procedimentoSlug" required>
+            <option value="preenchimento-labial">Preenchimento labial</option>
+            <option value="bioestimuladores-de-colageno">Bioestimuladores de colágeno</option>
+            <option value="toxina-botulinica-harmonizacao">Toxina botulínica e harmonização</option>
+            <option value="peelings">Peelings</option>
+            <option value="protocolos-de-pele">Protocolos de pele</option>
+          </select>
+        </label>
+        <button type="submit" class="pagina-revisao__simular-btn">Simular (mock)</button>
+      </form>
+      <p
+        class="pagina-revisao__simular-status"
+        data-simular-status
+        role="status"
+        aria-live="polite"
+      ></p>
+
       <!-- Confirmação de apagar — mesmo padrão visual/tokens --consent-*
            do painel de consentimento em FaceViewer3D.astro. Alternada via
            [data-confirmar-apagar] na section (nunca [hidden], mesmo
@@ -256,6 +280,59 @@ import Button from "../../components/Button.astro";
     color: var(--status-danger);
   }
 
+  /* --- Simular procedimento com esta captura --- */
+  .pagina-revisao__simular {
+    display: flex;
+    gap: var(--space-inline-sm);
+    flex-wrap: wrap;
+    align-items: flex-end;
+    padding-top: var(--space-stack-sm);
+    border-top: var(--border-width-hairline) solid var(--border-subtle);
+  }
+
+  .pagina-revisao__simular-campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-inline-xs);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .pagina-revisao__simular-campo select {
+    padding: var(--space-inline-sm);
+    border-radius: var(--radius-control);
+    border: var(--border-width-hairline) solid var(--border-subtle);
+    background: var(--surface-raised);
+    color: var(--text-body);
+    font-size: var(--font-size-base);
+  }
+
+  .pagina-revisao__simular-btn {
+    font-family: var(--button-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--button-tracking);
+    color: var(--button-primary-fg);
+    background: var(--button-primary-bg);
+    border: 0;
+    border-radius: var(--radius-pill);
+    padding: var(--space-inline-xs) var(--space-inline-md);
+    cursor: pointer;
+  }
+
+  .pagina-revisao__simular-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .pagina-revisao__simular-status {
+    font-size: var(--font-size-2xs);
+    color: var(--text-muted);
+    white-space: pre-wrap;
+  }
+
   /* --- Confirmação de apagar --- */
   .pagina-revisao__confirmar {
     display: none;
@@ -356,6 +433,9 @@ import Button from "../../components/Button.astro";
     "[data-revisao-apagar-cancelar]"
   );
   const apagarStatus = secao?.querySelector<HTMLElement>("[data-revisao-apagar-status]");
+  const formSimular = secao?.querySelector<HTMLFormElement>("[data-form-simular]");
+  const botaoSimular = formSimular?.querySelector<HTMLButtonElement>(".pagina-revisao__simular-btn");
+  const simularStatus = secao?.querySelector<HTMLElement>("[data-simular-status]");
 
   let instanciaPlayback: InstanciaPlayback | null = null;
   let capturaId: string | null = null;
@@ -465,6 +545,58 @@ import Button from "../../components/Button.astro";
       if (botaoApagarConfirmar) botaoApagarConfirmar.disabled = false;
     }
   }
+
+  // --- Simular procedimento com esta captura (esqueleto, ProvedorMock) ---
+  function mostrarSimulacao(texto: string): void {
+    if (simularStatus) simularStatus.textContent = texto;
+  }
+
+  async function aguardarConclusaoSimulacao(id: string): Promise<void> {
+    const inicio = Date.now();
+    while (Date.now() - inicio < 20000) {
+      const resposta = await fetch(`${baseUrlApi()}/api/simulacoes/${id}`);
+      if (!resposta.ok) {
+        mostrarSimulacao("Não foi possível consultar o status desta simulação.");
+        return;
+      }
+      const dados = await resposta.json();
+      mostrarSimulacao(`status: ${dados.status} · provedor: ${dados.provedor}`);
+      if (dados.status !== "processando") return;
+      await new Promise((r) => setTimeout(r, 700));
+    }
+    mostrarSimulacao("Tempo de espera esgotado — tente consultar de novo.");
+  }
+
+  formSimular?.addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    if (!botaoSimular || !capturaId) return;
+    botaoSimular.disabled = true;
+    mostrarSimulacao("Enviando pedido de simulação...");
+
+    const dados = new FormData(formSimular);
+    try {
+      const resposta = await fetch(`${baseUrlApi()}/api/simulacoes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          procedimentoSlug: dados.get("procedimentoSlug"),
+          capturaId,
+        }),
+      });
+      if (!resposta.ok) {
+        const erro = await resposta.json().catch(() => null);
+        mostrarSimulacao(erro?.erro ?? "Não foi possível iniciar a simulação agora.");
+        return;
+      }
+      const { id } = await resposta.json();
+      mostrarSimulacao(`pedido registrado — status: processando`);
+      await aguardarConclusaoSimulacao(id);
+    } catch {
+      mostrarSimulacao("Simular não está disponível neste momento (backend fora do ar?).");
+    } finally {
+      if (botaoSimular) botaoSimular.disabled = false;
+    }
+  });
 
   void carregar();
 </script>
