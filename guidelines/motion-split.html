@@ -1,0 +1,28 @@
+<!-- @dsCard group="Movimento (GSAP)" viewport="720x300" name="Split-text metálico (GSAP)" subtitle="Headline revela caractere a caractere com máscara. Recurso: SplitText. Clique para repetir." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="../motion/bl-motion.js"></script>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-body);background-color:var(--color-obsidian-900);background-image:var(--mesh-immersive);min-height:100vh;padding:var(--size-7) var(--size-6);display:flex;flex-direction:column;justify-content:center;cursor:pointer;overflow:hidden}
+.grain{position:absolute;inset:0;background-image:var(--grain);opacity:var(--grain-opacity-dark);mix-blend-mode:overlay;pointer-events:none}
+.ey{position:relative;font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-widest);color:var(--color-gold-300);margin-bottom:var(--size-4)}
+.h{position:relative;font-family:var(--font-display);font-weight:800;font-size:64px;line-height:1;letter-spacing:var(--letter-spacing-tighter);opacity:0;background:var(--gradient-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hint{position:relative;margin-top:var(--size-5);font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);color:#8B8070}
+</style></head><body id="stage">
+<div class="grain"></div>
+<div class="ey">Simulação 3D · expectativa ilustrativa</div>
+<div class="h" id="headline">Veja com clareza</div>
+<div class="hint">clique para repetir ↺</div>
+<script>
+BLMotion.ready().then(function(){
+  var ctrl;
+  function play(){ if(ctrl&&ctrl.split&&ctrl.split.revert)ctrl.split.revert(); ctrl = BLMotion.split("#headline",{stagger:0.03}); }
+  play();
+  document.getElementById("stage").addEventListener("click", play);
+});
+</script>
+</body></html>

@@ -1,0 +1,15 @@
+/* ============================================================
+   Dra. Beatriz Lima — Biomédica Esteta · Design System
+   ------------------------------------------------------------
+   PONTO DE ENTRADA único. Consumidores (Astro, Tauri) linkam
+   SÓ este arquivo. Apenas linhas @import — nenhuma regra aqui.
+   Ordem: fontes → primitivos (cor, tipo, escala, efeitos)
+          → semânticos (temas) → componentes.
+   ============================================================ */
+@import "tokens/fonts.css";
+@import "tokens/color.css";
+@import "tokens/typography.css";
+@import "tokens/scale.css";
+@import "tokens/effect.css";
+@import "tokens/semantic.css";
+@import "tokens/components.css";

@@ -1,0 +1,80 @@
+---
+// Button — CTA da marca. href é sempre rota real do site, nunca "#".
+interface Props {
+  href: string;
+  variante?: "primaria" | "secundaria" | "texto";
+  tamanho?: "sm" | "md";
+}
+
+const { href, variante = "primaria", tamanho = "md" } = Astro.props;
+---
+
+<a href={href} class="botao" data-variant={variante} data-size={tamanho}>
+  <slot />
+</a>
+
+<style>
+  .botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-inline-xs);
+    font-family: var(--button-font);
+    letter-spacing: var(--button-tracking);
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--button-primary-radius);
+    padding: var(--button-pad-y) var(--button-pad-x);
+    font-size: var(--button-font-size);
+    transition:
+      filter var(--duration-base) var(--ease-standard),
+      background-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-base) var(--ease-standard);
+    border: var(--border-width-thin) solid transparent;
+  }
+
+  .botao:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+  }
+
+  /* --- Primária: metálico dourado + bloom --- */
+  .botao[data-variant="primaria"] {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-fg);
+    border-color: var(--button-primary-border);
+  }
+  .botao[data-variant="primaria"]:hover,
+  .botao[data-variant="primaria"]:focus-visible {
+    filter: var(--button-primary-hover-filter);
+    box-shadow: var(--button-primary-bloom);
+  }
+
+  /* --- Secundária: contorno / vidro --- */
+  .botao[data-variant="secundaria"] {
+    background: var(--button-secondary-bg);
+    color: var(--button-secondary-fg);
+    border-color: var(--button-secondary-border);
+  }
+  .botao[data-variant="secundaria"]:hover,
+  .botao[data-variant="secundaria"]:focus-visible {
+    background: var(--button-secondary-hover-bg);
+  }
+
+  /* --- Texto: terciário --- */
+  .botao[data-variant="texto"] {
+    background: transparent;
+    color: var(--button-text-fg);
+    padding-inline: var(--space-inline-xs);
+  }
+  .botao[data-variant="texto"]:hover,
+  .botao[data-variant="texto"]:focus-visible {
+    background: var(--button-text-hover-bg);
+  }
+
+  /* --- Tamanhos --- */
+  .botao[data-size="sm"] {
+    padding: calc(var(--button-pad-y) * 0.7) calc(var(--button-pad-x) * 0.75);
+    font-size: var(--font-size-2xs);
+  }
+</style>

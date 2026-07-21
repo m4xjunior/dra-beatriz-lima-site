@@ -1,0 +1,127 @@
+---
+// ServiceCard — cartão de vidro "burro": só recebe dados, sem JS próprio.
+// Tilt/reveal são 100% delegados ao BLMotion.auto() global (BaseLayout).
+import Badge from "./Badge.astro";
+
+interface Props {
+  slug: string;
+  eyebrow: string;
+  title: string;
+  summary: string;
+  featured?: boolean;
+}
+
+const { slug, eyebrow, title, summary, featured = false } = Astro.props;
+---
+
+<a
+  href={`/procedimentos/${slug}`}
+  class="card-servico"
+  data-featured={featured ? "true" : "false"}
+  data-bl-tilt
+  data-bl-reveal
+>
+  {featured && (
+    <span class="card-servico__selo">
+      <Badge tone="ouro">Carro-chefe</Badge>
+    </span>
+  )}
+  <span class="card-servico__eyebrow">{eyebrow}</span>
+  <h3 class="card-servico__titulo">
+    <span class="card-servico__chave" aria-hidden="true">{"{"}</span>
+    {title}
+  </h3>
+  <p class="card-servico__resumo">{summary}</p>
+  <span class="card-servico__cta" aria-hidden="true">Ver detalhes →</span>
+</a>
+
+<style>
+  .card-servico {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+    text-decoration: none;
+    color: inherit;
+    background-color: var(--card-service-bg);
+    background-image: var(--surface-glass-tint);
+    border: var(--border-width-hairline) solid var(--card-service-border);
+    border-radius: var(--card-service-radius);
+    padding: var(--card-service-pad);
+    -webkit-backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-saturate));
+    backdrop-filter: blur(var(--card-glass-blur)) saturate(var(--card-glass-saturate));
+    box-shadow: var(--card-glass-inner), var(--card-glass-shadow);
+    transition: box-shadow var(--duration-base) var(--ease-standard);
+  }
+
+  .card-servico::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--card-glass-sheen);
+    pointer-events: none;
+  }
+
+  .card-servico:hover,
+  .card-servico:focus-visible {
+    box-shadow: var(--card-glass-inner), var(--card-glass-shadow), var(--tilt-glow);
+  }
+
+  .card-servico[data-featured="true"]:hover,
+  .card-servico[data-featured="true"]:focus-visible {
+    box-shadow: var(--card-glass-inner), var(--card-glass-shadow), var(--card-service-bloom-strong);
+  }
+
+  .card-servico:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+  }
+
+  .card-servico__selo {
+    position: relative;
+    align-self: flex-start;
+  }
+
+  .card-servico__eyebrow {
+    position: relative;
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--card-service-accent);
+  }
+
+  .card-servico__titulo {
+    position: relative;
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0;
+  }
+
+  .card-servico__chave {
+    color: var(--card-service-accent);
+    margin-right: var(--space-inline-xs);
+  }
+
+  .card-servico__resumo {
+    position: relative;
+    font-size: var(--font-size-sm);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .card-servico__cta {
+    position: relative;
+    margin-top: var(--space-stack-xs);
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+  }
+</style>

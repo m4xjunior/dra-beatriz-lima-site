@@ -1,0 +1,28 @@
+<!-- @dsCard group="Efeitos & Profundidade" viewport="720x300" name="Translucidez — escala de véu" subtitle="Três níveis de opacidade sobre o mesmo fundo. Menos opaco = mais se vê através." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-body);background:var(--color-obsidian-900);background-image:var(--mesh-immersive);min-height:100vh;position:relative;overflow:hidden;padding:var(--size-6);display:flex;align-items:center}
+.bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:0}
+.word{font-family:var(--font-display);font-weight:800;font-size:170px;line-height:1;letter-spacing:-.05em;background:var(--gradient-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:.9}
+.orb{position:absolute;width:220px;height:220px;border-radius:var(--radius-pill);background:radial-gradient(38% 38% at 40% 34%, var(--color-champagne), var(--color-gold-400) 48%, var(--color-gold-700) 80%);box-shadow:var(--bloom-gold-strong);left:60px;top:-40px}
+.grain{position:absolute;inset:0;background-image:var(--grain);opacity:var(--grain-opacity);mix-blend-mode:overlay;z-index:1;pointer-events:none}
+.rail{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:var(--size-4);width:100%}
+.veil{position:relative;border-radius:var(--radius-lg);border:1px solid var(--glass-border-dark);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));box-shadow:var(--glass-inner-dark),var(--shadow-md-dark);overflow:hidden;padding:var(--size-4);min-height:150px;display:flex;flex-direction:column;justify-content:flex-end;background-image:var(--glass-tint-dark)}
+.veil::before{content:"";position:absolute;inset:0;background:var(--glass-sheen-dark);pointer-events:none}
+.v1{background-color:var(--veil-dark-1)}.v2{background-color:var(--veil-dark-2)}.v3{background-color:var(--veil-dark-3)}
+.k{position:relative;font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--color-gold-300)}
+.d{position:relative;font-size:var(--font-size-md);font-family:var(--font-display);font-weight:600;color:var(--color-champagne);letter-spacing:var(--letter-spacing-tight);margin-top:4px}
+.o{position:relative;font-size:10px;color:#B8AD9A;margin-top:4px;font-variant-numeric:tabular-nums}
+</style></head><body>
+<div class="bg"><div class="word">PELE</div></div>
+<div class="orb"></div>
+<div class="grain"></div>
+<div class="rail">
+<div class="veil v1"><div class="k">véu · 1</div><div class="d">Transparente</div><div class="o">opacity 0.30 · decorativo</div></div>
+<div class="veil v2"><div class="k">véu · 2</div><div class="d">Padrão</div><div class="o">opacity 0.46 · cards</div></div>
+<div class="veil v3"><div class="k">véu · 3</div><div class="d">Legível</div><div class="o">opacity 0.68 · texto denso</div></div>
+</div>
+</body></html>

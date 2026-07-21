@@ -1,0 +1,21 @@
+---
+// Landing — / . Composição de seções fixas (ver contrato de arquivos).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/secoes/Hero.astro";
+import Posicionamento from "../components/secoes/Posicionamento.astro";
+import Pilares from "../components/secoes/Pilares.astro";
+import TeaserCatalogo from "../components/secoes/TeaserCatalogo.astro";
+import TeaserSimulacao from "../components/secoes/TeaserSimulacao.astro";
+---
+
+<BaseLayout
+  title="Dra. Beatriz Lima — Biomédica Esteta"
+  description="Consultório de biomedicina estética em Goiânia. Critério clínico, avaliação individual e simulação 3D — estética que valoriza você."
+  theme="brand"
+>
+  <Hero />
+  <Posicionamento />
+  <Pilares />
+  <TeaserCatalogo />
+  <TeaserSimulacao />
+</BaseLayout>

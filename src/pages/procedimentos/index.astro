@@ -1,0 +1,95 @@
+---
+// /procedimentos — catálogo completo. Cadastrar um novo procedimento é
+// adicionar um .md em src/content/procedimentos/ — esta página não muda.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ServiceCard from "../../components/ServiceCard.astro";
+import Divider from "../../components/Divider.astro";
+import { getCollection } from "astro:content";
+
+const procedimentos = (
+  await getCollection("procedimentos", ({ data }) => data.publicado)
+).sort((a, b) => a.data.ordem - b.data.ordem);
+---
+
+<BaseLayout
+  title="Procedimentos — Dra. Beatriz Lima"
+  description="Conheça os procedimentos oferecidos pela Dra. Beatriz Lima: preenchimento labial, bioestimuladores, toxina botulínica, peelings e protocolos de pele."
+  theme="brand"
+>
+  <section class="pagina-procedimentos">
+    <div class="pagina-procedimentos__cabecalho" data-bl-reveal>
+      <p class="pagina-procedimentos__eyebrow">CATÁLOGO</p>
+      <h1 class="pagina-procedimentos__titulo">Procedimentos</h1>
+      <p class="pagina-procedimentos__corpo">
+        Cada procedimento começa por uma avaliação individual. As
+        indicações e contraindicações abaixo são gerais — a decisão sobre
+        o que é adequado para você é sempre clínica, conversada em
+        consulta.
+      </p>
+    </div>
+
+    <Divider fade />
+
+    <div class="pagina-procedimentos__grade">
+      {
+        procedimentos.map((item) => (
+          <ServiceCard
+            slug={item.id}
+            eyebrow={item.data.eyebrow}
+            title={item.data.titulo}
+            summary={item.data.resumo}
+            featured={item.data.carroChefe}
+          />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pagina-procedimentos {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding: var(--space-section) var(--space-container-pad);
+  }
+
+  .pagina-procedimentos__cabecalho {
+    max-width: var(--container-prose);
+    margin-bottom: var(--space-stack-lg);
+  }
+
+  .pagina-procedimentos__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+  }
+
+  .pagina-procedimentos__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-4xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .pagina-procedimentos__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .pagina-procedimentos__grade {
+    display: grid;
+    /* Fluida por natureza: 1 coluna no mobile (o mínimo já não cabe em
+       dobro na largura da viewport) até 3+ no desktop, sem breakpoint
+       fixo arbitrário — só a matemática do clamp() decidindo. */
+    grid-template-columns: repeat(auto-fit, minmax(clamp(16rem, 38vw, 21rem), 1fr));
+    gap: var(--space-gutter);
+    margin-top: var(--space-stack-lg);
+  }
+</style>

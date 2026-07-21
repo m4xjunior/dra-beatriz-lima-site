@@ -1,0 +1,352 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<title>Dra. Beatriz Lima — Design System</title>
+<style>
+:root{--type-title:84px;--type-subtitle:40px;--type-body:32px;--type-small:25px;--type-eyebrow:23px;--pad-x:120px;--pad-y:100px;--gap-title:40px}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--color-obsidian-950)}
+deck-stage:not(:defined){visibility:hidden}
+.slide{width:100%;height:100%;position:relative;overflow:hidden;padding:var(--pad-y) var(--pad-x);display:flex;flex-direction:column;font-family:var(--font-body);color:var(--text-body)}
+.dark{background-color:var(--color-obsidian-900);background-image:var(--mesh-immersive);color:var(--color-sand-50)}
+.light{background-color:var(--color-sand-100);background-image:var(--mesh-brand);color:var(--color-ink-900)}
+.grain{position:absolute;inset:0;background-image:var(--grain);opacity:var(--grain-opacity-dark);mix-blend-mode:overlay;pointer-events:none}
+.light .grain{opacity:var(--grain-opacity-light)}
+.orb{position:absolute;border-radius:50%;background:radial-gradient(38% 38% at 40% 34%, var(--color-champagne), var(--color-gold-400) 46%, var(--color-gold-700) 78%, transparent 100%)}
+.eyebrow{position:relative;font-family:var(--font-body);font-size:var(--type-eyebrow);font-weight:600;text-transform:uppercase;letter-spacing:var(--letter-spacing-widest);color:var(--color-gold-300)}
+.light .eyebrow{color:var(--text-accent)}
+.title{position:relative;font-family:var(--font-display);font-weight:700;font-size:var(--type-title);line-height:.98;letter-spacing:var(--letter-spacing-tighter);color:var(--color-champagne)}
+.light .title{color:var(--text-heading)}
+.metal{background:var(--gradient-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.light .metal{background:var(--gradient-gold-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{position:relative;font-size:var(--type-subtitle);font-weight:300;line-height:1.3;color:var(--text-muted)}
+.dark .sub{color:#C8BCA6}
+.head{position:relative;display:flex;flex-direction:column;gap:16px;margin-bottom:56px}
+.head h2{font-family:var(--font-display);font-weight:700;font-size:66px;line-height:1;letter-spacing:var(--letter-spacing-tighter);color:var(--color-champagne)}
+.light .head h2{color:var(--text-heading)}
+.foot{position:absolute;left:var(--pad-x);bottom:60px;display:flex;align-items:center;gap:20px}
+.foot .rule{width:60px;height:1px;background:var(--color-gold-500)}
+.foot .lk{font-family:var(--font-display);font-weight:600;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);font-size:var(--type-small);color:var(--color-gold-300)}
+.light .foot .lk{color:var(--text-accent)}
+.pg{position:absolute;right:var(--pad-x);bottom:60px;font-size:var(--type-small);color:var(--text-subtle);font-variant-numeric:tabular-nums}
+.stack{display:flex;flex-direction:column;gap:var(--gap-title);position:relative;margin-top:auto;margin-bottom:auto}
+/* feature list */
+.list{position:relative;list-style:none;display:flex;flex-direction:column;gap:34px;max-width:1180px}
+.list li{display:flex;gap:26px;align-items:baseline}
+.list .br{font-family:var(--font-display);color:var(--color-gold-400);font-size:50px;line-height:.7;flex:none}
+.light .list .br{color:var(--color-gold-600)}
+.list .lt{font-family:var(--font-display);font-weight:600;font-size:38px;letter-spacing:var(--letter-spacing-tight);color:var(--color-champagne)}
+.light .list .lt{color:var(--text-heading)}
+.list .ld{font-size:var(--type-body);color:#B8AD9A;margin-top:8px;line-height:1.45}
+.light .list .ld{color:var(--text-muted)}
+/* pillars */
+.pillars{position:relative;display:flex;gap:24px;flex:1;align-items:stretch}
+.pillar{flex:1;border-radius:var(--radius-lg);border:1px solid var(--glass-border-dark);background-color:var(--veil-dark-1);background-image:var(--glass-tint-dark);-webkit-backdrop-filter:blur(var(--glass-blur));backdrop-filter:blur(var(--glass-blur));padding:44px 32px;display:flex;flex-direction:column;justify-content:flex-end;gap:16px;box-shadow:var(--glass-inner-dark)}
+.pillar .n{font-family:var(--font-display);font-weight:700;font-size:40px;color:var(--color-gold-400);opacity:.5}
+.pillar .pt{font-family:var(--font-display);font-weight:600;font-size:36px;letter-spacing:var(--letter-spacing-tight);color:var(--color-champagne)}
+.pillar .pd{font-size:22px;color:#B8AD9A;line-height:1.4}
+/* duotom */
+.duo{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:40px;flex:1;align-content:stretch}
+.tile{border-radius:var(--radius-xl);padding:56px;display:flex;flex-direction:column;gap:20px;justify-content:flex-end;overflow:hidden;position:relative}
+.tile.b{background-color:var(--color-sand-50);background-image:var(--mesh-brand);border:1px solid var(--color-sand-400)}
+.tile.i{background-color:var(--color-obsidian-900);background-image:var(--mesh-immersive);border:1px solid var(--glass-border-dark)}
+.tile .tk{font-size:var(--type-eyebrow);text-transform:uppercase;letter-spacing:var(--letter-spacing-wider)}
+.tile.b .tk{color:var(--text-accent)}.tile.i .tk{color:var(--color-gold-300)}
+.tile .th{font-family:var(--font-display);font-weight:600;font-size:50px;letter-spacing:var(--letter-spacing-tight)}
+.tile.b .th{color:var(--text-heading)}.tile.i .th{color:var(--color-champagne)}
+.tile .tp{font-size:var(--type-small);line-height:1.5}
+.tile.b .tp{color:var(--text-muted)}.tile.i .tp{color:#B8AD9A}
+.tile .chip{align-self:flex-start;font-size:19px;text-transform:uppercase;letter-spacing:.12em;padding:8px 16px;border-radius:var(--radius-pill)}
+.tile.b .chip{background:var(--gradient-gold);color:var(--color-ink-900)}
+.tile.i .chip{background:var(--gradient-champagne);color:var(--color-obsidian-900)}
+/* color ramp */
+.ramp{position:relative;display:flex;gap:0;flex:1;border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-lg-dark)}
+.ramp .sw{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:28px 22px;gap:4px}
+.ramp .sw .sk{font-family:var(--font-body);font-weight:600;font-size:21px;letter-spacing:.04em}
+.ramp .sw .sv{font-size:17px;font-variant-numeric:tabular-nums;opacity:.72}
+.cols3{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;flex:1}
+.card-g{border-radius:var(--radius-lg);border:1px solid var(--glass-border-dark);background-color:var(--veil-dark-2);-webkit-backdrop-filter:blur(var(--glass-blur));backdrop-filter:blur(var(--glass-blur));padding:40px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--glass-inner-dark)}
+.light .card-g{border-color:var(--color-sand-400);background-color:var(--veil-light-3)}
+.card-g .ck{font-size:20px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);color:var(--color-gold-300)}
+.light .card-g .ck{color:var(--text-accent)}
+/* contrast pairs */
+.pairs{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;flex:1}
+.pair{border-radius:var(--radius-lg);padding:40px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(255,255,255,.08)}
+.pair .ps{font-family:var(--font-display);font-weight:600;font-size:40px;letter-spacing:var(--letter-spacing-tight)}
+.pair .pmeta{display:flex;align-items:center;gap:14px;margin-top:24px}
+.pair .pr{font-size:30px;font-variant-numeric:tabular-nums;font-weight:600}
+.pair .pass{font-size:16px;letter-spacing:.08em;border:1px solid currentColor;border-radius:var(--radius-pill);padding:3px 12px}
+/* type specimen */
+.typ{position:relative;display:flex;gap:80px;flex:1;align-items:center}
+.bigA{font-family:var(--font-display);font-weight:700;font-size:340px;line-height:.8;letter-spacing:-.04em;color:var(--color-champagne)}
+.light .bigA{color:var(--text-heading)}
+.typ .col{flex:1;display:flex;flex-direction:column;gap:28px}
+.fam{display:flex;flex-direction:column;gap:6px}
+.fam .fn{font-size:20px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--color-gold-300)}
+.light .fam .fn{color:var(--text-accent)}
+.fam .fs{font-size:38px}
+/* scale rows */
+.scale{position:relative;display:flex;flex-direction:column;gap:2px;flex:1;justify-content:center}
+.srow{display:flex;align-items:baseline;gap:36px;padding:8px 0;border-bottom:1px solid rgba(219,190,124,.14)}
+.srow .stag{width:150px;flex:none;font-size:19px;text-transform:uppercase;letter-spacing:.08em;color:var(--color-gold-300);font-variant-numeric:tabular-nums}
+.light .srow .stag{color:var(--text-accent)}
+.srow .sex{font-family:var(--font-display);font-weight:600;color:var(--color-champagne);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.light .srow .sex{color:var(--text-heading)}
+/* spacing bars + grid */
+.two{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:80px;flex:1;align-content:center}
+.bars{display:flex;flex-direction:column;gap:14px}
+.brow{display:flex;align-items:center;gap:24px}
+.brow .bt{width:150px;flex:none;font-size:19px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);font-variant-numeric:tabular-nums}
+.dark .brow .bt{color:#B8AD9A}
+.brow .bb{height:20px;background:var(--gradient-gold);border-radius:var(--radius-xs)}
+.gridcols{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;align-self:start;width:100%}
+.gridcols i{height:120px;background-color:var(--veil-dark-2);border:1px solid var(--glass-border-dark);border-radius:var(--radius-xs)}
+.light .gridcols i{background-color:var(--color-nude-100);border-color:var(--color-sand-400)}
+.bps{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap}
+.bp{border:1px solid var(--glass-border-dark);border-radius:var(--radius-sm);padding:12px 18px;background-color:var(--veil-dark-1)}
+.light .bp{border-color:var(--color-sand-400);background:var(--color-sand-50)}
+.bp b{font-size:24px;color:var(--color-champagne);display:block}.light .bp b{color:var(--text-heading)}
+.bp span{font-size:16px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-subtle)}
+/* radius + elevation row */
+.rrow{position:relative;display:flex;gap:40px;flex:1;align-items:center;justify-content:center}
+.ritem{text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center}
+.rbox{width:170px;height:130px;background-color:var(--veil-dark-2);border:1px solid var(--border-hairline);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.rbox.e{border-color:transparent;background-color:var(--color-obsidian-800)}
+.rk{font-size:19px;text-transform:uppercase;letter-spacing:.06em;color:var(--color-gold-300)}
+.rv{font-size:17px;color:#B8AD9A}
+/* veil scale */
+.veilstage{position:relative;flex:1;border-radius:var(--radius-xl);overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid var(--glass-border-dark)}
+.veilbg{position:absolute;inset:0;background-color:var(--color-obsidian-850);background-image:var(--mesh-immersive)}
+.veilword{position:absolute;font-family:var(--font-display);font-weight:800;font-size:300px;letter-spacing:-.05em;background:var(--gradient-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:.9}
+.veilrail{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;width:100%;padding:52px}
+.veil{position:relative;border-radius:var(--radius-lg);border:1px solid var(--glass-border-dark);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));box-shadow:var(--glass-inner-dark),var(--shadow-md-dark);padding:36px;min-height:220px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;background-image:var(--glass-tint-dark);overflow:hidden}
+.veil::before{content:"";position:absolute;inset:0;background:var(--glass-sheen-dark);pointer-events:none}
+.v1{background-color:var(--veil-dark-1)}.v2{background-color:var(--veil-dark-2)}.v3{background-color:var(--veil-dark-3)}
+.veil .vk{position:relative;font-size:19px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--color-gold-300)}
+.veil .vt{position:relative;font-family:var(--font-display);font-weight:600;font-size:34px;color:var(--color-champagne);letter-spacing:var(--letter-spacing-tight)}
+.veil .vo{position:relative;font-size:18px;color:#B8AD9A;font-variant-numeric:tabular-nums}
+/* metal + bloom */
+.blooms{position:relative;display:flex;gap:90px;align-items:center;justify-content:center;flex:1}
+.bitem{display:flex;flex-direction:column;align-items:center;gap:26px}
+.borb{width:180px;height:180px;border-radius:50%;background:radial-gradient(38% 38% at 38% 32%, var(--color-champagne), var(--color-gold-400) 50%, var(--color-gold-700) 82%)}
+.bs1{box-shadow:var(--bloom-gold-soft)}.bs2{box-shadow:var(--bloom-gold)}.bs3{box-shadow:var(--bloom-gold-strong)}
+.blab{font-size:22px;text-transform:uppercase;letter-spacing:.1em;color:#8B8070}
+/* token tiers */
+.tiers{position:relative;display:flex;gap:22px;flex:1;align-items:stretch}
+.tier{flex:1;border-radius:var(--radius-lg);border:1px solid var(--glass-border-dark);background-color:var(--veil-dark-2);-webkit-backdrop-filter:blur(var(--glass-blur));backdrop-filter:blur(var(--glass-blur));padding:40px;display:flex;flex-direction:column;gap:18px;box-shadow:var(--glass-inner-dark)}
+.tier .tn{font-size:20px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--color-gold-300)}
+.tier .tt{font-family:var(--font-display);font-weight:600;font-size:34px;color:var(--color-champagne);letter-spacing:var(--letter-spacing-tight)}
+.tier code{font-family:var(--font-mono);font-size:19px;color:var(--color-sand-50);background:var(--color-obsidian-950);padding:6px 10px;border-radius:var(--radius-xs);display:block;line-height:1.7;margin-top:auto}
+.tier .td{font-size:19px;color:#B8AD9A;line-height:1.4}
+.arrow{align-self:center;color:var(--color-gold-400);font-size:44px;flex:none}
+</style></head>
+<body>
+<deck-stage width="1920" height="1080">
+
+<section data-label="Capa" class="slide dark" data-screen-label="01">
+<div class="grain"></div>
+<div class="orb" style="width:1000px;height:1000px;top:-320px;right:-300px;opacity:.4;filter:blur(8px)"></div>
+<div class="stack">
+<div class="eyebrow">Design System · Etapa 1 — Fundação</div>
+<h1 class="title" style="font-size:120px">Dra. Beatriz Lima<br><span class="metal">Biomédica Esteta</span></h1>
+<div class="sub">Luxo clínico, dimensional e translúcido.<br>Cor, tipografia, espaço, efeitos e movimento — parametrizáveis.</div>
+</div>
+<div class="foot"><span class="lk">BL</span><span class="rule"></span><span class="lk">Goiânia · GO</span></div>
+</section>
+
+<section data-label="Essência" class="slide dark" data-screen-label="02">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Posicionamento</div><h2>Consultório sério,<br><span class="metal">não salão</span></h2></div>
+<ul class="list">
+<li><span class="br">{</span><div><div class="lt">Critério clínico acima de tendência</div><div class="ld">Mais perto de uma marca de dermocosmético de luxo do que de um spa.</div></div></li>
+<li><span class="br">{</span><div><div class="lt">"Valor não é só preço"</div><div class="ld">Preço tratado com discrição — nunca a chamada principal.</div></div></li>
+<li><span class="br">{</span><div><div class="lt">Natural, elegante, proporcional</div><div class="ld">A estética valoriza quem você é, nunca transforma você em outra pessoa.</div></div></li>
+</ul>
+<div class="pg">02</div>
+</section>
+
+<section data-label="Pilares" class="slide dark" data-screen-label="03">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">O que sustenta a marca</div><h2>Cinco pilares</h2></div>
+<div class="pillars">
+<div class="pillar"><div class="n">01</div><div class="pt">Ciência</div><div class="pd">Evidência antes de tendência.</div></div>
+<div class="pillar"><div class="n">02</div><div class="pt">Ética</div><div class="pd">CFBM 330/2020 como regra de design.</div></div>
+<div class="pillar"><div class="n">03</div><div class="pt">Escuta</div><div class="pd">O cuidado começa por ouvir.</div></div>
+<div class="pillar"><div class="n">04</div><div class="pt">Respeito</div><div class="pd">Sem exageros, sem pressa.</div></div>
+<div class="pillar"><div class="n">05</div><div class="pt">Individualidade</div><div class="pd">Cada rosto é único.</div></div>
+</div>
+<div class="pg">03</div>
+</section>
+
+<section data-label="Duotom" class="slide light" data-screen-label="04">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Dois temas, os mesmos primitivos</div><h2>Duotom</h2></div>
+<div class="duo">
+<div class="tile b"><span class="chip">data-theme="brand"</span><div class="tk">Brand · público</div><div class="th">Claro &amp; sereno</div><div class="tp">Base creme, muito ar, véu claro. O site que decide no celular.</div></div>
+<div class="tile i"><span class="chip">data-theme="immersive"</span><div class="tk">Immersive · simulação</div><div class="th">Obsidiana viva</div><div class="tp">Fundo escuro para o 3D e a simulação facial brilharem. Ouro com bloom.</div></div>
+</div>
+<div class="pg">04</div>
+</section>
+
+<section data-label="Cor · Ouro" class="slide dark" data-screen-label="05">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Cor · família dourada</div><h2>Bronze ao champanhe</h2></div>
+<div class="ramp">
+<div class="sw" style="background:var(--color-gold-200)"><span class="sk" style="color:var(--color-ink-900)">200</span><span class="sv" style="color:var(--color-ink-900)">#E9D3A3</span></div>
+<div class="sw" style="background:var(--color-gold-300)"><span class="sk" style="color:var(--color-ink-900)">300</span><span class="sv" style="color:var(--color-ink-900)">#DBBE7C</span></div>
+<div class="sw" style="background:var(--color-gold-400)"><span class="sk" style="color:var(--color-ink-900)">400</span><span class="sv" style="color:var(--color-ink-900)">#C9A65C</span></div>
+<div class="sw" style="background:var(--color-gold-500)"><span class="sk" style="color:var(--color-ink-900)">500·marca</span><span class="sv" style="color:var(--color-ink-900)">#B58E45</span></div>
+<div class="sw" style="background:var(--color-gold-600)"><span class="sk" style="color:var(--color-sand-50)">600</span><span class="sv" style="color:var(--color-sand-50)">#997438</span></div>
+<div class="sw" style="background:var(--color-gold-700)"><span class="sk" style="color:var(--color-sand-50)">700·texto</span><span class="sv" style="color:var(--color-sand-50)">#7A5B2B</span></div>
+<div class="sw" style="background:var(--color-gold-800)"><span class="sk" style="color:var(--color-sand-50)">800</span><span class="sv" style="color:var(--color-sand-50)">#5C4420</span></div>
+</div>
+<div class="pg">05</div>
+</section>
+
+<section data-label="Cor · Neutros" class="slide dark" data-screen-label="06">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Cor · neutros quentes</div><h2>Creme &amp; obsidiana</h2></div>
+<div class="cols3">
+<div class="card-g" style="background:var(--color-sand-100)"><div class="ck" style="color:var(--text-accent)">Sand · brand</div><div><div style="font-family:var(--font-display);font-weight:700;font-size:44px;color:var(--color-ink-900)">Creme quente</div><div style="font-size:21px;color:var(--color-ink-500);margin-top:8px;font-variant-numeric:tabular-nums">50 → 400 · base #F6F1E8</div></div></div>
+<div class="card-g" style="background:var(--color-obsidian-900)"><div class="ck">Obsidian · immersive</div><div><div style="font-family:var(--font-display);font-weight:700;font-size:44px;color:var(--color-champagne)">Preto quente</div><div style="font-size:21px;color:#B8AD9A;margin-top:8px;font-variant-numeric:tabular-nums">950 → 600 · nunca #000</div></div></div>
+<div class="card-g" style="background:var(--color-nude-200)"><div class="ck" style="color:var(--color-gold-700)">Nude · acento</div><div><div style="font-family:var(--font-display);font-weight:700;font-size:44px;color:var(--color-ink-900)">Pele suave</div><div style="font-size:21px;color:var(--color-ink-600);margin-top:8px;font-variant-numeric:tabular-nums">100 → 300 · destaques</div></div></div>
+</div>
+<div class="pg">06</div>
+</section>
+
+<section data-label="Contraste AA" class="slide dark" data-screen-label="07">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Acessibilidade · WCAG AA verificado</div><h2>Contraste é barreira</h2></div>
+<div class="pairs">
+<div class="pair" style="background:var(--color-sand-100)"><span class="ps" style="color:var(--color-ink-900)">Corpo de leitura</span><div class="pmeta" style="color:var(--color-ink-700)"><span class="pr">16.2:1</span><span class="pass">AA · AAA</span></div></div>
+<div class="pair" style="background:var(--color-sand-100)"><span class="ps" style="color:var(--color-gold-700)">Dourado texto</span><div class="pmeta" style="color:var(--color-ink-700)"><span class="pr">5.5:1</span><span class="pass">AA</span></div></div>
+<div class="pair" style="background:var(--color-obsidian-900);border-color:var(--glass-border-dark)"><span class="ps" style="color:var(--color-gold-300)">Ouro no escuro</span><div class="pmeta" style="color:#B8AD9A"><span class="pr">8.9:1</span><span class="pass">AA</span></div></div>
+</div>
+<div class="pg">07</div>
+</section>
+
+<section data-label="Tipografia" class="slide light" data-screen-label="08">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Tipografia</div><h2>Grotesca &amp; humanista</h2></div>
+<div class="typ">
+<div class="bigA">Aa</div>
+<div class="col">
+<div class="fam"><div class="fn">Display · Bricolage Grotesque</div><div class="fs" style="font-family:var(--font-display);font-weight:700;color:var(--text-heading);font-size:52px;letter-spacing:-.02em">Estética que valoriza</div></div>
+<div class="fam"><div class="fn">Corpo · Mulish</div><div class="fs" style="font-family:var(--font-body);font-weight:300;color:var(--text-muted)">Cada rosto é único; o cuidado começa pela escuta.</div></div>
+<div class="fam"><div class="fn">Citação · Cormorant Garamond</div><div class="fs" style="font-family:var(--font-serif);font-style:italic;font-weight:500;color:var(--text-heading)">valor não é só preço</div></div>
+</div>
+</div>
+<div class="pg">08</div>
+</section>
+
+<section data-label="Escala tipográfica" class="slide dark" data-screen-label="09">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Escala modular · razão ~1.28</div><h2>Do rótulo ao display</h2></div>
+<div class="scale">
+<div class="srow"><span class="stag">6xl · 88</span><span class="sex" style="font-size:88px">Beatriz Lima</span></div>
+<div class="srow"><span class="stag">4xl · 54</span><span class="sex" style="font-size:54px">Harmonização facial</span></div>
+<div class="srow"><span class="stag">3xl · 42</span><span class="sex" style="font-size:42px">Estética que valoriza você</span></div>
+<div class="srow"><span class="stag">2xl · 32</span><span class="sex" style="font-size:32px">Critério clínico acima de tendência</span></div>
+<div class="srow"><span class="stag">lg · 21</span><span class="sex" style="font-size:21px;font-family:var(--font-body);font-weight:400;color:#C8BCA6">Bioestimuladores de colágeno</span></div>
+</div>
+<div class="pg">09</div>
+</section>
+
+<section data-label="Espaçamento & Grid" class="slide light" data-screen-label="10">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Espaçamento &amp; grid · base 4px, mobile-first</div><h2>Ritmo &amp; estrutura</h2></div>
+<div class="two">
+<div class="bars">
+<div class="brow"><span class="bt">2 · 8px</span><div class="bb" style="width:8px"></div></div>
+<div class="brow"><span class="bt">4 · 16px</span><div class="bb" style="width:16px"></div></div>
+<div class="brow"><span class="bt">5 · 24px</span><div class="bb" style="width:24px"></div></div>
+<div class="brow"><span class="bt">6 · 32px</span><div class="bb" style="width:32px"></div></div>
+<div class="brow"><span class="bt">7 · 48px</span><div class="bb" style="width:48px"></div></div>
+<div class="brow"><span class="bt">9 · 96px·section</span><div class="bb" style="width:96px"></div></div>
+<div class="brow"><span class="bt">11 · 160px</span><div class="bb" style="width:160px"></div></div>
+</div>
+<div>
+<div class="gridcols"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="bps"><div class="bp"><span>sm</span><b>480</b></div><div class="bp"><span>md</span><b>768</b></div><div class="bp"><span>lg</span><b>1024</b></div><div class="bp"><span>xl</span><b>1280</b></div><div class="bp"><span>2xl</span><b>1536</b></div></div>
+</div>
+</div>
+<div class="pg">10</div>
+</section>
+
+<section data-label="Raios & Elevação" class="slide dark" data-screen-label="11">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Raios &amp; elevação · suaves, amigáveis ao vidro</div><h2>Cantos &amp; profundidade</h2></div>
+<div class="rrow">
+<div class="ritem"><div class="rbox" style="border-radius:var(--radius-sm)"></div><div class="rk">sm · 8</div><div class="rv">—</div></div>
+<div class="ritem"><div class="rbox" style="border-radius:var(--radius-md)"></div><div class="rk">md · 12</div><div class="rv">control</div></div>
+<div class="ritem"><div class="rbox" style="border-radius:var(--radius-lg)"></div><div class="rk">lg · 16</div><div class="rv">card</div></div>
+<div class="ritem"><div class="rbox e" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-md-dark)"></div><div class="rk">floating</div><div class="rv">md</div></div>
+<div class="ritem"><div class="rbox e" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-lg-dark)"></div><div class="rk">overlay</div><div class="rv">lg</div></div>
+</div>
+<div class="pg">11</div>
+</section>
+
+<section data-label="Translucidez" class="slide dark" data-screen-label="12">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">A assinatura · véu de vidro fosco</div><h2>Translucidez</h2></div>
+<div class="veilstage">
+<div class="veilbg"></div>
+<div class="veilword">PELE</div>
+<div class="veilrail">
+<div class="veil v1"><div class="vk">véu · 1</div><div class="vt">Transparente</div><div class="vo">opacity 0.30 · decorativo</div></div>
+<div class="veil v2"><div class="vk">véu · 2</div><div class="vt">Padrão</div><div class="vo">opacity 0.46 · cards</div></div>
+<div class="veil v3"><div class="vk">véu · 3</div><div class="vt">Legível</div><div class="vo">opacity 0.68 · texto denso</div></div>
+</div>
+</div>
+<div class="pg">12</div>
+</section>
+
+<section data-label="Metálico & Bloom" class="slide dark" data-screen-label="13">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Efeitos · ouro reflexivo, não chapado</div><h2 class="metal">Metálico &amp; bloom</h2></div>
+<div class="blooms">
+<div class="bitem"><div class="borb bs1"></div><div class="blab">bloom · soft</div></div>
+<div class="bitem"><div class="borb bs2"></div><div class="blab">bloom</div></div>
+<div class="bitem"><div class="borb bs3"></div><div class="blab">bloom · strong</div></div>
+</div>
+<div class="pg">13</div>
+</section>
+
+<section data-label="Movimento · GSAP" class="slide dark" data-screen-label="14">
+<div class="grain"></div>
+<div class="orb" style="width:520px;height:520px;bottom:-200px;left:-160px;opacity:.28;filter:blur(6px)"></div>
+<div class="head"><div class="eyebrow">Movimento · BL·Motion sobre GSAP</div><h2>Coreografia da marca</h2></div>
+<ul class="list">
+<li><span class="br">{</span><div><div class="lt">Reveal · Split · Tilt · Parallax</div><div class="ld">Receitas prontas sobre GSAP 3.13 (gratuito) — ScrollTrigger e SplitText inclusos.</div></div></li>
+<li><span class="br">{</span><div><div class="lt">Declarativo por data-*</div><div class="ld">data-bl-reveal / tilt / split / parallax — o admin liga movimento sem código.</div></div></li>
+<li><span class="br">{</span><div><div class="lt">Token-aware &amp; acessível</div><div class="ld">Lê as durações dos tokens; respeita prefers-reduced-motion (mostra estado final).</div></div></li>
+</ul>
+<div class="pg">14</div>
+</section>
+
+<section data-label="Arquitetura de tokens" class="slide dark" data-screen-label="15">
+<div class="grain"></div>
+<div class="head"><div class="eyebrow">Parametrização · nada hardcoded</div><h2>Três níveis de token</h2></div>
+<div class="tiers">
+<div class="tier"><div class="tn">1 · Primitivo</div><div class="tt">Valor bruto</div><div class="td">Sem significado. Projeção do tokens.json.</div><code>--color-gold-500<br>--size-4</code></div>
+<div class="arrow">→</div>
+<div class="tier"><div class="tn">2 · Semântico</div><div class="tt">Intenção</div><div class="td">O que o componente lê. Muda por tema.</div><code>--surface-base<br>--text-accent</code></div>
+<div class="arrow">→</div>
+<div class="tier"><div class="tn">3 · Componente</div><div class="tt">Sobrescrevível</div><div class="td">Herda do semântico; o admin ajusta um só.</div><code>--button-primary-bg<br>--card-glass-blur</code></div>
+</div>
+<div class="pg">15</div>
+</section>
+
+<section data-label="Encerramento" class="slide dark" data-screen-label="16" style="align-items:center;justify-content:center;text-align:center">
+<div class="grain"></div>
+<div class="orb" style="width:820px;height:820px;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.22;filter:blur(10px)"></div>
+<div class="stack" style="align-items:center;margin:0">
+<div class="eyebrow">Dra. Beatriz Lima · Biomédica Esteta</div>
+<h2 class="title" style="font-size:104px">Estética que<br><span class="metal">valoriza você</span></h2>
+<div class="sub" style="max-width:1000px">Etapa 1 concluída — fundação de tokens, temas, efeitos e movimento. Próximo: componentes base.</div>
+</div>
+</section>
+
+</deck-stage>
+<script src="./deck-stage.js"></script>
+</body></html>

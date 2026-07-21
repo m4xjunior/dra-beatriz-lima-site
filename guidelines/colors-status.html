@@ -1,0 +1,21 @@
+<!-- @dsCard group="Cores" viewport="700x150" name="Status — clínico, dessaturado" subtitle="Feedback funcional. Nunca vibrante; coerente com consultório sério." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--surface-base);font-family:var(--font-body);color:var(--text-body);padding:var(--size-5)}
+.ramp{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--size-2)}
+.chip{border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border-subtle)}
+.sw{height:64px}
+.meta{padding:6px 8px;background:var(--surface-raised)}
+.k{font-size:10px;letter-spacing:var(--letter-spacing-wide);text-transform:uppercase;color:var(--text-muted)}
+.h{font-size:11px;font-variant-numeric:tabular-nums}
+</style></head><body>
+<div class="ramp">
+<div class="chip"><div class="sw" style="background:var(--status-success)"></div><div class="meta"><div class="k">success</div><div class="h">#5E7A5A</div></div></div>
+<div class="chip"><div class="sw" style="background:var(--status-warning)"></div><div class="meta"><div class="k">warning</div><div class="h">#A9793A</div></div></div>
+<div class="chip"><div class="sw" style="background:var(--status-danger)"></div><div class="meta"><div class="k">danger</div><div class="h">#9B4A3F</div></div></div>
+<div class="chip"><div class="sw" style="background:var(--status-info)"></div><div class="meta"><div class="k">info</div><div class="h">#4A6670</div></div></div>
+</div>
+</body></html>

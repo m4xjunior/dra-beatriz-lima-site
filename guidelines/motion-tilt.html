@@ -1,0 +1,30 @@
+<!-- @dsCard group="Movimento (GSAP)" viewport="720x320" name="Tilt 3D + bloom (GSAP quickTo)" subtitle="Card inclina seguindo o ponteiro; camadas flutuam em Z. Recurso: gsap.quickTo." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="../motion/bl-motion.js"></script>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-body);background-color:var(--color-obsidian-900);background-image:var(--mesh-immersive);min-height:100vh;display:flex;align-items:center;justify-content:center;gap:var(--size-7);padding:var(--size-6)}
+.stage{perspective:var(--tilt-perspective)}
+.card{width:270px;position:relative;background-color:var(--veil-dark-2);background-image:var(--glass-tint-dark);border:1px solid var(--glass-border-dark);border-radius:var(--radius-lg);padding:var(--size-5);-webkit-backdrop-filter:blur(var(--glass-blur));backdrop-filter:blur(var(--glass-blur));box-shadow:var(--glass-inner-dark),var(--shadow-lg-dark);color:var(--color-sand-50);transition:box-shadow var(--duration-base) var(--ease-standard)}
+.card:hover{box-shadow:var(--glass-inner-dark),var(--shadow-lg-dark),var(--bloom-gold)}
+.card::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--glass-sheen-dark);pointer-events:none}
+.ey{position:relative;font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--color-gold-300)}
+.card h4{position:relative;font-family:var(--font-display);font-weight:600;font-size:var(--font-size-xl);letter-spacing:var(--letter-spacing-tight);color:var(--color-champagne);margin-top:8px}
+.card p{position:relative;font-size:var(--font-size-xs);color:#B8AD9A;margin-top:10px;line-height:1.55}
+.chip{position:relative;display:inline-block;margin-top:14px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-obsidian-900);background:var(--gradient-champagne);padding:6px 12px;border-radius:var(--radius-pill)}
+.hint{color:#8B8070;font-size:11px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);max-width:150px;line-height:1.7}
+</style></head><body>
+<div class="stage" id="stage"><div class="card" id="card">
+<div class="ey" style="transform:translateZ(30px)">Procedimento</div>
+<h4 style="transform:translateZ(52px)">Preenchimento labial</h4>
+<p style="transform:translateZ(24px)">As camadas flutuam em Z conforme o card inclina — profundidade real, não sombra.</p>
+<span class="chip" style="transform:translateZ(64px)">Ver detalhes</span>
+</div></div>
+<div class="hint">passe o mouse sobre o card →</div>
+<script>
+BLMotion.ready().then(function(){ BLMotion.tilt("#card", { host: document.getElementById("stage"), max:9, scale:1.03 }); });
+</script>
+</body></html>

@@ -1,0 +1,21 @@
+<!-- @dsCard group="Espaçamento & Grid" viewport="700x160" name="Raios de borda" subtitle="Suaves (12–22px) — amigáveis ao vidro. Nada de cantos afiados." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--surface-base);font-family:var(--font-body);color:var(--text-body);padding:var(--size-5);display:flex;gap:var(--size-4);align-items:flex-end}
+.item{text-align:center}
+.box{width:88px;height:64px;background:var(--surface-raised);border:1px solid var(--border-hairline)}
+.k{font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);color:var(--text-muted);margin-top:8px}
+.v{font-size:11px;color:var(--text-body)}
+.pill{width:120px;border-radius:var(--radius-pill)}
+</style></head><body>
+<div class="item"><div class="box" style="border-radius:var(--radius-none)"></div><div class="k">none</div><div class="v">0</div></div>
+<div class="item"><div class="box" style="border-radius:var(--radius-xs)"></div><div class="k">xs</div><div class="v">4px</div></div>
+<div class="item"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="k">sm</div><div class="v">8px</div></div>
+<div class="item"><div class="box" style="border-radius:var(--radius-md)"></div><div class="k">md ·control</div><div class="v">12px</div></div>
+<div class="item"><div class="box" style="border-radius:var(--radius-lg)"></div><div class="k">lg ·card</div><div class="v">16px</div></div>
+<div class="item"><div class="box" style="border-radius:var(--radius-xl)"></div><div class="k">xl ·surface</div><div class="v">22px</div></div>
+<div class="item"><div class="box pill" style="border-radius:var(--radius-pill)"></div><div class="k">pill</div><div class="v">badge</div></div>
+</body></html>

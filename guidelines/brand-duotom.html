@@ -1,0 +1,36 @@
+<!-- @dsCard group="Marca" viewport="760x430" name="Duotom — brand ↔ immersive" subtitle="A nova espinha: público claro e sereno; 3D/simulação em escuro imersivo." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-body);display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.pane{position:relative;padding:var(--size-7) var(--size-6);background-color:var(--surface-base);background-image:var(--surface-mesh);overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:var(--size-4)}
+.pane::after{content:"";position:absolute;inset:0;background-image:var(--grain);opacity:var(--grain-opacity);mix-blend-mode:overlay;pointer-events:none}
+.ey{font-family:var(--type-eyebrow-font);font-size:var(--font-size-2xs);text-transform:uppercase;letter-spacing:var(--letter-spacing-widest);color:var(--text-accent);position:relative;z-index:1}
+h1{font-family:var(--type-display-font);font-weight:600;font-size:var(--font-size-3xl);line-height:1;letter-spacing:var(--letter-spacing-tighter);color:var(--text-heading);position:relative;z-index:1}
+h1 .metal{background:var(--gradient-gold-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-style:normal}
+.glass{position:relative;z-index:1;background-color:var(--surface-glass);background-image:var(--surface-glass-tint);border:1px solid var(--surface-glass-border);border-radius:var(--radius-card);padding:var(--size-4) var(--size-5);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));box-shadow:var(--surface-glass-inner),var(--elevation-floating);display:flex;flex-direction:column;gap:var(--size-3);overflow:hidden}
+.glass::before{content:"";position:absolute;inset:0;background:var(--surface-glass-sheen);pointer-events:none}
+.glass>*{position:relative}
+.glass p{font-size:var(--font-size-sm);color:var(--text-muted);line-height:var(--line-height-relaxed);font-weight:300}
+.row{display:flex;gap:var(--size-3);align-items:center}
+.btn{font-family:var(--button-font);text-transform:uppercase;letter-spacing:var(--button-tracking);font-size:var(--font-size-xs);color:var(--button-primary-fg);background:var(--button-primary-bg);padding:12px 22px;border:0;border-radius:var(--radius-pill);box-shadow:var(--bloom);cursor:pointer}
+.ghost{background:transparent;border:1px solid var(--border-hairline);color:var(--text-accent);border-radius:var(--radius-pill);padding:11px 20px;font-size:var(--font-size-xs);text-transform:uppercase;letter-spacing:var(--button-tracking)}
+.orb{position:relative;z-index:1;width:96px;height:96px;border-radius:var(--radius-pill);background:radial-gradient(38% 38% at 38% 32%, var(--color-champagne), var(--color-gold-400) 46%, var(--color-gold-700) 78%, var(--color-obsidian-800) 100%);box-shadow:var(--bloom-gold-strong);align-self:flex-start}
+.tag{position:relative;z-index:1;font-size:10px;letter-spacing:var(--letter-spacing-wide);text-transform:uppercase;color:var(--text-subtle)}
+</style></head><body>
+<section class="pane" data-theme="brand">
+<div class="ey">Consultório · público</div>
+<h1>Estética que <span class="metal">valoriza você</span></h1>
+<div class="glass"><p>Base clara e serena, camadas de vidro e luz. Critério clínico, muito ar.</p><div class="row"><button class="btn">Agendar avaliação</button><button class="ghost">Serviços</button></div></div>
+<div class="tag">data-theme="brand"</div>
+</section>
+<section class="pane" data-theme="immersive">
+<div class="ey">Simulação 3D · imersivo</div>
+<h1>Veja com <span class="metal">clareza</span></h1>
+<div class="orb"></div>
+<div class="glass"><p>Obsidiana quente para o 3D brilhar. Ouro ganha bloom; vidro ganha vida.</p><div class="row"><button class="btn">Iniciar simulação</button></div></div>
+<div class="tag">data-theme="immersive"</div>
+</section>
+</body></html>

@@ -1,0 +1,38 @@
+<!-- @dsCard group="Movimento (GSAP)" viewport="720x300" name="Motor de movimento — BL·Motion sobre GSAP" subtitle="GSAP gratuito (v3.13+). Camada da marca: token-aware, declarativa por data-*, reduced-motion." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--surface-base);font-family:var(--font-body);color:var(--text-body);padding:var(--size-5);display:grid;grid-template-columns:1.1fr 1fr;gap:var(--size-5);align-items:center}
+.ey{font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-widest);color:var(--text-accent);margin-bottom:var(--size-3)}
+h4{font-family:var(--font-display);font-weight:600;font-size:var(--font-size-xl);letter-spacing:var(--letter-spacing-tight);color:var(--text-heading);margin-bottom:var(--size-3)}
+.list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.list li{display:flex;gap:10px;align-items:baseline;font-size:var(--font-size-sm);color:var(--text-muted);line-height:1.4}
+.br{font-family:var(--font-display);color:var(--color-gold-500);font-size:16px;flex:none}
+.list b{color:var(--text-body);font-weight:600}
+code{font-family:var(--font-mono);font-size:11px;background:var(--surface-sunken);color:var(--text-accent-strong);padding:2px 6px;border-radius:var(--radius-xs)}
+.panel{background:var(--color-obsidian-900);background-image:var(--mesh-immersive);border-radius:var(--radius-card);padding:var(--size-5);color:var(--color-sand-50);box-shadow:var(--elevation-floating)}
+.panel .k{font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--color-gold-300);margin-bottom:10px}
+pre{font-family:var(--font-mono);font-size:11px;line-height:1.7;color:var(--color-champagne);white-space:pre-wrap}
+.tag{color:#B8AD9A}
+</style></head><body>
+<div>
+<div class="ey">Motor de movimento</div>
+<h4>BL·Motion · GSAP</h4>
+<ul class="list">
+<li><span class="br">{</span><span><b>Gratuito e comercial</b> — GSAP 100% livre desde 04/2025 (v3.13+), inclui ScrollTrigger e SplitText.</span></li>
+<li><span class="br">{</span><span><b>Token-aware</b> — lê <code>--duration-*</code> e eases da marca; nada hardcoded.</span></li>
+<li><span class="br">{</span><span><b>Declarativo</b> — <code>data-bl-reveal</code>, <code>data-bl-tilt</code>, <code>data-bl-split</code>, <code>data-bl-parallax</code> (§5.2).</span></li>
+<li><span class="br">{</span><span><b>Acessível</b> — respeita <code>prefers-reduced-motion</code> (mostra estado final, sem animar).</span></li>
+</ul>
+</div>
+<div class="panel">
+<div class="k">Uso — declarativo</div>
+<pre><span class="tag">&lt;h1</span> data-bl-split<span class="tag">&gt;</span>Veja com clareza<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;div</span> data-bl-reveal<span class="tag">&gt;</span>…<span class="tag">&lt;/div&gt;</span>
+
+BLMotion.ready()
+  .then(() =&gt; BLMotion.auto());</pre>
+</div>
+</body></html>

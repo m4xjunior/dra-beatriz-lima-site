@@ -1,0 +1,186 @@
+---
+// FaceViewer3D — janela de simulação 3D (Three.js). Sempre nasce em seu
+// próprio [data-theme="immersive"] (duotom aninhado — ver brand-duotom.html),
+// mesmo quando embutido numa página em tema brand.
+// Invariante estrutural: SEMPRE renderiza <Disclaimer variant="simulacao">
+// logo abaixo do canvas — não existe prop para ocultar isso (compliance
+// garantida pela construção do componente, não pela disciplina de quem usa).
+import Disclaimer from "./Disclaimer.astro";
+
+interface Props {
+  variant?: "hero" | "inline";
+  autoRotate?: boolean;
+  caption?: string;
+}
+
+const { variant = "inline", autoRotate = true, caption } = Astro.props;
+---
+
+<div class="face-viewer" data-theme="immersive" data-variant={variant}>
+  <div class="face-viewer__stage">
+    <!-- Fallback estático (prefers-reduced-motion / JS desabilitado) —
+         visível por padrão; o script só o esconde depois de montar a
+         cena Three.js com sucesso (progressive enhancement: nunca um
+         buraco vazio onde a peça 3D deveria estar). -->
+    <div class="face-viewer__orb-static" aria-hidden="true"></div>
+    <canvas
+      class="face-viewer__canvas"
+      data-autorotate={autoRotate ? "true" : "false"}
+      data-variant={variant}
+      aria-label="Ilustração 3D animada de marca — não é uma simulação do seu rosto"
+      role="img"
+    ></canvas>
+    <span class="face-viewer__label">Ilustração — não é o seu resultado</span>
+    <noscript>
+      <style>
+        .face-viewer__canvas { display: none; }
+        .face-viewer__orb-static { opacity: 1 !important; }
+      </style>
+    </noscript>
+  </div>
+
+  {caption && <p class="face-viewer__caption">{caption}</p>}
+
+  <Disclaimer variant="simulacao" />
+</div>
+
+<style>
+  .face-viewer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-sm);
+  }
+
+  .face-viewer__stage {
+    position: relative;
+    border-radius: var(--viewer3d-radius);
+    background-color: var(--viewer3d-bg);
+    background-image: var(--surface-mesh);
+    overflow: hidden;
+    box-shadow: var(--viewer3d-glow);
+    aspect-ratio: 4 / 5;
+  }
+
+  .face-viewer[data-variant="hero"] .face-viewer__stage {
+    aspect-ratio: 1 / 1;
+    box-shadow: var(--viewer3d-glow-strong);
+  }
+
+  @media (min-width: 768px) {
+    .face-viewer[data-variant="hero"] .face-viewer__stage {
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  /* Orb estático — mesma silhueta/tokens do orb Three.js, visível até o
+     script trocar data-mode="3d" no stage (ou para sempre, se reduced
+     motion / sem JS). */
+  .face-viewer__orb-static {
+    position: absolute;
+    inset: 12%;
+    border-radius: var(--radius-pill);
+    background-image: var(--viewer3d-orb-static);
+    box-shadow: var(--viewer3d-glow-strong);
+    opacity: 1;
+    transition: opacity var(--duration-slow) var(--ease-standard);
+  }
+
+  .face-viewer__canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: pan-y;
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-standard);
+  }
+
+  .face-viewer__stage[data-mode="3d"] .face-viewer__canvas {
+    opacity: 1;
+  }
+
+  .face-viewer__stage[data-mode="3d"] .face-viewer__orb-static {
+    opacity: 0;
+  }
+
+  .face-viewer__label {
+    position: absolute;
+    z-index: 1;
+    top: var(--space-inline-md);
+    left: var(--space-inline-md);
+    background-color: var(--viewer3d-control-bg);
+    border: var(--border-width-hairline) solid var(--viewer3d-control-border);
+    color: var(--viewer3d-label-fg);
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    padding: var(--space-inline-xs) var(--space-inline-sm);
+    border-radius: var(--radius-pill);
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+    backdrop-filter: blur(var(--glass-blur-sm));
+  }
+
+  .face-viewer__caption {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    line-height: var(--type-body-leading);
+    margin: 0;
+  }
+</style>
+
+<script>
+  // Este script NÃO importa face-viewer-3d-scene.ts no topo — de propósito.
+  // Three.js + postprocessing pesam ~540kB; um import estático aqui faria o
+  // navegador baixar tudo isso no load da página, mesmo se o viewer estiver
+  // fora da dobra (ex.: TeaserSimulacao na home). Em vez disso:
+  //   1) se prefers-reduced-motion, nem o import() dinâmico acontece — zero
+  //      bytes de Three.js baixados, o orb estático em CSS já resolve;
+  //   2) senão, só faz o import() dinâmico quando o IntersectionObserver
+  //      confirma que o stage entrou na viewport — o bundle pesado só é
+  //      buscado quando de fato vai ser usado (LCP da home intacto).
+  type OpcoesFaceViewer3D = {
+    autoRotate: boolean;
+    variant: "hero" | "inline";
+  };
+
+  const blMotion = (window as unknown as { BLMotion?: { reduced: boolean } }).BLMotion;
+
+  // Script deduplicado por Astro (mesmo módulo em toda página): varre TODOS
+  // os stages ainda não inicializados, suportando múltiplas instâncias
+  // (ex.: teaser na landing + página /simulacao-3d, embora nunca ambos na
+  // mesma página nesta etapa).
+  document
+    .querySelectorAll<HTMLDivElement>(
+      ".face-viewer__stage:not([data-bl3d-init])"
+    )
+    .forEach((stage) => {
+      stage.dataset.bl3dInit = "true";
+      const canvas = stage.querySelector<HTMLCanvasElement>(".face-viewer__canvas");
+      if (!canvas) return;
+
+      // prefers-reduced-motion: o orb estático em CSS (visível por padrão)
+      // já é o resultado final — nem chega a existir o import() do Three.js.
+      if (blMotion?.reduced) return;
+
+      const opcoes: OpcoesFaceViewer3D = {
+        autoRotate: canvas.dataset.autorotate !== "false",
+        variant: canvas.dataset.variant === "hero" ? "hero" : "inline",
+      };
+
+      const observer = new IntersectionObserver(
+        (entradas) => {
+          for (const entrada of entradas) {
+            if (!entrada.isIntersecting) continue;
+            observer.disconnect();
+            import("./face-viewer-3d-scene.ts").then(({ iniciarFaceViewer3D }) => {
+              iniciarFaceViewer3D(stage, canvas, opcoes);
+            });
+          }
+        },
+        { threshold: 0.2 }
+      );
+      observer.observe(stage);
+    });
+</script>

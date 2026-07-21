@@ -1,0 +1,226 @@
+/* ============================================================
+   TOKENS SEMÂNTICOS  —  o que os componentes consomem.
+   DUOTOM: brand (claro/público) ↔ immersive (escuro/3D).
+   ops = interno/ERP. Troca por [data-theme] no <html>.
+   Componentes JAMAIS referenciam primitivos — só estes.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   TEMA BRAND — claro, sereno, dimensional (site público) · PADRÃO
+   ------------------------------------------------------------ */
+:root,
+[data-theme="brand"] {
+  /* Superfícies */
+  --surface-base: var(--color-sand-100);
+  --surface-raised: var(--color-sand-50);
+  --surface-sunken: var(--color-sand-200);
+  --surface-inverse: var(--color-ink-900);
+  --surface-accent-soft: var(--color-nude-100);
+  --surface-overlay: rgba(26, 22, 17, 0.44);
+
+  /* Vidro / véu / mesh / grão / bloom */
+  --surface-glass: var(--veil-light-2);
+  --surface-glass-strong: var(--veil-light-3);
+  --surface-veil: var(--veil-light-1);
+  --surface-glass-border: var(--glass-border-light);
+  --surface-glass-sheen: var(--glass-sheen);
+  --surface-glass-inner: var(--glass-inner-light);  /* @kind other */
+  --surface-glass-tint: none;                       /* @kind other */
+  --surface-mesh: var(--mesh-brand);
+  --grain-opacity: var(--grain-opacity-light);  /* @kind other */
+  --bloom: var(--bloom-gold-soft);              /* @kind shadow */
+  --bloom-strong: var(--bloom-gold-strong);     /* @kind shadow */
+
+  /* Texto */
+  --text-body: var(--color-ink-900);
+  --text-heading: var(--color-ink-900);
+  --text-muted: var(--color-ink-500);
+  --text-subtle: var(--color-ink-400);
+  --text-accent: var(--color-gold-700);
+  --text-accent-strong: var(--color-gold-800);
+  --text-on-inverse: var(--color-sand-50);
+  --text-accent-on-inverse: var(--color-gold-400);
+  --text-on-accent: var(--color-ink-900);
+
+  /* Bordas */
+  --border-hairline: var(--color-gold-500);
+  --border-subtle: var(--color-sand-400);
+  --border-strong: var(--color-ink-700);
+  --border-focus: var(--color-gold-600);
+  --border-metal: var(--gradient-metal);
+
+  /* Interação */
+  --surface-hover: rgba(122, 91, 43, 0.06);
+  --surface-pressed: rgba(122, 91, 43, 0.12);
+  --surface-selected: var(--color-nude-100);
+  --ring-focus: 0 0 0 3px rgba(153, 116, 56, 0.35);
+
+  /* Status */
+  --status-success: var(--color-success);
+  --status-warning: var(--color-warning);
+  --status-danger: var(--color-danger);
+  --status-info: var(--color-info);
+
+  /* Texto com gradiente (inverte por tema) */
+  --gradient-gold-text: linear-gradient(96deg, var(--color-ink-900) 0%, var(--color-gold-700) 58%, var(--color-gold-500) 100%);
+  --gradient-gold-text-inverse: linear-gradient(96deg, var(--color-sand-50) 0%, var(--color-gold-300) 60%, var(--color-gold-400) 100%);
+
+  /* Tipografia semântica */
+  --type-display-font: var(--font-display);
+  --type-body-font: var(--font-body);
+  --type-eyebrow-font: var(--font-body);
+  --type-quote-font: var(--font-serif);
+  --type-display-tracking: var(--letter-spacing-tight);
+  --type-eyebrow-tracking: var(--letter-spacing-widest);
+  --type-body-leading: var(--line-height-relaxed);
+  --type-display-leading: var(--line-height-tight);
+
+  /* Espaçamento semântico */
+  --space-inline-xs: var(--size-2);
+  --space-inline-sm: var(--size-3);
+  --space-inline-md: var(--size-4);
+  --space-inline-lg: var(--size-5);
+  --space-stack-xs: var(--size-2);
+  --space-stack-sm: var(--size-4);
+  --space-stack-md: var(--size-5);
+  --space-stack-lg: var(--size-7);
+  --space-gutter: var(--size-5);
+  --space-container-pad: var(--size-5);
+  --space-section: var(--size-9);
+  --space-section-lg: var(--size-11);
+
+  /* Raio semântico (suave) */
+  --radius-control: var(--radius-md);
+  --radius-card: var(--radius-lg);
+  --radius-surface: var(--radius-xl);
+
+  /* Elevação semântica (profundidade em camadas) */
+  --elevation-flat: var(--shadow-none);
+  --elevation-raised: var(--shadow-sm);
+  --elevation-floating: var(--shadow-md);
+  --elevation-overlay: var(--shadow-lg);
+  --elevation-hero: var(--shadow-xl);
+}
+
+/* ------------------------------------------------------------
+   TEMA IMMERSIVE — obsidiana escura, para 3D / simulação.
+   Ouro brilha; vidro e bloom ganham vida. É o "modo escuro" da marca.
+   ------------------------------------------------------------ */
+[data-theme="immersive"] {
+  --surface-base: var(--color-obsidian-900);
+  --surface-raised: var(--color-obsidian-800);
+  --surface-sunken: var(--color-obsidian-950);
+  --surface-inverse: var(--color-sand-100);
+  --surface-accent-soft: rgba(181, 142, 69, 0.12);
+  --surface-overlay: rgba(6, 5, 3, 0.64);
+
+  --surface-glass: var(--veil-dark-2);
+  --surface-glass-strong: var(--veil-dark-3);
+  --surface-veil: var(--veil-dark-1);
+  --surface-glass-border: var(--glass-border-dark);
+  --surface-glass-sheen: var(--glass-sheen-dark);
+  --surface-glass-inner: var(--glass-inner-dark);   /* @kind other */
+  --surface-glass-tint: var(--glass-tint-dark);     /* @kind other */
+  --surface-mesh: var(--mesh-immersive);
+  --grain-opacity: var(--grain-opacity-dark);   /* @kind other */
+  --bloom: var(--bloom-gold);                   /* @kind shadow */
+  --bloom-strong: var(--bloom-gold-strong);     /* @kind shadow */
+
+  --text-body: var(--color-sand-50);
+  --text-heading: var(--color-champagne);
+  --text-muted: #B8AD9A;
+  --text-subtle: #8B8070;
+  --text-accent: var(--color-gold-300);
+  --text-accent-strong: var(--color-gold-200);
+  --text-on-inverse: var(--color-ink-900);
+  --text-accent-on-inverse: var(--color-gold-700);
+  --text-on-accent: var(--color-ink-900);
+
+  --border-hairline: var(--color-gold-400);
+  --border-subtle: #3A342B;
+  --border-strong: #5A5142;
+  --border-focus: var(--color-gold-400);
+  --border-metal: var(--gradient-metal);
+
+  --surface-hover: rgba(219, 190, 124, 0.08);
+  --surface-pressed: rgba(219, 190, 124, 0.14);
+  --surface-selected: rgba(181, 142, 69, 0.16);
+  --ring-focus: 0 0 0 3px rgba(219, 190, 124, 0.40);
+
+  --gradient-gold-text: var(--gradient-gold-text-inverse);
+
+  --elevation-flat: var(--shadow-none);
+  --elevation-raised: var(--shadow-md-dark);
+  --elevation-floating: var(--shadow-md-dark);
+  --elevation-overlay: var(--shadow-lg-dark);
+  --elevation-hero: var(--shadow-lg-dark);
+}
+
+/* ------------------------------------------------------------
+   TEMA OPS — interno / ERP (Tauri). Neutro, denso, sem vidro.
+   Sans em tudo, alta legibilidade em tabela. Ouro = acento funcional.
+   ------------------------------------------------------------ */
+[data-theme="ops"] {
+  --surface-base: #FAFAF8;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #F1F0ED;
+  --surface-inverse: #26241F;
+  --surface-accent-soft: #F3EEE3;
+  --surface-overlay: rgba(20, 19, 16, 0.40);
+
+  --surface-glass: rgba(255, 255, 255, 0.90);
+  --surface-glass-strong: #FFFFFF;
+  --surface-veil: rgba(255, 255, 255, 0.72);
+  --surface-glass-border: #E4E2DD;
+  --surface-glass-sheen: none;
+  --surface-glass-inner: none;   /* @kind other */
+  --surface-glass-tint: none;    /* @kind other */
+  --surface-mesh: none;
+  --grain-opacity: 0;  /* @kind other */
+  --bloom: none;       /* @kind shadow */
+  --bloom-strong: none;  /* @kind shadow */
+
+  --text-body: #201E1A;
+  --text-heading: #201E1A;
+  --text-muted: #57544E;
+  --text-subtle: #85817A;
+  --text-accent: var(--color-gold-700);
+  --text-accent-strong: var(--color-gold-800);
+  --text-on-inverse: #F5F4F1;
+  --text-accent-on-inverse: var(--color-gold-400);
+  --text-on-accent: #201E1A;
+
+  --border-hairline: var(--color-gold-600);
+  --border-subtle: #E4E2DD;
+  --border-strong: #C8C5BE;
+  --border-focus: var(--color-gold-600);
+  --border-metal: var(--color-gold-500);
+
+  --surface-hover: rgba(32, 30, 26, 0.04);
+  --surface-pressed: rgba(32, 30, 26, 0.08);
+  --surface-selected: #F3EEE3;
+  --ring-focus: 0 0 0 2px rgba(153, 116, 56, 0.45);
+
+  /* Sans em tudo (sem display grotesca de destaque) */
+  --type-display-font: var(--font-body);
+  --type-quote-font: var(--font-body);
+  --type-display-tracking: var(--letter-spacing-normal);
+  --type-body-leading: var(--line-height-normal);
+  --type-display-leading: var(--line-height-snug);
+
+  /* Densidade maior */
+  --space-inline-md: var(--size-3);
+  --space-stack-md: var(--size-4);
+  --space-gutter: var(--size-4);
+  --space-container-pad: var(--size-4);
+  --space-section: var(--size-6);
+  --space-section-lg: var(--size-8);
+  --radius-control: var(--radius-xs);
+  --radius-card: var(--radius-sm);
+  --radius-surface: var(--radius-sm);
+
+  --elevation-raised: var(--shadow-sm);
+  --elevation-floating: var(--shadow-md);
+  --elevation-overlay: var(--shadow-lg);
+  --elevation-hero: var(--shadow-lg);
+}

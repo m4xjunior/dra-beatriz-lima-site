@@ -1,0 +1,25 @@
+<!-- @dsCard group="Espaçamento & Grid" viewport="700x230" name="Grid & breakpoints (mobile-first)" subtitle="12 colunas, container 1200px, medida de leitura contida. 5 breakpoints." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--surface-base);font-family:var(--font-body);color:var(--text-body);padding:var(--size-5)}
+.ey{font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);color:var(--text-muted);margin-bottom:8px}
+.cols{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;margin-bottom:var(--size-5)}
+.col{height:44px;background:var(--color-nude-100);border:1px solid var(--border-subtle);border-radius:var(--radius-xs)}
+.bps{display:flex;gap:var(--size-2);flex-wrap:wrap}
+.bp{border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:8px 12px;background:var(--surface-raised)}
+.bp b{font-size:12px;color:var(--text-body);display:block}
+.bp span{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+</style></head><body>
+<div class="ey">12 colunas · gutter 24px · container 1200px</div>
+<div class="cols"><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div><div class="col"></div></div>
+<div class="bps">
+<div class="bp"><span>sm</span><b>480px</b></div>
+<div class="bp"><span>md</span><b>768px</b></div>
+<div class="bp"><span>lg</span><b>1024px</b></div>
+<div class="bp"><span>xl</span><b>1280px</b></div>
+<div class="bp"><span>2xl</span><b>1536px</b></div>
+</div>
+</body></html>

@@ -1,0 +1,23 @@
+<!-- @dsCard group="Cores" viewport="700x250" name="Contraste verificado (WCAG AA)" subtitle="Pares texto/superfície testados. Dourado pequeno usa gold-700+." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--surface-base);font-family:var(--font-body);color:var(--text-body);padding:var(--size-5)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--size-3)}
+.cell{padding:var(--size-4);border-radius:var(--radius-sm);border:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:6px}
+.lbl{font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);opacity:.72}
+.samp{font-size:17px;font-weight:500}
+.ratio{font-size:11px;font-variant-numeric:tabular-nums;opacity:.82;display:flex;gap:6px;align-items:center}
+.pass{border:1px solid currentColor;border-radius:var(--radius-pill);padding:0 7px;font-size:9px;letter-spacing:.06em}
+</style></head><body>
+<div class="grid">
+<div class="cell" style="background:var(--surface-base)"><span class="lbl">body · ink-900 / base</span><span class="samp" style="color:var(--text-body)">Critério clínico</span><span class="ratio">16.2:1 <span class="pass">AA · AAA</span></span></div>
+<div class="cell" style="background:var(--surface-base)"><span class="lbl">muted · ink-500 / base</span><span class="samp" style="color:var(--text-muted)">Resumo do procedimento</span><span class="ratio">5.9:1 <span class="pass">AA</span></span></div>
+<div class="cell" style="background:var(--surface-base)"><span class="lbl">accent · gold-700 / base</span><span class="samp" style="color:var(--text-accent)">Individualidade</span><span class="ratio">5.5:1 <span class="pass">AA</span></span></div>
+<div class="cell" style="background:var(--surface-inverse)"><span class="lbl" style="color:var(--text-on-inverse)">on-inverse · sand-50 / ink</span><span class="samp" style="color:var(--text-on-inverse)">Valor não é só preço</span><span class="ratio" style="color:var(--text-on-inverse)">17.0:1 <span class="pass">AA · AAA</span></span></div>
+<div class="cell" style="background:var(--surface-inverse)"><span class="lbl" style="color:var(--text-accent-on-inverse)">accent-inverse · gold-400 / ink</span><span class="samp" style="color:var(--text-accent-on-inverse)">Escuta · Respeito</span><span class="ratio" style="color:var(--text-on-inverse)">7.9:1 <span class="pass">AA</span></span></div>
+<div class="cell" style="background:var(--surface-base)"><span class="lbl">subtle · ink-400 / base</span><span class="samp" style="color:var(--text-subtle);font-size:22px">Só texto grande</span><span class="ratio">3.4:1 <span class="pass">AA large</span></span></div>
+</div>
+</body></html>

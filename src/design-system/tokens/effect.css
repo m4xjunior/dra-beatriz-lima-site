@@ -1,0 +1,82 @@
+/* ============================================================
+   PRIMITIVOS · EFEITOS  —  a camada que define a nova pele:
+   vidro, bloom dourado, metálico champanhe, mesh, grão,
+   profundidade em camadas. Composições theme-neutras; os
+   aliases que invertem por tema vivem em semantic.css.
+   ============================================================ */
+:root {
+  /* --- Gradientes dourados / metálicos -------------------- */
+  --gradient-gold: linear-gradient(135deg, var(--color-gold-800) 0%, var(--color-gold-600) 32%, var(--color-gold-400) 66%, var(--color-gold-200) 100%);
+  --gradient-gold-soft: linear-gradient(135deg, var(--color-gold-500) 0%, var(--color-gold-300) 100%);
+  --gradient-metal: linear-gradient(135deg, var(--color-gold-700) 0%, var(--color-gold-400) 22%, var(--color-champagne) 42%, var(--color-gold-400) 60%, var(--color-gold-600) 78%, var(--color-gold-200) 100%);
+  --gradient-champagne: linear-gradient(100deg, var(--color-gold-600) 0%, var(--color-gold-400) 40%, var(--color-gold-100) 100%);
+  --gradient-hairline: linear-gradient(90deg, transparent 0%, var(--color-gold-500) 20%, var(--color-gold-500) 80%, transparent 100%);
+  --gradient-ink: linear-gradient(180deg, var(--color-ink-800) 0%, var(--color-ink-900) 100%);
+
+  /* --- Vidro fosco / VÉU (frosted serum glass) ------------ */
+  /* Translucidez é a assinatura. Três níveis de opacidade: quanto
+     menor, mais se vê através; o blur + saturate + sheen mantêm a
+     legibilidade. veil-3 para conteúdo denso (texto longo). */
+  --glass-blur-sm: 12px;
+  --glass-blur: 22px;
+  --glass-blur-lg: 40px;
+  --glass-saturate: 1.6;                 /* @kind other */
+
+  /* Escala de véu — claro */
+  --veil-light-1: rgba(251, 249, 244, 0.34);
+  --veil-light-2: rgba(251, 249, 244, 0.56);
+  --veil-light-3: rgba(251, 249, 244, 0.80);
+  /* Escala de véu — escuro (calor dourado, nunca cinza) */
+  --veil-dark-1: rgba(30, 24, 16, 0.30);
+  --veil-dark-2: rgba(28, 23, 16, 0.46);
+  --veil-dark-3: rgba(20, 16, 10, 0.68);
+
+  /* Aliases de compatibilidade (= nível 2, padrão) */
+  --glass-bg-light: var(--veil-light-2);
+  --glass-bg-dark: var(--veil-dark-2);
+
+  --glass-border-light: rgba(255, 255, 255, 0.60);
+  --glass-border-dark: rgba(219, 190, 124, 0.22);
+
+  /* Sheen (brilho de topo) — o que faz o vidro parecer molhado */
+  --glass-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 46%);       /* @kind other */
+  --glass-sheen-dark: linear-gradient(180deg, rgba(233, 211, 163, 0.16) 0%, rgba(233, 211, 163, 0) 48%);  /* @kind other */
+
+  /* Luz interna difusa (inset) — o "sérum" que brilha por dentro */
+  --glass-inner-light: inset 0 1px 0 rgba(255, 255, 255, 0.60), inset 0 0 44px -18px rgba(255, 255, 255, 0.55);  /* @kind other */
+  --glass-inner-dark: inset 0 1px 0 rgba(233, 211, 163, 0.14), inset 0 0 64px -24px rgba(201, 166, 92, 0.28);    /* @kind other */
+
+  /* Tinta dourada sobre o vidro escuro (serum tint) */
+  --glass-tint-dark: linear-gradient(135deg, rgba(201, 166, 92, 0.12) 0%, rgba(122, 91, 43, 0.04) 100%);  /* @kind other */
+
+  /* --- Bloom dourado (brilho metálico vivo) --------------- */
+  --bloom-gold-soft: 0 0 24px -6px rgba(201, 166, 92, 0.35);
+  --bloom-gold: 0 8px 40px -8px rgba(201, 166, 92, 0.45), 0 0 14px -2px rgba(233, 211, 163, 0.35);
+  --bloom-gold-strong: 0 10px 60px -6px rgba(201, 166, 92, 0.60), 0 0 20px -1px rgba(233, 211, 163, 0.50);
+
+  /* --- Profundidade em camadas (elevação) ----------------- */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px rgba(26, 22, 17, 0.06);
+  --shadow-md: 0 6px 20px -6px rgba(26, 22, 17, 0.12), 0 2px 6px -2px rgba(26, 22, 17, 0.08);
+  --shadow-lg: 0 18px 48px -12px rgba(26, 22, 17, 0.18), 0 6px 16px -6px rgba(26, 22, 17, 0.10);
+  --shadow-xl: 0 30px 80px -16px rgba(26, 22, 17, 0.28), 0 10px 24px -8px rgba(26, 22, 17, 0.14);
+  --shadow-inset-hairline: inset 0 0 0 1px rgba(181, 142, 69, 0.30);
+  /* Versões para superfícies escuras (immersive) */
+  --shadow-md-dark: 0 8px 28px -8px rgba(0, 0, 0, 0.55), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg-dark: 0 24px 60px -14px rgba(0, 0, 0, 0.65), 0 8px 20px -8px rgba(0, 0, 0, 0.45);
+
+  /* --- Mesh de fundo (orgânico, muito discreto) ----------- */
+  --mesh-brand:
+    radial-gradient(62% 52% at 14% 8%, rgba(233, 211, 163, 0.34) 0%, transparent 60%),
+    radial-gradient(48% 42% at 92% 0%, rgba(245, 230, 220, 0.55) 0%, transparent 56%),
+    radial-gradient(70% 62% at 82% 104%, rgba(219, 190, 124, 0.18) 0%, transparent 60%);  /* @kind other */
+  --mesh-immersive:
+    radial-gradient(52% 44% at 10% 6%, rgba(181, 142, 69, 0.24) 0%, transparent 60%),
+    radial-gradient(46% 46% at 90% 10%, rgba(201, 166, 92, 0.16) 0%, transparent 60%),
+    radial-gradient(64% 54% at 52% 116%, rgba(122, 91, 43, 0.26) 0%, transparent 62%);  /* @kind other */
+
+  /* --- Grão de filme (textura fina) ----------------------- */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");  /* @kind other */
+  --grain-opacity-light: 0.045;  /* @kind other */
+  --grain-opacity-dark: 0.07;    /* @kind other */
+}

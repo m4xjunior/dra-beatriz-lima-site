@@ -1,0 +1,121 @@
+---
+// BaseLayout — casca única do site. Toda página passa por aqui: mesmo
+// <head>, mesmo carregamento de motor de movimento, mesmo Nav/Footer.
+// Nenhuma página importa Nav/Footer diretamente — evita header/footer
+// divergentes entre páginas construídas por agentes diferentes.
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import "../design-system/styles.css";
+
+interface Props {
+  title: string;
+  description: string;
+  theme?: "brand" | "immersive"; // nunca "ops" no site público — tipo já impede
+  ogImage?: string;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description,
+  theme = "brand",
+  ogImage,
+  bodyClass,
+} = Astro.props;
+
+const urlOgImage = ogImage
+  ? new URL(ogImage, Astro.site ?? Astro.url)
+  : undefined;
+---
+
+<!doctype html>
+<html lang="pt-BR" data-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1A1611" />
+
+    <!-- Open Graph — sóbrio, sem clickbait -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="pt_BR" />
+    {urlOgImage && <meta property="og:image" content={urlOgImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Fontes da marca via Google Fonts CDN (ver readme.md § Fontes e
+         tokens/fonts.css). Padrão non-blocking: preconnect + preload
+         que troca pra stylesheet no onload (perf-astro) — evita o
+         @import em CSS, que é sempre síncrono e travava o CSSOM. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+      />
+    </noscript>
+
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <Nav />
+    <slot />
+    <Footer />
+
+    <!-- Motor de movimento — GSAP via CDN, camada BL·Motion por cima.
+         Carregado uma única vez por página, nesta ordem (ver readme.md
+         § Motor de movimento). bl-motion.js sabe lazy-carregar o CDN
+         sozinho, mas os três scripts abaixo são a via documentada e
+         garantida — sem depender de injeção assíncrona em runtime. -->
+    <!-- defer (não async): mantém a ORDEM de execução entre os 4 scripts
+         (gsap → ScrollTrigger → SplitText → bl-motion.js), mas deixa o
+         navegador baixar os 4 em paralelo em vez de 1 download bloqueante
+         de cada vez — sem isso, cada <script src> sem defer/async trava
+         o parser até terminar de baixar+rodar antes de sequer começar o
+         próximo fetch (perf-astro: JS de terceiro não deve travar o load). -->
+    <script
+      is:inline
+      defer
+      src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
+    ></script>
+    <script
+      is:inline
+      defer
+      src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
+    ></script>
+    <script
+      is:inline
+      defer
+      src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"
+    ></script>
+    <script
+      is:inline
+      defer
+      src="/design-system/motion/bl-motion.js"
+    ></script>
+    <!-- Precisa ser um src externo (não inline) para o defer valer:
+         script inline sem src ignora defer e roda fora de ordem — ver
+         comentário em bl-init.js. -->
+    <script
+      is:inline
+      defer
+      src="/design-system/motion/bl-init.js"
+    ></script>
+  </body>
+</html>

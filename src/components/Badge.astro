@@ -1,0 +1,36 @@
+---
+// Badge — selo curto (ex.: "Carro-chefe"). Sem link, sem ação.
+interface Props {
+  tone?: "ouro" | "neutro";
+}
+
+const { tone = "ouro" } = Astro.props;
+---
+
+<span class="selo" data-tone={tone}>
+  <slot />
+</span>
+
+<style>
+  .selo {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--badge-font-size);
+    letter-spacing: var(--badge-tracking);
+    text-transform: uppercase;
+    border-radius: var(--badge-radius);
+    padding: var(--space-inline-xs) var(--space-inline-sm);
+    border: var(--border-width-hairline) solid var(--badge-border);
+  }
+
+  .selo[data-tone="ouro"] {
+    background: var(--badge-bg);
+    color: var(--badge-fg);
+  }
+
+  .selo[data-tone="neutro"] {
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+  }
+</style>

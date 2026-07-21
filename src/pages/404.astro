@@ -1,0 +1,70 @@
+---
+// 404 — página não encontrada.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Button from "../components/Button.astro";
+---
+
+<BaseLayout
+  title="Página não encontrada — Dra. Beatriz Lima"
+  description="A página que você procura não existe ou foi movida."
+  theme="brand"
+>
+  <section class="pagina-404">
+    <p class="pagina-404__eyebrow">404</p>
+    <h1 class="pagina-404__titulo">Esta página não foi encontrada</h1>
+    <p class="pagina-404__corpo">
+      O endereço acessado não existe ou foi movido. Volte ao início ou
+      conheça os procedimentos disponíveis.
+    </p>
+    <div class="pagina-404__acoes">
+      <Button href="/" variante="primaria">Voltar ao início</Button>
+      <Button href="/procedimentos" variante="secundaria">Ver procedimentos</Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pagina-404 {
+    max-width: var(--container-prose);
+    margin-inline: auto;
+    padding: var(--space-section-lg) var(--space-container-pad);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-stack-sm);
+  }
+
+  .pagina-404__eyebrow {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-5xl);
+    background: var(--gradient-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
+  .pagina-404__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-2xl);
+    color: var(--text-heading);
+    margin: 0;
+  }
+
+  .pagina-404__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .pagina-404__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-md);
+    justify-content: center;
+  }
+</style>

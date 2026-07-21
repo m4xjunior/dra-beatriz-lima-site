@@ -1,0 +1,45 @@
+---
+// Disclaimer — presença regulatória obrigatória e NÃO removível (CFBM Res.
+// 330/2020). Não existe prop que sobrescreva o texto padrão — só "extra",
+// que COMPLEMENTA, nunca substitui. Isso impede que o texto legal seja
+// apagado por acidente (ver contrato de arquivos § Disclaimer).
+interface Props {
+  variant?: "simulacao" | "geral";
+  extra?: string;
+}
+
+const { variant = "geral", extra } = Astro.props;
+
+const textoPadrao: Record<"simulacao" | "geral", string> = {
+  simulacao:
+    "Esta é uma ilustração / expectativa gerada por simulação 3D — não é uma fotografia, não é o seu resultado e não constitui promessa ou garantia de resultado. O resultado real de qualquer procedimento depende de avaliação clínica individual e varia de pessoa para pessoa.",
+  geral:
+    "Conteúdo com finalidade informativa. Não substitui avaliação clínica presencial. Procedimentos estéticos não têm resultado garantido: cada indicação depende do seu histórico e da sua avaliação individual, conforme a Resolução CFBM nº 330/2020.",
+};
+---
+
+<aside class="disclaimer" data-variant={variant} role="note">
+  <p class="disclaimer__texto">{textoPadrao[variant]}</p>
+  {extra && <p class="disclaimer__extra">{extra}</p>}
+</aside>
+
+<style>
+  .disclaimer {
+    background: var(--disclaimer-bg);
+    color: var(--disclaimer-fg);
+    border: var(--border-width-hairline) solid var(--disclaimer-border);
+    border-radius: var(--disclaimer-radius);
+    padding: var(--disclaimer-pad);
+    font-size: var(--disclaimer-font-size);
+    line-height: var(--type-body-leading);
+  }
+
+  .disclaimer__texto {
+    margin: 0;
+  }
+
+  .disclaimer__extra {
+    margin: var(--space-inline-xs) 0 0;
+    opacity: 0.85;
+  }
+</style>

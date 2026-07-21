@@ -1,0 +1,56 @@
+/* ============================================================
+   PRIMITIVOS · COR  —  valores brutos, sem significado.
+   Componentes JAMAIS usam estes diretamente (só os semânticos).
+   ============================================================ */
+:root {
+  /* --- Neutros quentes claros (areia / creme) — tema brand -- */
+  --color-sand-50: #FBF9F4;
+  --color-sand-100: #F6F1E8;
+  --color-sand-200: #EEE6D7;
+  --color-sand-300: #E3D8C5;
+  --color-sand-400: #CBBBA0;
+
+  /* --- Neutros quentes escuros (tinta) --------------------- */
+  --color-ink-400: #8B8070;
+  --color-ink-500: #635A4C;
+  --color-ink-600: #4A4236;
+  --color-ink-700: #342E25;
+  --color-ink-800: #241F18;
+  --color-ink-900: #1A1611;
+
+  /* --- Obsidiana (tema immersive — quente, nunca #000) ----- */
+  --color-obsidian-950: #0C0A07;
+  --color-obsidian-900: #100D09;
+  --color-obsidian-850: #15110B;
+  --color-obsidian-800: #1C1710;
+  --color-obsidian-700: #262017;
+  --color-obsidian-600: #342C20;
+
+  /* --- Família dourada (bronze → champanhe) --------------- */
+  --color-gold-100: #F4E8CC;
+  --color-gold-200: #E9D3A3;
+  --color-gold-300: #DBBE7C;
+  --color-gold-400: #C9A65C;
+  --color-gold-500: #B58E45;
+  --color-gold-600: #997438;
+  --color-gold-700: #7A5B2B;
+  --color-gold-800: #5C4420;
+
+  /* --- Champanhe claro (brilho metálico / highlight) ------- */
+  --color-champagne: #F7EDD6;
+
+  /* --- Nude / pele (acento suave) -------------------------- */
+  --color-nude-100: #F5E6DC;
+  --color-nude-200: #E9CDBC;
+  --color-nude-300: #D8AF9A;
+
+  /* --- Status (dessaturados, clínicos) -------------------- */
+  --color-success: #5E7A5A;
+  --color-warning: #A9793A;
+  --color-danger: #9B4A3F;
+  --color-info: #4A6670;
+
+  /* --- Absolutos (uso técnico raro) ----------------------- */
+  --color-white: #FFFFFF;
+  --color-black: #0B0906;
+}

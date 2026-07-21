@@ -1,0 +1,88 @@
+---
+// /simulacao-3d — página completa da simulação (tema immersive).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FaceViewer3D from "../components/FaceViewer3D.astro";
+---
+
+<BaseLayout
+  title="Simulação 3D — Dra. Beatriz Lima"
+  description="Explore uma ilustração tridimensional do conceito discutido na sua avaliação — uma expectativa visual, nunca uma promessa de resultado."
+  theme="immersive"
+>
+  <section class="pagina-simulacao">
+    <div class="pagina-simulacao__cabecalho" data-bl-reveal>
+      <p class="pagina-simulacao__eyebrow">SIMULAÇÃO 3D</p>
+      <h1 class="pagina-simulacao__titulo" data-bl-split>Veja com clareza</h1>
+      <p class="pagina-simulacao__corpo">
+        A pré-visualização em 3D é um recurso de apoio à conversa com a
+        Dra. Beatriz — uma ilustração do conceito discutido na avaliação,
+        nunca uma fotografia real nem uma garantia do que o procedimento
+        vai entregar. A decisão final é sempre clínica e individual.
+      </p>
+    </div>
+
+    <div class="pagina-simulacao__viewer" data-bl-reveal>
+      <p class="pagina-simulacao__rotulo">
+        Ilustração / expectativa — não é uma previsão do seu resultado
+      </p>
+      <FaceViewer3D
+        variant="hero"
+        autoRotate={true}
+        caption="Ilustração tridimensional do conceito de proporção discutido em avaliação — gire, aproxime e observe o volume simulado."
+      />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pagina-simulacao {
+    max-width: var(--container-lg);
+    margin-inline: auto;
+    padding: var(--space-section) var(--space-container-pad) var(--space-section);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-lg);
+  }
+
+  .pagina-simulacao__cabecalho {
+    max-width: var(--container-prose);
+  }
+
+  .pagina-simulacao__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+  }
+
+  .pagina-simulacao__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-4xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .pagina-simulacao__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .pagina-simulacao__viewer {
+    width: 100%;
+  }
+
+  .pagina-simulacao__rotulo {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+  }
+</style>

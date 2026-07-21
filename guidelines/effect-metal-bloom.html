@@ -1,0 +1,24 @@
+<!-- @dsCard group="Efeitos & Profundidade" viewport="720x220" name="Metálico champanhe & bloom" subtitle="Ouro reflexivo (não chapado) + brilho dourado em três intensidades." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-body);background:var(--color-obsidian-900);background-image:var(--mesh-immersive);color:var(--color-sand-50);padding:var(--size-6);display:flex;flex-direction:column;gap:var(--size-5);justify-content:center;min-height:100vh}
+.metal{font-family:var(--font-display);font-weight:700;font-size:var(--font-size-4xl);letter-spacing:var(--letter-spacing-tighter);line-height:1;background:var(--gradient-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.k{font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--color-gold-300)}
+.blooms{display:flex;gap:var(--size-6);align-items:center}
+.item{display:flex;flex-direction:column;align-items:center;gap:10px}
+.orb{width:56px;height:56px;border-radius:var(--radius-pill);background:radial-gradient(38% 38% at 38% 32%, var(--color-champagne), var(--color-gold-400) 50%, var(--color-gold-700) 82%)}
+.s1{box-shadow:var(--bloom-gold-soft)}.s2{box-shadow:var(--bloom-gold)}.s3{box-shadow:var(--bloom-gold-strong)}
+.lab{font-size:10px;color:var(--color-ink-400);text-transform:uppercase;letter-spacing:.1em}
+.bar{height:14px;flex:1;border-radius:var(--radius-pill);background:var(--gradient-metal)}
+</style></head><body>
+<div><div class="k">--gradient-metal · texto reflexivo</div><div class="metal">Champanhe</div></div>
+<div class="row" style="display:flex;gap:var(--size-4);align-items:center"><div class="bar"></div></div>
+<div class="blooms">
+<div class="item"><div class="orb s1"></div><div class="lab">bloom-soft</div></div>
+<div class="item"><div class="orb s2"></div><div class="lab">bloom</div></div>
+<div class="item"><div class="orb s3"></div><div class="lab">bloom-strong</div></div>
+</div>
+</body></html>

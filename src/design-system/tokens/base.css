@@ -1,0 +1,28 @@
+/* ============================================================
+   BASE — reset mínimo que faltava no sistema.
+   ------------------------------------------------------------
+   BUG REAL (visto em tela, não teoria): nenhum arquivo deste
+   design system definia font-family em html/body. Como os
+   arquivos de tokens são só variáveis (:root), e vários
+   componentes (.hero__corpo, .pagina-procedimentos__corpo,
+   .card-servico__resumo, entre outros) declaram font-size/
+   line-height/color mas ESQUECEM font-family — confiando em
+   herança — o texto corrido do site inteiro caía no serif
+   padrão do navegador (Times), nunca no Mulish do design system.
+   Título/eyebrow ficavam certos só porque sempre setam
+   font-family explícita; o corpo de texto, não.
+
+   Este arquivo é a única folha de estilo deste pacote que mira
+   elementos HTML crus (html/body) em vez de :root — por isso
+   vive separado dos outros tokens/*.css (que são só variáveis) e
+   é importado por último em styles.css, depois de todos os
+   tokens já existirem.
+   ============================================================ */
+html {
+  font-family: var(--font-body);
+}
+
+body {
+  font-family: var(--type-body-font, var(--font-body));
+  color: var(--text-body);
+}

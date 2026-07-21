@@ -1,0 +1,183 @@
+---
+// /procedimentos/[slug] — página de um procedimento. O slug É o id da
+// entrada (nome do arquivo .md) — não existe campo "slug" redundante.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Badge from "../../components/Badge.astro";
+import Divider from "../../components/Divider.astro";
+import Disclaimer from "../../components/Disclaimer.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const procedimentos = await getCollection(
+    "procedimentos",
+    ({ data }) => data.publicado
+  );
+  return procedimentos.map((item) => ({
+    params: { slug: item.id },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const { data } = item;
+const { Content } = await render(item);
+---
+
+<BaseLayout
+  title={data.seoTitulo ?? `${data.titulo} — Dra. Beatriz Lima`}
+  description={data.seoDescricao ?? data.resumo}
+  theme="brand"
+>
+  <article class="pagina-procedimento">
+    <header class="pagina-procedimento__cabecalho" data-bl-reveal>
+      {data.carroChefe && <Badge tone="ouro">Carro-chefe</Badge>}
+      <p class="pagina-procedimento__eyebrow">{data.eyebrow}</p>
+      <h1 class="pagina-procedimento__titulo">{data.titulo}</h1>
+      <p class="pagina-procedimento__resumo">{data.resumo}</p>
+      {
+        data.duracaoMedia && (
+          <p class="pagina-procedimento__meta">
+            Duração média do atendimento: {data.duracaoMedia}
+          </p>
+        )
+      }
+    </header>
+
+    <Divider fade />
+
+    <div class="pagina-procedimento__corpo" data-bl-reveal>
+      <Content />
+    </div>
+
+    <div class="pagina-procedimento__grade" data-bl-reveal>
+      <section>
+        <h2 class="pagina-procedimento__subtitulo">Indicações</h2>
+        <ul class="pagina-procedimento__lista">
+          {data.indicacoes.map((linha) => <li>{linha}</li>)}
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="pagina-procedimento__subtitulo">Contraindicações</h2>
+        <ul class="pagina-procedimento__lista">
+          {data.contraindicacoes.map((linha) => <li>{linha}</li>)}
+        </ul>
+      </section>
+
+      {
+        data.cuidadosPosProcedimento && (
+          <section>
+            <h2 class="pagina-procedimento__subtitulo">Cuidados após o procedimento</h2>
+            <ul class="pagina-procedimento__lista">
+              {data.cuidadosPosProcedimento.map((linha) => <li>{linha}</li>)}
+            </ul>
+          </section>
+        )
+      }
+    </div>
+
+    {
+      data.notaPreco && (
+        <p class="pagina-procedimento__preco" data-bl-reveal>{data.notaPreco}</p>
+      )
+    }
+
+    <Disclaimer variant="geral" extra={data.disclaimerExtra} />
+  </article>
+</BaseLayout>
+
+<style>
+  .pagina-procedimento {
+    max-width: var(--container-prose);
+    margin-inline: auto;
+    padding: var(--space-section) var(--space-container-pad) var(--space-stack-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-lg);
+  }
+
+  .pagina-procedimento__cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+  }
+
+  .pagina-procedimento__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: var(--space-stack-xs) 0 0;
+  }
+
+  .pagina-procedimento__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-3xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0;
+  }
+
+  .pagina-procedimento__resumo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .pagina-procedimento__meta {
+    font-size: var(--font-size-xs);
+    color: var(--text-subtle);
+    margin: 0;
+  }
+
+  .pagina-procedimento__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-body);
+  }
+
+  .pagina-procedimento__corpo :global(p) {
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .pagina-procedimento__grade {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-stack-lg);
+  }
+
+  .pagina-procedimento__subtitulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-lg);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-xs);
+  }
+
+  .pagina-procedimento__lista {
+    margin: 0;
+    padding-left: var(--space-inline-md);
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    line-height: var(--type-body-leading);
+  }
+
+  .pagina-procedimento__lista li {
+    margin-bottom: var(--space-inline-xs);
+  }
+
+  .pagina-procedimento__preco {
+    font-size: var(--font-size-sm);
+    color: var(--text-subtle);
+    font-style: italic;
+  }
+
+  @media (min-width: 768px) {
+    .pagina-procedimento__grade {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

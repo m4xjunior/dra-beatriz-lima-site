@@ -1,0 +1,129 @@
+---
+// Pilares — os cinco princípios comunicados pela própria Dra. Beatriz
+// (ver readme.md § Contexto da marca).
+const pilares = [
+  {
+    nome: "Ciência",
+    descricao: "Cada indicação parte de critério clínico, não de tendência.",
+  },
+  {
+    nome: "Ética",
+    descricao: "Transparência sobre o que um procedimento pode e não pode entregar.",
+  },
+  {
+    nome: "Escuta",
+    descricao: "Cada rosto é único, e o cuidado começa por ouvir o que você busca.",
+  },
+  {
+    nome: "Respeito",
+    descricao: "Ao seu tempo, ao seu histórico e aos seus limites.",
+  },
+  {
+    nome: "Individualidade",
+    descricao: "Nenhum protocolo é padrão — cada avaliação é sobre você.",
+  },
+];
+---
+
+<section class="pilares">
+  <div class="pilares__inner">
+    <p class="pilares__eyebrow" data-bl-reveal>PILARES</p>
+    <h2 class="pilares__titulo" data-bl-reveal>O que sustenta cada avaliação</h2>
+    <ul class="pilares__lista">
+      {
+        pilares.map((pilar) => (
+          <li class="pilares__item" data-bl-reveal>
+            <span class="pilares__chave" aria-hidden="true">{"{"}</span>
+            <div>
+              <h3 class="pilares__nome">{pilar.nome}</h3>
+              <p class="pilares__descricao">{pilar.descricao}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pilares {
+    padding-block: var(--space-section);
+    background-color: var(--surface-sunken);
+  }
+
+  .pilares__inner {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+  }
+
+  .pilares__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+    text-align: center;
+  }
+
+  .pilares__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-2xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    text-align: center;
+    margin: 0 0 var(--space-stack-lg);
+  }
+
+  .pilares__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-stack-md);
+    padding: 0;
+    margin: 0;
+  }
+
+  .pilares__item {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: flex-start;
+  }
+
+  .pilares__chave {
+    font-family: var(--type-display-font);
+    font-size: var(--font-size-2xl);
+    color: var(--text-accent);
+    line-height: 1;
+  }
+
+  .pilares__nome {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-lg);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-inline-xs);
+  }
+
+  .pilares__descricao {
+    font-size: var(--font-size-sm);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+    max-width: 46ch;
+  }
+
+  @media (min-width: 768px) {
+    .pilares__lista {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: var(--space-gutter);
+    }
+    .pilares__item:last-child {
+      grid-column: 1 / -1;
+      justify-content: center;
+      text-align: left;
+    }
+  }
+</style>

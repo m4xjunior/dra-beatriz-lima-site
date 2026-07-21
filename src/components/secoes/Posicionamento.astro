@@ -1,0 +1,73 @@
+---
+// Posicionamento — o discurso central da marca, em texto editorial.
+import Divider from "../Divider.astro";
+---
+
+<section class="posicionamento">
+  <div class="posicionamento__inner">
+    <Divider fade />
+    <p class="posicionamento__eyebrow" data-bl-reveal>POSICIONAMENTO</p>
+    <blockquote class="posicionamento__citacao" data-bl-reveal>
+      "Valor não é só preço. A estética deve valorizar quem você é — nunca
+      transformar você em outra pessoa."
+    </blockquote>
+    <cite class="posicionamento__atribuicao" data-bl-reveal>
+      Dra. Beatriz Lima · Biomédica Esteta
+    </cite>
+    <p class="posicionamento__corpo" data-bl-reveal>
+      Critério clínico acima de tendência. Cada avaliação parte da sua
+      individualidade, não de um padrão de rosto ou de uma referência de
+      rede social. Resultado natural, elegante e proporcional — sem
+      exageros.
+    </p>
+  </div>
+</section>
+
+<style>
+  .posicionamento {
+    padding-block: var(--space-section);
+  }
+
+  .posicionamento__inner {
+    max-width: var(--container-prose);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+    text-align: center;
+  }
+
+  .posicionamento__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: var(--space-stack-lg) 0 var(--space-stack-sm);
+  }
+
+  .posicionamento__citacao {
+    font-family: var(--type-quote-font);
+    font-style: italic;
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-snug);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-md);
+  }
+
+  .posicionamento__atribuicao {
+    display: block;
+    font-family: var(--type-eyebrow-font);
+    font-style: normal;
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-md);
+  }
+
+  .posicionamento__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+  }
+</style>

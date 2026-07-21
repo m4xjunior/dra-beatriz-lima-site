@@ -1,0 +1,160 @@
+/* ============================================================
+   TOKENS DE COMPONENTE  —  herdam do semântico; cada um pode
+   ser sobrescrito individualmente pelo admin sem afetar os
+   outros. Nível que o painel expõe por componente.
+   Nenhum literal (hex/px/rem/família) dentro do componente.
+   ============================================================ */
+:root {
+  /* --- Botão primário (metálico) -------------------------- */
+  --button-primary-bg: var(--gradient-gold);
+  --button-primary-bg-fallback: var(--color-gold-600);
+  --button-primary-fg: var(--text-on-accent);
+  --button-primary-border: transparent;
+  --button-primary-bloom: var(--bloom);
+  --button-primary-hover-filter: brightness(1.04) saturate(1.05); /* @kind other */
+  --button-primary-radius: var(--radius-control);
+
+  /* --- Botão secundário (contorno / vidro) ---------------- */
+  --button-secondary-bg: transparent;
+  --button-secondary-fg: var(--text-accent);
+  --button-secondary-border: var(--color-gold-500);
+  --button-secondary-hover-bg: var(--surface-hover);
+  --button-secondary-radius: var(--radius-control);
+
+  /* --- Botão texto (terciário) ---------------------------- */
+  --button-text-fg: var(--text-accent);
+  --button-text-hover-bg: var(--surface-hover);
+
+  /* --- Métricas de botão (por data-size) ------------------ */
+  --button-font: var(--type-eyebrow-font);
+  --button-tracking: var(--letter-spacing-wide);
+  --button-pad-y: var(--size-3);
+  --button-pad-x: var(--size-6);
+  --button-font-size: var(--font-size-sm);
+
+  /* --- Campo de formulário -------------------------------- */
+  --field-bg: var(--surface-raised);
+  --field-fg: var(--text-body);
+  --field-placeholder: var(--text-subtle);
+  --field-border: var(--border-subtle);
+  --field-border-focus: var(--border-focus);
+  --field-radius: var(--radius-control);
+  --field-pad-y: var(--size-3);
+  --field-pad-x: var(--size-4);
+  --field-label-font: var(--type-eyebrow-font);
+  --field-label-color: var(--text-muted);
+  --field-invalid-border: var(--status-danger);
+
+  /* --- Card genérico -------------------------------------- */
+  --card-bg: var(--surface-raised);
+  --card-border: var(--border-subtle);
+  --card-radius: var(--radius-card);
+  --card-pad: var(--size-6);
+  --card-shadow: var(--elevation-floating);
+
+  /* --- Card de vidro (glass / véu) ------------------------ */
+  --card-glass-bg: var(--surface-glass);
+  --card-glass-bg-strong: var(--surface-glass-strong);
+  --card-glass-border: var(--surface-glass-border);
+  --card-glass-blur: var(--glass-blur);
+  --card-glass-saturate: var(--glass-saturate);
+  --card-glass-sheen: var(--surface-glass-sheen);
+  --card-glass-inner: var(--surface-glass-inner);
+  --card-glass-tint: var(--surface-glass-tint);
+  --card-glass-radius: var(--radius-card);
+  --card-glass-shadow: var(--elevation-floating);
+
+  /* --- Tilt 3D (cards que inclinam) ----------------------- */
+  --tilt-max: 8deg;               /* @kind other */
+  --tilt-perspective: 900px;      /* @kind other */
+  --tilt-ease: var(--ease-tilt);  /* @kind other */
+  --tilt-glow: var(--bloom);
+
+  /* --- Card de serviço/procedimento ----------------------- */
+  --card-service-bg: var(--surface-glass);
+  --card-service-border: var(--surface-glass-border);
+  --card-service-radius: var(--radius-card);
+  --card-service-accent: var(--border-hairline);
+  --card-service-pad: var(--size-6);
+  --card-service-bloom-strong: var(--bloom-strong);
+
+  /* --- Badge / tag ---------------------------------------- */
+  --badge-bg: var(--surface-accent-soft);
+  --badge-fg: var(--text-accent-strong);
+  --badge-border: transparent;
+  --badge-radius: var(--radius-pill);
+  --badge-font-size: var(--font-size-2xs);
+  --badge-tracking: var(--letter-spacing-wider);
+
+  /* --- Fio divisor (hairline dourada) --------------------- */
+  --divider-color: var(--border-hairline);
+  --divider-thickness: var(--border-width-hairline);
+
+  /* --- Navegação ------------------------------------------ */
+  --nav-bg: var(--surface-glass);
+  --nav-blur: var(--glass-blur);
+  --nav-fg: var(--text-body);
+  --nav-fg-active: var(--text-accent);
+  --nav-border: var(--surface-glass-border);
+  --nav-height: var(--size-8);
+
+  /* --- Rodapé --------------------------------------------- */
+  --footer-bg: var(--surface-inverse);
+  --footer-fg: var(--text-on-inverse);
+  --footer-accent: var(--text-accent-on-inverse);
+
+  /* --- Modal ---------------------------------------------- */
+  --modal-bg: var(--surface-glass-strong);
+  --modal-blur: var(--glass-blur-lg);
+  --modal-inner: var(--surface-glass-inner);
+  --modal-radius: var(--radius-surface);
+  --modal-shadow: var(--elevation-overlay);
+  --modal-scrim: var(--surface-overlay);
+  --modal-max-width: var(--container-sm);
+
+  /* --- Toast ---------------------------------------------- */
+  --toast-bg: var(--surface-inverse);
+  --toast-fg: var(--text-on-inverse);
+  --toast-radius: var(--radius-card);
+  --toast-shadow: var(--elevation-overlay);
+
+  /* --- Tabs ----------------------------------------------- */
+  --tabs-fg: var(--text-muted);
+  --tabs-fg-active: var(--text-body);
+  --tabs-indicator: var(--border-hairline);
+  --tabs-border: var(--border-subtle);
+
+  /* --- Visualizador 3D facial (immersive) ----------------- */
+  --viewer3d-bg: var(--surface-sunken);
+  --viewer3d-radius: var(--radius-surface);
+  --viewer3d-glow: var(--bloom);
+  --viewer3d-glow-strong: var(--bloom-gold-strong);
+  --viewer3d-control-bg: var(--surface-glass);
+  --viewer3d-control-border: var(--surface-glass-border);
+  --viewer3d-label-fg: var(--text-accent);
+  /* Cores do orb — lidas via getComputedStyle em face-viewer-3d-scene.ts
+     (GLSL não lê var(); ver comentário no topo daquele arquivo). Aliasam
+     primitivos de color.css: se a paleta mudar, muda só aqui. */
+  --viewer3d-core-start: var(--color-gold-700);
+  --viewer3d-core-end: var(--color-gold-500);
+  --viewer3d-edge-glow: var(--color-champagne);
+  --viewer3d-void: var(--color-obsidian-900);
+  /* Fallback estático (prefers-reduced-motion / <noscript>) — mesma
+     receita de guidelines/brand-duotom.html, remontada só com tokens. */
+  --viewer3d-orb-static: radial-gradient(38% 38% at 38% 32%, var(--viewer3d-edge-glow) 0%, var(--color-gold-400) 46%, var(--viewer3d-core-start) 78%, var(--viewer3d-void) 100%);
+
+  /* --- Disclaimer obrigatório (regulatório) --------------- */
+  /* Presença NÃO removível pelo esquema; conteúdo editável. */
+  --disclaimer-bg: var(--surface-sunken);
+  --disclaimer-fg: var(--text-muted);
+  --disclaimer-border: var(--border-hairline);
+  --disclaimer-radius: var(--radius-sm);
+  --disclaimer-font-size: var(--font-size-xs);
+  --disclaimer-pad: var(--size-4);
+
+  /* --- Aviso LGPD / dado biométrico ----------------------- */
+  --consent-bg: var(--surface-accent-soft);
+  --consent-fg: var(--text-body);
+  --consent-border: var(--color-gold-500);
+  --consent-radius: var(--radius-card);
+}

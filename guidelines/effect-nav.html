@@ -1,0 +1,29 @@
+<!-- @dsCard group="Efeitos & Profundidade" viewport="720x260" name="Nav translúcida — a página brilha através" subtitle="Barra fosca fixa: o conteúdo desliza por baixo e transparece. Brand e immersive." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-body);display:grid;grid-template-columns:1fr 1fr}
+.pane{position:relative;min-height:100vh;background-color:var(--surface-base);background-image:var(--surface-mesh);overflow:hidden}
+.nav{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:var(--size-3) var(--size-5);background-color:var(--nav-bg);background-image:var(--surface-glass-tint);-webkit-backdrop-filter:blur(var(--nav-blur)) saturate(var(--glass-saturate));backdrop-filter:blur(var(--nav-blur)) saturate(var(--glass-saturate));border-bottom:1px solid var(--surface-glass-border);box-shadow:var(--surface-glass-inner)}
+.brand{font-family:var(--font-display);font-weight:700;letter-spacing:var(--letter-spacing-wide);font-size:var(--font-size-md);color:var(--text-heading)}
+.links{display:flex;gap:var(--size-4);font-size:var(--font-size-xs);text-transform:uppercase;letter-spacing:var(--letter-spacing-wide);color:var(--text-muted)}
+.links .on{color:var(--text-accent)}
+.body{padding:var(--size-5)}
+.big{font-family:var(--font-display);font-weight:800;font-size:74px;line-height:.92;letter-spacing:-.04em;color:var(--text-heading);opacity:.9}
+.big .m{background:var(--gradient-gold-text);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.p{font-size:var(--font-size-sm);color:var(--text-muted);margin-top:var(--size-3);max-width:34ch;line-height:1.6}
+.hint{position:absolute;bottom:10px;left:var(--size-5);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-subtle)}
+</style></head><body>
+<section class="pane" data-theme="brand">
+<nav class="nav"><span class="brand">BL</span><span class="links"><span class="on">Serviços</span><span>Sobre</span><span>Contato</span></span></nav>
+<div class="body"><div class="big">Cuidado com <span class="m">critério</span></div><p>Role e a tipografia passa por trás do véu — a nav nunca vira um bloco opaco.</p></div>
+<div class="hint">--nav-bg · véu-2 · blur 22px</div>
+</section>
+<section class="pane" data-theme="immersive">
+<nav class="nav"><span class="brand">BL</span><span class="links"><span class="on">Simulação</span><span>Rosto</span><span>Sair</span></span></nav>
+<div class="body"><div class="big">Simular em <span class="m">3D</span></div><p>No escuro, a barra ganha tinta dourada e a luz interna do vidro aparece.</p></div>
+<div class="hint">immersive · tinta dourada + luz interna</div>
+</section>
+</body></html>

@@ -1,0 +1,106 @@
+---
+// TeaserCatalogo — amostra do catálogo na landing (2–3 procedimentos).
+// Lê a collection 'procedimentos' — nunca hardcoda dado clínico aqui.
+import { getCollection } from "astro:content";
+import ServiceCard from "../ServiceCard.astro";
+import Button from "../Button.astro";
+
+const todos = await getCollection("procedimentos", ({ data }) => data.publicado);
+const destaques = todos
+  .sort((a, b) => a.data.ordem - b.data.ordem)
+  .slice(0, 3);
+---
+
+<section class="teaser-catalogo">
+  <div class="teaser-catalogo__inner">
+    <div class="teaser-catalogo__cabecalho" data-bl-reveal>
+      <p class="teaser-catalogo__eyebrow">PROCEDIMENTOS</p>
+      <h2 class="teaser-catalogo__titulo">Um catálogo por indicação, não por tendência</h2>
+      <p class="teaser-catalogo__corpo">
+        Preenchimento labial, bioestimuladores de colágeno, toxina botulínica
+        e harmonização, peelings e protocolos de pele — cada um com
+        indicações e contraindicações claras, para você decidir com
+        informação, não com pressa.
+      </p>
+    </div>
+
+    <div class="teaser-catalogo__grade">
+      {
+        destaques.map((item) => (
+          <ServiceCard
+            slug={item.id}
+            eyebrow={item.data.eyebrow}
+            title={item.data.titulo}
+            summary={item.data.resumo}
+            featured={item.data.carroChefe}
+          />
+        ))
+      }
+    </div>
+
+    <div class="teaser-catalogo__acao" data-bl-reveal>
+      <Button href="/procedimentos" variante="texto">Ver todos os procedimentos →</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .teaser-catalogo {
+    padding-block: var(--space-section);
+  }
+
+  .teaser-catalogo__inner {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+  }
+
+  .teaser-catalogo__cabecalho {
+    text-align: center;
+    margin-bottom: var(--space-stack-lg);
+  }
+
+  .teaser-catalogo__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+  }
+
+  .teaser-catalogo__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-2xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .teaser-catalogo__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    max-width: 62ch;
+    margin-inline: auto;
+  }
+
+  .teaser-catalogo__grade {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-gutter);
+  }
+
+  .teaser-catalogo__acao {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-stack-lg);
+  }
+
+  @media (min-width: 768px) {
+    .teaser-catalogo__grade {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

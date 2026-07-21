@@ -1,0 +1,120 @@
+---
+// Hero — abertura da landing. Sem props: copy fixa (ver readme.md §
+// CONTENT FUNDAMENTALS para o tom de voz de referência).
+import Button from "../Button.astro";
+---
+
+<section class="hero">
+  <div class="hero__mesh" aria-hidden="true"></div>
+  <div class="hero__grain" aria-hidden="true"></div>
+
+  <div class="hero__conteudo">
+    <p class="hero__eyebrow" data-bl-reveal>GOIÂNIA · BIOMEDICINA ESTÉTICA</p>
+    <h1 class="hero__titulo" data-bl-split>
+      Estética que valoriza <span class="hero__destaque">você</span>
+    </h1>
+    <p class="hero__corpo" data-bl-reveal>
+      Critério clínico acima de tendência. Cada procedimento parte de uma
+      avaliação individual sobre o seu rosto — nunca de um padrão pronto.
+    </p>
+
+    <div class="hero__acoes" data-bl-reveal>
+      <Button href="/procedimentos" variante="primaria">Ver procedimentos</Button>
+      <Button href="/simulacao-3d" variante="secundaria">Iniciar simulação 3D</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--space-section-lg) var(--space-section);
+  }
+
+  .hero__mesh {
+    position: absolute;
+    inset: 0;
+    background-color: var(--surface-base);
+    background-image: var(--surface-mesh);
+    z-index: -2;
+  }
+
+  .hero__grain {
+    position: absolute;
+    inset: 0;
+    background-image: var(--grain);
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .hero__conteudo {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+  }
+
+  .hero__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .hero__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-bold);
+    font-size: clamp(2.625rem, 6vw + 1rem, 5.5rem);
+    line-height: var(--type-display-leading);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-md);
+    max-width: 16ch;
+  }
+
+  .hero__destaque {
+    background: var(--gradient-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* BUG REAL (visto em tela, não só teoria): data-bl-split no .hero__titulo
+     reconstrói o texto inteiro em <div>s por caractere (SplitText,
+     mask:"chars"). Isso move os glyphs de "você" para dentro de divs
+     filhas que herdam -webkit-text-fill-color:transparent do
+     .hero__destaque mas NÃO herdam o background (background não é
+     propriedade herdável) — resultado: a palavra some por completo,
+     0% opaca e sem nada atrás. O clip precisa estar no elemento que
+     realmente contém o glyph (o .bl-char folha), não só no ancestral.
+
+     :global() é obrigatório aqui: SplitText cria o .bl-char em runtime,
+     depois do build — ele nunca ganha o atributo data-astro-cid-* que o
+     Astro usa pra escopar CSS, então ".hero__destaque .bl-char" sem
+     :global() (viraria ".hero__destaque[data-astro-cid-x] .bl-char
+     [data-astro-cid-x]") jamais bateria em nada. */
+  .hero__destaque :global(.bl-char) {
+    background: var(--gradient-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    max-width: 42ch;
+    margin: 0 0 var(--space-stack-lg);
+  }
+
+  .hero__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-md);
+  }
+</style>

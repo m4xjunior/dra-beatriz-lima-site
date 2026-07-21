@@ -1,0 +1,98 @@
+---
+// TeaserSimulacao — chamada para a simulação 3D, com prévia embutida
+// (FaceViewer3D variant="inline"). O disclaimer obrigatório vem embutido
+// no próprio FaceViewer3D — não duplicar aqui.
+import FaceViewer3D from "../FaceViewer3D.astro";
+import Button from "../Button.astro";
+---
+
+<section class="teaser-simulacao">
+  <div class="teaser-simulacao__inner">
+    <div class="teaser-simulacao__texto" data-bl-reveal>
+      <p class="teaser-simulacao__eyebrow">SIMULAÇÃO 3D</p>
+      <h2 class="teaser-simulacao__titulo">Veja com clareza</h2>
+      <p class="teaser-simulacao__corpo">
+        Uma peça ilustrativa em 3D — não uma previsão do seu rosto — para
+        você entender visualmente o raciocínio por trás de cada avaliação,
+        antes de decidir.
+      </p>
+      <div class="teaser-simulacao__acao">
+        <Button href="/simulacao-3d" variante="primaria">Iniciar simulação</Button>
+      </div>
+      <p class="teaser-simulacao__nota">
+        Ilustração de marca; resultados reais dependem de avaliação
+        individual presencial.
+      </p>
+    </div>
+
+    <div class="teaser-simulacao__viewer" data-bl-reveal>
+      <FaceViewer3D variant="inline" autoRotate={true} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .teaser-simulacao {
+    padding-block: var(--space-section);
+  }
+
+  .teaser-simulacao__inner {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-stack-lg);
+    align-items: center;
+  }
+
+  .teaser-simulacao__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+  }
+
+  .teaser-simulacao__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-2xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .teaser-simulacao__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    max-width: 46ch;
+    margin: 0 0 var(--space-stack-md);
+  }
+
+  .teaser-simulacao__nota {
+    font-size: var(--font-size-xs);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    opacity: 0.75;
+    max-width: 46ch;
+    margin: var(--space-stack-sm) 0 0;
+  }
+
+  .teaser-simulacao__viewer {
+    max-width: 26rem;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .teaser-simulacao__inner {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+    .teaser-simulacao__viewer {
+      margin-inline: 0;
+    }
+  }
+</style>

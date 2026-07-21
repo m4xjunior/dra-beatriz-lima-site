@@ -1,0 +1,31 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{width:1280px;height:854px;display:flex;font-family:var(--font-display)}
+.main{flex:1;position:relative;background-color:var(--color-obsidian-900);background-image:var(--mesh-immersive);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;overflow:hidden}
+.main::after{content:"";position:absolute;inset:0;background-image:var(--grain);opacity:.09;mix-blend-mode:overlay}
+.orb{position:absolute;width:520px;height:520px;border-radius:var(--radius-pill);background:radial-gradient(38% 38% at 40% 34%, var(--color-champagne), var(--color-gold-400) 44%, var(--color-gold-700) 72%, transparent 100%);filter:blur(6px);opacity:.5;top:-120px;right:-120px}
+.mono{position:relative;font-weight:700;font-size:190px;line-height:.8;letter-spacing:-.02em;background:var(--gradient-metal);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.name{position:relative;font-weight:600;text-transform:uppercase;letter-spacing:.18em;font-size:50px;color:var(--color-sand-50);white-space:nowrap}
+.rule{position:relative;width:120px;height:2px;background:var(--gradient-metal)}
+.sub{position:relative;font-family:var(--font-body);text-transform:uppercase;letter-spacing:.34em;font-size:24px;color:var(--color-gold-300)}
+.strip{width:300px;display:flex;flex-direction:column}
+.strip>div{flex:1}
+</style></head><body>
+<div class="main">
+<div class="orb"></div>
+<div class="mono">BL</div>
+<div class="name">Dra. Beatriz Lima</div>
+<div class="rule"></div>
+<div class="sub">Biomédica Esteta</div>
+</div>
+<div class="strip">
+<div style="background:var(--color-champagne)"></div>
+<div style="background:var(--color-gold-400)"></div>
+<div style="background:var(--color-gold-600)"></div>
+<div style="background:var(--color-gold-800)"></div>
+</div>
+</body></html>

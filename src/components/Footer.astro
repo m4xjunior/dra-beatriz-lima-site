@@ -1,0 +1,166 @@
+---
+// Footer — rodapé fixo do site, herdando tema do [data-theme] do <html>.
+// Sem props obrigatórias. Slot nomeado "extra" opcional (link legal — Etapa 3).
+const pilares = ["Ciência", "Ética", "Escuta", "Respeito", "Individualidade"];
+const ano = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__lockup">
+      <span class="footer__mono">BL</span>
+      <div class="footer__nome">
+        <span>Dra. Beatriz Lima</span>
+        <span class="footer__sub">Biomédica Esteta</span>
+      </div>
+    </div>
+
+    <ul class="footer__pilares" aria-label="Pilares da prática">
+      {
+        pilares.map((pilar) => (
+          <li>
+            <span class="footer__chave" aria-hidden="true">{"{"}</span>
+            {pilar}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="footer__contato">
+      <a
+        href="https://www.instagram.com/biomedica.beatrizz"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="footer__instagram"
+      >
+        @biomedica.beatrizz
+      </a>
+      <span class="footer__local">Goiânia · GO</span>
+    </div>
+
+    <slot name="extra" />
+
+    <p class="footer__legal">
+      Conteúdo informativo — não substitui avaliação clínica presencial.
+      Todo procedimento é individual; resultados dependem de indicação e
+      histórico de cada paciente.
+    </p>
+
+    <p class="footer__copy">© {ano} Dra. Beatriz Lima. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-fg);
+  }
+
+  .footer__inner {
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding: var(--space-section) var(--space-container-pad) var(--space-stack-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-md);
+  }
+
+  .footer__lockup {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-md);
+  }
+
+  .footer__mono {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-3xl);
+    letter-spacing: var(--letter-spacing-normal);
+    background: var(--gradient-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+
+  .footer__nome {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--type-display-font);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    font-size: var(--font-size-sm);
+  }
+
+  .footer__sub {
+    color: var(--footer-accent);
+    font-size: var(--font-size-2xs);
+    margin-top: var(--space-inline-xs);
+  }
+
+  .footer__pilares {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-lg) var(--space-inline-lg);
+    padding: 0;
+    margin: 0;
+    font-family: var(--type-body-font);
+    font-size: var(--font-size-sm);
+  }
+
+  .footer__chave {
+    color: var(--footer-accent);
+    margin-right: var(--space-inline-xs);
+    font-family: var(--type-display-font);
+  }
+
+  .footer__contato {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-md);
+    align-items: baseline;
+    font-size: var(--font-size-sm);
+  }
+
+  .footer__instagram {
+    color: var(--footer-accent);
+    text-decoration: none;
+  }
+
+  .footer__instagram:hover,
+  .footer__instagram:focus-visible {
+    text-decoration: underline;
+  }
+
+  .footer__local {
+    color: var(--footer-fg);
+    opacity: 0.7;
+  }
+
+  .footer__legal {
+    font-size: var(--font-size-xs);
+    line-height: var(--type-body-leading);
+    max-width: 62ch;
+    opacity: 0.75;
+    border-top: var(--border-width-hairline) solid var(--border-hairline);
+    padding-top: var(--space-stack-sm);
+  }
+
+  .footer__copy {
+    font-size: var(--font-size-2xs);
+    opacity: 0.55;
+  }
+
+  @media (min-width: 768px) {
+    .footer__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-gutter);
+    }
+    .footer__legal,
+    .footer__copy {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+// Divider — fio dourado divisor. fade=true usa o gradiente que esmaece nas pontas.
+interface Props {
+  fade?: boolean;
+}
+
+const { fade = false } = Astro.props;
+---
+
+<hr class="fio" data-fade={fade ? "true" : "false"} />
+
+<style>
+  .fio {
+    border: none;
+    height: var(--divider-thickness);
+    background: var(--divider-color);
+    margin: 0;
+  }
+
+  .fio[data-fade="true"] {
+    background: var(--gradient-hairline);
+  }
+</style>

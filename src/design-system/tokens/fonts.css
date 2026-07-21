@@ -1,0 +1,16 @@
+/* ============================================================
+   FONTES — Google Fonts CDN (font-display: swap)
+   ------------------------------------------------------------
+   Display  : Bricolage Grotesque  — grotesca contemporânea, tech-editorial
+   Corpo/UI : Mulish               — sans humanista leve
+   Citações : Cormorant Garamond   — serifa editorial, só em citações
+   Para Tauri/offline: auto-hospede os .woff2 e troque por @font-face
+   locais — os tokens --font-* não mudam.
+
+   O carregamento em si NÃO mora aqui como @import: @import em CSS é
+   sempre render-blocking (a cadeia styles.css → fonts.css → Google
+   trava o CSSOM até resolver, em série) e não aceita o truque
+   media=print/onload. O <link> real vive em BaseLayout.astro (head),
+   com rel=preload + onload→stylesheet (non-blocking, perf-astro).
+   Este arquivo permanece só como documentação da decisão de fontes.
+   ============================================================ */

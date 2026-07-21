@@ -1,0 +1,235 @@
+---
+// Nav — barra translúcida fixa (véu + blur), mobile-first.
+// Sem props: deriva o item ativo sozinho a partir da URL atual.
+// Sem link "Contato" — não existe página real para ele.
+const { pathname } = Astro.url;
+
+const links = [
+  { href: "/", label: "Início" },
+  { href: "/procedimentos", label: "Procedimentos" },
+  { href: "/simulacao-3d", label: "Simulação 3D" },
+];
+
+function estaAtivo(href: string) {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+---
+
+<header class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__brand" aria-label="Dra. Beatriz Lima — início">
+      BL
+    </a>
+
+    <nav class="nav__links" aria-label="Navegação principal">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="nav__link"
+            aria-current={estaAtivo(link.href) ? "page" : undefined}
+            data-active={estaAtivo(link.href) ? "true" : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      type="button"
+      class="nav__toggle"
+      aria-expanded="false"
+      aria-controls="nav-mobile"
+      data-nav-toggle
+    >
+      <span class="nav__toggle-bar"></span>
+      <span class="nav__toggle-bar"></span>
+      <span class="nav__toggle-bar"></span>
+      <span class="sr-only">Abrir menu</span>
+    </button>
+  </div>
+
+  <nav id="nav-mobile" class="nav__mobile" aria-label="Navegação (mobile)" data-nav-mobile hidden>
+    {
+      links.map((link) => (
+        <a
+          href={link.href}
+          class="nav__mobile-link"
+          aria-current={estaAtivo(link.href) ? "page" : undefined}
+          data-active={estaAtivo(link.href) ? "true" : undefined}
+        >
+          {link.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    background-color: var(--nav-bg);
+    background-image: var(--surface-glass-tint);
+    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--nav-blur)) saturate(var(--glass-saturate));
+    border-bottom: var(--border-width-hairline) solid var(--nav-border);
+    box-shadow: var(--surface-glass-inner);
+  }
+
+  .nav__inner {
+    height: var(--nav-height);
+    max-width: var(--container-xl);
+    margin-inline: auto;
+    padding-inline: var(--space-container-pad);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-inline-md);
+  }
+
+  .nav__brand {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-lg);
+    letter-spacing: var(--letter-spacing-wide);
+    text-decoration: none;
+    background: var(--gradient-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    flex-shrink: 0;
+  }
+
+  .nav__links {
+    display: none;
+    gap: var(--space-inline-lg);
+    align-items: center;
+  }
+
+  .nav__link {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--nav-fg);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--duration-base) var(--ease-standard);
+  }
+
+  .nav__link:hover,
+  .nav__link:focus-visible {
+    color: var(--nav-fg-active);
+  }
+
+  .nav__link[data-active="true"] {
+    color: var(--nav-fg-active);
+  }
+
+  .nav__toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: var(--size-6);
+    height: var(--size-6);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .nav__toggle-bar {
+    display: block;
+    width: 100%;
+    height: 1.5px;
+    background: var(--nav-fg);
+    border-radius: var(--radius-none);
+  }
+
+  .nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+  .nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  .nav__mobile {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-stack-sm) var(--space-container-pad) var(--space-stack-md);
+    border-top: var(--border-width-hairline) solid var(--nav-border);
+    background-color: var(--nav-bg);
+    background-image: var(--surface-glass-tint);
+    -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--nav-blur)) saturate(var(--glass-saturate));
+  }
+
+  .nav__mobile[hidden] {
+    display: none;
+  }
+
+  .nav__mobile-link {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--nav-fg);
+    text-decoration: none;
+    padding-block: var(--space-inline-sm);
+    border-bottom: var(--border-width-hairline) solid var(--nav-border);
+  }
+
+  .nav__mobile-link:last-child {
+    border-bottom: none;
+  }
+
+  .nav__mobile-link[data-active="true"] {
+    color: var(--nav-fg-active);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (min-width: 768px) {
+    .nav__links {
+      display: flex;
+    }
+    .nav__toggle {
+      display: none;
+    }
+    .nav__mobile {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  // Toggle nativo do menu mobile — sem framework, sem dependência do BL·Motion
+  // (é estrutural, não decorativo; independe de prefers-reduced-motion).
+  const botao = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  const painel = document.querySelector<HTMLElement>("[data-nav-mobile]");
+
+  botao?.addEventListener("click", () => {
+    const aberto = botao.getAttribute("aria-expanded") === "true";
+    botao.setAttribute("aria-expanded", String(!aberto));
+    if (painel) painel.hidden = aberto;
+  });
+</script>

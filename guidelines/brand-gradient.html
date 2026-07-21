@@ -1,0 +1,22 @@
+<!-- @dsCard group="Marca" viewport="700x200" name="Gradiente dourado (token composto)" subtitle="Bronze → champanhe, 135°. Reutilizável: preenchimentos, fios, botão primário." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:var(--surface-base);font-family:var(--font-body);color:var(--text-body);padding:var(--size-5)}
+.big{height:96px;border-radius:var(--radius-card);background:var(--gradient-gold);margin-bottom:var(--size-3)}
+.token{font-size:11px;color:var(--text-muted);letter-spacing:.03em}
+.stops{display:flex;gap:var(--size-4);margin-top:var(--size-3)}
+.stop{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-body)}
+.dot{width:16px;height:16px;border-radius:var(--radius-pill);border:1px solid var(--border-subtle)}
+</style></head><body>
+<div class="big"></div>
+<div class="token">--gradient-gold&nbsp;&nbsp;·&nbsp;&nbsp;linear-gradient(135deg, gold-800 → gold-600 → gold-400 → gold-200)</div>
+<div class="stops">
+<div class="stop"><span class="dot" style="background:var(--color-gold-800)"></span>800 bronze</div>
+<div class="stop"><span class="dot" style="background:var(--color-gold-600)"></span>600</div>
+<div class="stop"><span class="dot" style="background:var(--color-gold-400)"></span>400</div>
+<div class="stop"><span class="dot" style="background:var(--color-gold-200)"></span>200 champanhe</div>
+</div>
+</body></html>

@@ -1,0 +1,18 @@
+<!-- @dsCard group="Marca" viewport="700x280" name="Temas — brand vs ops" subtitle="Mesmos primitivos, semânticas diferentes. Troca por [data-theme] no <html>." -->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../styles.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font-body);display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.pane{padding:var(--size-6) var(--size-5);background:var(--surface-base);color:var(--text-body)}
+.tag{font-size:10px;text-transform:uppercase;letter-spacing:var(--letter-spacing-wider);color:var(--text-accent);margin-bottom:var(--size-4)}
+h3{font-family:var(--type-display-font);font-weight:600;font-size:var(--font-size-2xl);color:var(--text-heading);line-height:1.05;letter-spacing:var(--type-display-tracking);margin-bottom:var(--size-2)}
+p{font-size:var(--font-size-sm);color:var(--text-muted);line-height:var(--type-body-leading);margin-bottom:var(--size-4)}
+.hr{height:1px;background:var(--border-hairline);margin:var(--size-4) 0}
+.btn{display:inline-block;font-family:var(--button-font);text-transform:uppercase;letter-spacing:var(--button-tracking);font-size:var(--font-size-xs);color:var(--button-primary-fg);background:var(--button-primary-bg);padding:10px 20px;border-radius:var(--button-primary-radius)}
+.field{margin-top:var(--size-3);background:var(--field-bg);border:1px solid var(--field-border);border-radius:var(--field-radius);padding:var(--field-pad-y) var(--field-pad-x);font-size:13px;color:var(--field-placeholder)}
+</style></head><body>
+<div class="pane" data-theme="brand"><div class="tag">Tema brand · público</div><h3>Preenchimento labial</h3><p>Editorial, dourado, muito ar. Serifa Didone nos títulos.</p><div class="hr"></div><span class="btn">Agendar avaliação</span><div class="field">seu@email.com</div></div>
+<div class="pane" data-theme="ops"><div class="tag">Tema ops · interno</div><h3>Preenchimento labial</h3><p>Neutro, denso, sans em tudo. Alta legibilidade em tabela.</p><div class="hr"></div><span class="btn">Salvar registro</span><div class="field">seu@email.com</div></div>
+</body></html>

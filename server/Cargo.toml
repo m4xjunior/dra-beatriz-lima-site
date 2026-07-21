@@ -1,0 +1,20 @@
+[package]
+name = "bl-design-system-server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.104"
+axum = "0.8.9"
+tokio = { version = "1.53.1", features = ["full"] }
+tower-http = { version = "0.7.0", features = ["fs", "compression-gzip", "compression-br", "compression-deflate", "compression-zstd", "trace"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+# Profile de release recomendado para deploy self-hosted (binário otimizado, sem símbolos de debug)
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
