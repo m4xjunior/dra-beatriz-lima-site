@@ -1,0 +1,470 @@
+---
+// /simulacao-3d/ver — página de revisão de uma captura 3D salva. Rota
+// independente de /simulacao-3d (coexistem sem conflito no roteador de
+// arquivos do Astro: simulacao-3d.astro + simulacao-3d/ver.astro).
+//
+// Site é output:'static' — nada aqui roda em SSR. O <script> client-side
+// lê ?id= da URL e busca os dados via fetch() na API do servidor Rust
+// (server/, endpoints /api/capturas), depois desenha o player 3D com
+// face-viewer-3d-playback.ts. Sem essa captura ainda ter sido feita, ou
+// sem id na URL, a página mostra um estado de erro claro — nunca quebra.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Disclaimer from "../../components/Disclaimer.astro";
+import Button from "../../components/Button.astro";
+---
+
+<BaseLayout
+  title="Sua captura 3D — Dra. Beatriz Lima"
+  description="Reveja a ilustração 3D da sua captura salva — um registro numérico da malha facial, nunca uma fotografia."
+  theme="immersive"
+>
+  <section class="pagina-revisao" data-pagina-revisao data-estado="carregando">
+    <div class="pagina-revisao__cabecalho" data-bl-reveal>
+      <p class="pagina-revisao__eyebrow">SUA CAPTURA</p>
+      <h1 class="pagina-revisao__titulo" data-bl-split>Reveja sua captura</h1>
+      <p class="pagina-revisao__corpo">
+        Esta é a mesma ilustração tridimensional gerada na sua sessão —
+        reconstruída a partir dos pontos numéricos salvos, nunca de uma
+        fotografia. Continua sendo uma expectativa visual do conceito
+        discutido em avaliação, não uma previsão do resultado real.
+      </p>
+    </div>
+
+    <p class="pagina-revisao__rotulo">
+      Ilustração / expectativa — não é uma previsão do seu resultado
+    </p>
+
+    <p
+      class="pagina-revisao__status"
+      data-revisao-status
+      role="status"
+      aria-live="polite"
+    >
+      Carregando sua captura…
+    </p>
+
+    <div class="pagina-revisao__viewer" data-bl-reveal>
+      <div class="pagina-revisao__stage" data-revisao-stage>
+        <canvas
+          class="pagina-revisao__canvas"
+          data-revisao-canvas
+          aria-label="Ilustração 3D da captura salva — não é uma fotografia do seu rosto"
+          role="img"
+        ></canvas>
+      </div>
+
+      <div class="pagina-revisao__acoes">
+        <button type="button" class="pagina-revisao__apagar-btn" data-revisao-apagar>
+          Apagar esta captura
+        </button>
+        <span
+          class="pagina-revisao__apagar-status"
+          data-revisao-apagar-status
+          role="status"
+          aria-live="polite"
+        ></span>
+      </div>
+
+      <!-- Confirmação de apagar — mesmo padrão visual/tokens --consent-*
+           do painel de consentimento em FaceViewer3D.astro. Alternada via
+           [data-confirmar-apagar] na section (nunca [hidden], mesmo
+           motivo documentado em FaceViewer3D.astro). -->
+      <div class="pagina-revisao__confirmar" data-revisao-confirmar role="alertdialog" aria-label="Confirmar apagar captura">
+        <p class="pagina-revisao__confirmar-eyebrow">AVISO — DADO BIOMÉTRICO</p>
+        <p class="pagina-revisao__confirmar-corpo">
+          Isso remove definitivamente os pontos numéricos desta captura do
+          servidor. Não é possível desfazer.
+        </p>
+        <div class="pagina-revisao__confirmar-acoes">
+          <button
+            type="button"
+            class="pagina-revisao__confirmar-btn pagina-revisao__confirmar-btn--apagar"
+            data-revisao-apagar-confirmar
+          >
+            Apagar definitivamente
+          </button>
+          <button
+            type="button"
+            class="pagina-revisao__confirmar-btn pagina-revisao__confirmar-btn--cancelar"
+            data-revisao-apagar-cancelar
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagina-revisao__apagada">
+      <p class="pagina-revisao__apagada-texto">
+        Captura apagada — os pontos numéricos não estão mais no servidor.
+      </p>
+      <Button href="/simulacao-3d" variante="secundaria" tamanho="sm">
+        Voltar para a simulação
+      </Button>
+    </div>
+
+    <Disclaimer
+      variant="simulacao"
+      extra="Os pontos numéricos desta malha foram calculados no seu navegador e guardados no servidor a seu pedido — nunca uma fotografia, quadro de vídeo ou imagem do seu rosto. Você pode apagá-los quando quiser nesta página."
+    />
+  </section>
+</BaseLayout>
+
+<style>
+  .pagina-revisao {
+    max-width: var(--container-lg);
+    margin-inline: auto;
+    padding: var(--space-section) var(--space-container-pad) var(--space-section);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-lg);
+  }
+
+  .pagina-revisao__cabecalho {
+    max-width: var(--container-prose);
+  }
+
+  .pagina-revisao__eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0 0 var(--space-stack-xs);
+  }
+
+  .pagina-revisao__titulo {
+    font-family: var(--type-display-font);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-4xl);
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-sm);
+  }
+
+  .pagina-revisao__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .pagina-revisao__rotulo {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-accent);
+    margin: 0;
+  }
+
+  /* --- Estados (carregando / sem-id / não-encontrada / erro / ok /
+     apagada) — controlados por [data-estado] na section, nunca [hidden]
+     (mesma técnica de estado usada em FaceViewer3D.astro). ------------ */
+  .pagina-revisao__status {
+    display: none;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    margin: 0;
+  }
+  .pagina-revisao[data-estado="carregando"] .pagina-revisao__status,
+  .pagina-revisao[data-estado="sem-id"] .pagina-revisao__status,
+  .pagina-revisao[data-estado="nao-encontrada"] .pagina-revisao__status,
+  .pagina-revisao[data-estado="erro"] .pagina-revisao__status {
+    display: block;
+  }
+  .pagina-revisao[data-estado="sem-id"] .pagina-revisao__status,
+  .pagina-revisao[data-estado="nao-encontrada"] .pagina-revisao__status,
+  .pagina-revisao[data-estado="erro"] .pagina-revisao__status {
+    color: var(--status-danger);
+  }
+
+  .pagina-revisao__viewer {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-stack-sm);
+    width: 100%;
+  }
+  .pagina-revisao[data-estado="ok"] .pagina-revisao__viewer {
+    display: flex;
+  }
+
+  .pagina-revisao__apagada {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-stack-sm);
+  }
+  .pagina-revisao[data-estado="apagada"] .pagina-revisao__apagada {
+    display: flex;
+  }
+
+  .pagina-revisao__apagada-texto {
+    font-size: var(--font-size-md);
+    color: var(--status-success);
+    margin: 0;
+  }
+
+  /* --- Stage 3D — mesma receita visual de tokens do FaceViewer3D
+     (viewer3d-*), mas markup próprio: esta página só reproduz números
+     salvos, não embute o componente de câmera ao vivo. -------------- */
+  .pagina-revisao__stage {
+    position: relative;
+    border-radius: var(--viewer3d-radius);
+    background-color: var(--viewer3d-bg);
+    background-image: var(--surface-mesh);
+    overflow: hidden;
+    box-shadow: var(--viewer3d-glow-strong);
+    aspect-ratio: 16 / 10;
+  }
+
+  .pagina-revisao__canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .pagina-revisao__acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
+    flex-wrap: wrap;
+  }
+
+  .pagina-revisao__apagar-btn {
+    font-family: var(--button-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--button-tracking);
+    color: var(--button-secondary-fg);
+    background: var(--button-secondary-bg);
+    border: var(--border-width-hairline) solid var(--button-secondary-border);
+    border-radius: var(--radius-pill);
+    padding: var(--space-inline-xs) var(--space-inline-md);
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .pagina-revisao__apagar-btn:hover {
+    background: var(--button-secondary-hover-bg);
+  }
+
+  .pagina-revisao__apagar-status {
+    font-size: var(--font-size-2xs);
+    color: var(--status-danger);
+  }
+
+  /* --- Confirmação de apagar --- */
+  .pagina-revisao__confirmar {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+    background-color: var(--consent-bg);
+    color: var(--consent-fg);
+    border: var(--border-width-hairline) solid var(--consent-border);
+    border-radius: var(--consent-radius);
+    padding: var(--space-inline-md);
+  }
+  .pagina-revisao[data-confirmar-apagar] .pagina-revisao__confirmar {
+    display: flex;
+  }
+  .pagina-revisao[data-confirmar-apagar] .pagina-revisao__acoes {
+    display: none;
+  }
+
+  .pagina-revisao__confirmar-eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent);
+    margin: 0;
+  }
+
+  .pagina-revisao__confirmar-corpo {
+    font-size: var(--font-size-xs);
+    line-height: var(--type-body-leading);
+    margin: 0;
+  }
+
+  .pagina-revisao__confirmar-acoes {
+    display: flex;
+    gap: var(--space-inline-sm);
+    flex-wrap: wrap;
+  }
+
+  .pagina-revisao__confirmar-btn {
+    font-family: var(--button-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--button-tracking);
+    border-radius: var(--radius-pill);
+    padding: var(--space-inline-xs) var(--space-inline-md);
+    cursor: pointer;
+    border: var(--border-width-hairline) solid transparent;
+    transition: filter var(--duration-fast) var(--ease-standard);
+  }
+
+  .pagina-revisao__confirmar-btn--apagar {
+    background: var(--status-danger);
+    color: var(--text-on-inverse);
+  }
+
+  .pagina-revisao__confirmar-btn--cancelar {
+    background: var(--button-secondary-bg);
+    color: var(--button-secondary-fg);
+    border-color: var(--button-secondary-border);
+  }
+
+  .pagina-revisao__confirmar-btn--cancelar:hover {
+    background: var(--button-secondary-hover-bg);
+  }
+</style>
+
+<script>
+  import { iniciarPlaybackFaceMesh } from "../../components/face-viewer-3d-playback.ts";
+  import type { InstanciaPlayback } from "../../components/face-viewer-3d-playback.ts";
+
+  interface CapturaApi {
+    capturaId: string;
+    criadoEmUnixMs: number;
+    versaoEsquema: number;
+    variante: "hero" | "inline";
+    fpsAlvo: number;
+    pontosPorQuadro: number;
+    totalQuadros: number;
+    quadros: number[][];
+  }
+
+  // PUBLIC_API_BASE_URL: mesma convenção documentada em
+  // face-viewer-3d-captura.ts — origem pura, inlinada em build-time.
+  function baseUrlApi(): string {
+    return (import.meta.env.PUBLIC_API_BASE_URL as string | undefined) ?? "";
+  }
+
+  const secao = document.querySelector<HTMLElement>("[data-pagina-revisao]");
+  const statusEl = secao?.querySelector<HTMLElement>("[data-revisao-status]");
+  const stage = secao?.querySelector<HTMLElement>("[data-revisao-stage]");
+  const canvas = secao?.querySelector<HTMLCanvasElement>("[data-revisao-canvas]");
+  const botaoApagar = secao?.querySelector<HTMLButtonElement>("[data-revisao-apagar]");
+  const botaoApagarConfirmar = secao?.querySelector<HTMLButtonElement>(
+    "[data-revisao-apagar-confirmar]"
+  );
+  const botaoApagarCancelar = secao?.querySelector<HTMLButtonElement>(
+    "[data-revisao-apagar-cancelar]"
+  );
+  const apagarStatus = secao?.querySelector<HTMLElement>("[data-revisao-apagar-status]");
+
+  let instanciaPlayback: InstanciaPlayback | null = null;
+  let capturaId: string | null = null;
+
+  function definirEstado(estado: string): void {
+    secao?.setAttribute("data-estado", estado);
+  }
+
+  async function carregar(): Promise<void> {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (!id) {
+      definirEstado("sem-id");
+      if (statusEl) {
+        statusEl.textContent =
+          "Não encontramos uma captura para exibir — volte para a simulação e salve uma nova.";
+      }
+      return;
+    }
+    capturaId = id;
+
+    try {
+      const resposta = await fetch(`${baseUrlApi()}/api/capturas/${encodeURIComponent(id)}`);
+
+      if (resposta.status === 404) {
+        definirEstado("nao-encontrada");
+        if (statusEl) {
+          statusEl.textContent =
+            "Esta captura não foi encontrada — pode já ter sido apagada, ou o link está incorreto.";
+        }
+        return;
+      }
+
+      // Branch principal por status, não pelo corpo — nem toda resposta
+      // de erro segue o shape {"erro": ...} (ver nota sobre JsonRejection
+      // do axum no contrato da API).
+      if (!resposta.ok) {
+        definirEstado("erro");
+        if (statusEl) {
+          statusEl.textContent = "Não foi possível carregar esta captura agora. Tente novamente em instantes.";
+        }
+        return;
+      }
+
+      const dados = (await resposta.json()) as CapturaApi;
+      definirEstado("ok");
+      if (stage && canvas) {
+        instanciaPlayback = iniciarPlaybackFaceMesh(stage, canvas, {
+          quadros: dados.quadros,
+          pontosPorQuadro: dados.pontosPorQuadro,
+          fpsAlvo: dados.fpsAlvo,
+          variant: "hero",
+        });
+      }
+    } catch {
+      definirEstado("erro");
+      if (statusEl) {
+        statusEl.textContent = "Não foi possível carregar esta captura agora. Tente novamente em instantes.";
+      }
+    }
+  }
+
+  botaoApagar?.addEventListener("click", () => {
+    secao?.setAttribute("data-confirmar-apagar", "");
+  });
+  botaoApagarCancelar?.addEventListener("click", () => {
+    secao?.removeAttribute("data-confirmar-apagar");
+  });
+  botaoApagarConfirmar?.addEventListener("click", () => {
+    void apagar();
+  });
+
+  async function apagar(): Promise<void> {
+    if (!capturaId) return;
+    secao?.removeAttribute("data-confirmar-apagar");
+    if (apagarStatus) apagarStatus.textContent = "";
+    if (botaoApagarConfirmar) botaoApagarConfirmar.disabled = true;
+
+    try {
+      const resposta = await fetch(`${baseUrlApi()}/api/capturas/${encodeURIComponent(capturaId)}`, {
+        method: "DELETE",
+      });
+
+      if (resposta.status === 204) {
+        instanciaPlayback?.destruir();
+        instanciaPlayback = null;
+        definirEstado("apagada");
+        return;
+      }
+
+      if (resposta.status === 404) {
+        if (apagarStatus) {
+          apagarStatus.textContent =
+            "Esta captura não foi encontrada — pode já ter sido apagada, ou o link está incorreto.";
+        }
+        return;
+      }
+
+      if (apagarStatus) {
+        apagarStatus.textContent = "Não foi possível apagar a captura agora. Tente novamente.";
+      }
+    } catch {
+      if (apagarStatus) {
+        apagarStatus.textContent = "Não foi possível apagar a captura agora. Tente novamente.";
+      }
+    } finally {
+      if (botaoApagarConfirmar) botaoApagarConfirmar.disabled = false;
+    }
+  }
+
+  void carregar();
+</script>

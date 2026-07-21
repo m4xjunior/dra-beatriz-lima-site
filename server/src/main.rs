@@ -9,15 +9,17 @@ use std::{net::SocketAddr, path::PathBuf, sync::Arc};
 use anyhow::Context;
 use axum::{
     Router,
-    extract::{Request, State},
+    extract::{DefaultBodyLimit, Request, State},
     http::{StatusCode, header},
     middleware::{self, Next},
     response::{IntoResponse, Response},
 };
 use tower_http::{
-    compression::CompressionLayer, services::ServeDir, trace::TraceLayer,
+    compression::CompressionLayer, cors::CorsLayer, services::ServeDir, trace::TraceLayer,
 };
 use tracing_subscriber::EnvFilter;
+
+mod capturas;
 
 const DEFAULT_PORT: u16 = 8080;
 
@@ -39,13 +41,29 @@ async fn main() -> anyhow::Result<()> {
 
     let serve_dir = ServeDir::new(dist_dir.as_ref().clone());
 
-    let app = Router::new()
+    // O middleware `not_found_fallback` reescreve QUALQUER 404 para o
+    // dist/404.html — se ele envolvesse o router inteiro, também sequestraria
+    // os 404 JSON dos handlers de /api/capturas (GET/DELETE em id inexistente),
+    // trocando `{"erro":"captura não encontrada"}` pelo HTML da página 404 do
+    // Astro. Por isso ele fica isolado neste sub-router, aplicado só ao
+    // fallback_service estático, ANTES do merge com as rotas de API.
+    let router_estatico = Router::new()
         .fallback_service(serve_dir)
         .layer(middleware::from_fn_with_state(
             Arc::clone(&dist_dir),
             not_found_fallback,
-        ))
+        ));
+
+    // ORDEM CRÍTICA (gotcha real do axum): rotas/sub-routers mesclados DEPOIS
+    // de um `.layer()` não passam por esse layer. CORS/compressão/limite de
+    // corpo/trace abaixo são globais (aplicados depois do merge), então valem
+    // tanto para /api/capturas quanto para os arquivos estáticos.
+    let app = Router::new()
+        .merge(capturas::rotas())
+        .merge(router_estatico)
         .layer(CompressionLayer::new())
+        .layer(CorsLayer::permissive())
+        .layer(DefaultBodyLimit::max(4 * 1024 * 1024))
         .layer(TraceLayer::new_for_http());
 
     let port = read_port();

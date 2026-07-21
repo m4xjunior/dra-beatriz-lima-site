@@ -23,6 +23,16 @@ const { variant = "inline", autoRotate = true, caption } = Astro.props;
          cena Three.js com sucesso (progressive enhancement: nunca um
          buraco vazio onde a peça 3D deveria estar). -->
     <div class="face-viewer__orb-static" aria-hidden="true"></div>
+    <!-- Modo ao vivo (opt-in): vídeo espelhado, escondido até o usuário
+         clicar em "Ativar câmera". Nunca autoplay — consentimento real,
+         não só técnico (ver face-viewer-3d-camera.ts). -->
+    <video
+      class="face-viewer__video"
+      autoplay
+      muted
+      playsinline
+      aria-hidden="true"
+    ></video>
     <canvas
       class="face-viewer__canvas"
       data-autorotate={autoRotate ? "true" : "false"}
@@ -31,9 +41,46 @@ const { variant = "inline", autoRotate = true, caption } = Astro.props;
       role="img"
     ></canvas>
     <span class="face-viewer__label">Ilustração — não é o seu resultado</span>
+    <div class="face-viewer__controls">
+      <button type="button" class="face-viewer__camera-btn" data-face-camera-toggle>
+        Ativar câmera — ver seu rosto
+      </button>
+      <!-- Só existe visualmente durante o modo câmera (ver
+           .face-viewer__stage[data-mode="camera"] abaixo) — nasce
+           desabilitado, JS só habilita depois de detectar rosto por >=1s
+           seguido (ver face-viewer-3d-captura.ts, aoMudarProntidao). -->
+      <button
+        type="button"
+        class="face-viewer__camera-btn face-viewer__save-btn"
+        data-face-save-btn
+        disabled
+      >
+        Salvar captura 3D
+      </button>
+      <span class="face-viewer__camera-status" data-face-camera-status role="status" aria-live="polite"></span>
+    </div>
+    <!-- Painel de consentimento (aviso LGPD/dado biométrico) — aparece
+         ANTES de qualquer envio, ao clicar em "Salvar captura 3D".
+         Alternado via [data-consent-open] no stage (mesmo padrão de
+         estado do [data-mode]), nunca via [hidden] (evita conflito de
+         especificidade CSS com as regras de data-mode abaixo). -->
+    <div class="face-viewer__consent" data-face-consent role="alertdialog" aria-label="Aviso de dado biométrico">
+      <p class="face-viewer__consent-eyebrow">AVISO — DADO BIOMÉTRICO</p>
+      <p class="face-viewer__consent-body">
+        Ao confirmar, guardamos somente os pontos numéricos (as coordenadas) da malha facial calculada nesta sessão — nunca uma fotografia, quadro de vídeo ou qualquer imagem do seu rosto. Tratamos esses pontos como dado pessoal sensível, conforme a LGPD. Eles ficam guardados só para você rever esta ilustração 3D depois, e podem ser apagados por você a qualquer momento na página de revisão.
+      </p>
+      <div class="face-viewer__consent-actions">
+        <button type="button" class="face-viewer__consent-btn face-viewer__consent-btn--confirm" data-face-consent-confirm>
+          Confirmar e salvar
+        </button>
+        <button type="button" class="face-viewer__consent-btn face-viewer__consent-btn--cancel" data-face-consent-cancel>
+          Cancelar
+        </button>
+      </div>
+    </div>
     <noscript>
       <style>
-        .face-viewer__canvas { display: none; }
+        .face-viewer__canvas, .face-viewer__controls, .face-viewer__consent { display: none; }
         .face-viewer__orb-static { opacity: 1 !important; }
       </style>
     </noscript>
@@ -41,7 +88,10 @@ const { variant = "inline", autoRotate = true, caption } = Astro.props;
 
   {caption && <p class="face-viewer__caption">{caption}</p>}
 
-  <Disclaimer variant="simulacao" />
+  <Disclaimer
+    variant="simulacao"
+    extra="Se você ativar a câmera: o mesh facial é calculado localmente no seu navegador (IA on-device) — nenhuma imagem ou vídeo é enviado, transmitido ou armazenado em qualquer servidor. Se você optar por salvar uma captura, guardamos apenas os pontos numéricos da malha (nunca a imagem), e você pode apagá-los quando quiser."
+  />
 </div>
 
 <style>
@@ -85,6 +135,22 @@ const { variant = "inline", autoRotate = true, caption } = Astro.props;
     transition: opacity var(--duration-slow) var(--ease-standard);
   }
 
+  .face-viewer__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1); /* espelho — comportamento esperado de câmera frontal */
+    filter: grayscale(0.7) sepia(0.4) contrast(1.08) brightness(0.85) saturate(1.1);
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-standard);
+  }
+
+  .face-viewer__stage[data-mode="camera"] .face-viewer__video {
+    opacity: 1;
+  }
+
   .face-viewer__canvas {
     position: absolute;
     inset: 0;
@@ -96,12 +162,155 @@ const { variant = "inline", autoRotate = true, caption } = Astro.props;
     transition: opacity var(--duration-slow) var(--ease-standard);
   }
 
-  .face-viewer__stage[data-mode="3d"] .face-viewer__canvas {
+  .face-viewer__stage[data-mode="3d"] .face-viewer__canvas,
+  .face-viewer__stage[data-mode="camera"] .face-viewer__canvas {
     opacity: 1;
   }
 
-  .face-viewer__stage[data-mode="3d"] .face-viewer__orb-static {
+  .face-viewer__stage[data-mode="3d"] .face-viewer__orb-static,
+  .face-viewer__stage[data-mode="camera"] .face-viewer__orb-static {
     opacity: 0;
+  }
+
+  .face-viewer__controls {
+    position: absolute;
+    z-index: 1;
+    bottom: var(--space-inline-md);
+    left: var(--space-inline-md);
+    right: var(--space-inline-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
+    flex-wrap: wrap;
+  }
+
+  .face-viewer__camera-btn {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--viewer3d-label-fg);
+    background-color: var(--viewer3d-control-bg);
+    border: var(--border-width-hairline) solid var(--viewer3d-control-border);
+    border-radius: var(--radius-pill);
+    padding: var(--space-inline-xs) var(--space-inline-md);
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+    backdrop-filter: blur(var(--glass-blur-sm));
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .face-viewer__camera-btn:hover {
+    background-color: var(--viewer3d-control-bg-hover, var(--viewer3d-control-bg));
+  }
+
+  /* Botão "Salvar captura 3D" — só existe visualmente durante o modo
+     câmera; nasce disabled no HTML, JS habilita após >=1s de rosto
+     detectado (ver aoMudarProntidao em face-viewer-3d-captura.ts). */
+  .face-viewer__save-btn {
+    display: none;
+  }
+
+  .face-viewer__stage[data-mode="camera"] .face-viewer__save-btn {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .face-viewer__save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .face-viewer__camera-status {
+    font-size: var(--font-size-2xs);
+    color: var(--text-muted);
+  }
+
+  .face-viewer__camera-status a {
+    color: var(--text-accent);
+  }
+
+  /* --- Painel de consentimento (aviso LGPD/dado biométrico) --------- */
+  /* Escondido por padrão; visível só com [data-consent-open] no stage —
+     mesma técnica de estado de [data-mode], nunca [hidden] (evita
+     conflito de especificidade entre as duas regras). Quando aberto,
+     substitui a barra de controles no mesmo espaço. */
+  .face-viewer__consent {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    bottom: var(--space-inline-md);
+    left: var(--space-inline-md);
+    right: var(--space-inline-md);
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+    background-color: var(--consent-bg);
+    color: var(--consent-fg);
+    border: var(--border-width-hairline) solid var(--consent-border);
+    border-radius: var(--consent-radius);
+    padding: var(--space-inline-md);
+    -webkit-backdrop-filter: blur(var(--glass-blur-sm));
+    backdrop-filter: blur(var(--glass-blur-sm));
+  }
+
+  .face-viewer__stage[data-consent-open] .face-viewer__consent {
+    display: flex;
+  }
+
+  .face-viewer__stage[data-consent-open] .face-viewer__controls {
+    display: none;
+  }
+
+  .face-viewer__consent-eyebrow {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--viewer3d-label-fg);
+    margin: 0;
+  }
+
+  .face-viewer__consent-body {
+    font-size: var(--font-size-xs);
+    line-height: var(--type-body-leading);
+    margin: 0;
+  }
+
+  .face-viewer__consent-actions {
+    display: flex;
+    gap: var(--space-inline-sm);
+    flex-wrap: wrap;
+  }
+
+  .face-viewer__consent-btn {
+    font-family: var(--button-font);
+    font-size: var(--font-size-2xs);
+    text-transform: uppercase;
+    letter-spacing: var(--button-tracking);
+    border-radius: var(--radius-pill);
+    padding: var(--space-inline-xs) var(--space-inline-md);
+    cursor: pointer;
+    border: var(--border-width-hairline) solid transparent;
+    transition: filter var(--duration-fast) var(--ease-standard);
+  }
+
+  .face-viewer__consent-btn--confirm {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-fg);
+  }
+
+  .face-viewer__consent-btn--confirm:hover {
+    filter: var(--button-primary-hover-filter);
+  }
+
+  .face-viewer__consent-btn--cancel {
+    background: var(--button-secondary-bg);
+    color: var(--button-secondary-fg);
+    border-color: var(--button-secondary-border);
+  }
+
+  .face-viewer__consent-btn--cancel:hover {
+    background: var(--button-secondary-hover-bg);
   }
 
   .face-viewer__label {
@@ -140,6 +349,16 @@ const { variant = "inline", autoRotate = true, caption } = Astro.props;
   //   2) senão, só faz o import() dinâmico quando o IntersectionObserver
   //      confirma que o stage entrou na viewport — o bundle pesado só é
   //      buscado quando de fato vai ser usado (LCP da home intacto).
+  // Módulo de bufferização/persistência de captura — leve (sem Three.js/
+  // MediaPipe), importado estaticamente porque é usado sempre que o modo
+  // câmera existe na página, não só sob demanda de um asset pesado.
+  import {
+    criarBufferCaptura,
+    ErroCapturaInstavel,
+    ErroCapturaIndisponivel,
+    type ResultadoCaptura,
+  } from "./face-viewer-3d-captura.ts";
+
   type OpcoesFaceViewer3D = {
     autoRotate: boolean;
     variant: "hero" | "inline";
@@ -169,18 +388,148 @@ const { variant = "inline", autoRotate = true, caption } = Astro.props;
         variant: canvas.dataset.variant === "hero" ? "hero" : "inline",
       };
 
-      const observer = new IntersectionObserver(
-        (entradas) => {
-          for (const entrada of entradas) {
-            if (!entrada.isIntersecting) continue;
-            observer.disconnect();
-            import("./face-viewer-3d-scene.ts").then(({ iniciarFaceViewer3D }) => {
-              iniciarFaceViewer3D(stage, canvas, opcoes);
-            });
+      // Instância viva do orb decorativo — guardada para poder ser
+      // destruída (liberar o <canvas>) quando o modo câmera assume, e
+      // recriada quando o usuário desliga a câmera.
+      let instanciaOrb: { destruir: () => void } | null = null;
+
+      function montarOrb() {
+        import("./face-viewer-3d-scene.ts").then(({ iniciarFaceViewer3D }) => {
+          instanciaOrb = iniciarFaceViewer3D(stage, canvas!, opcoes);
+        });
+      }
+
+      if (!blMotion?.reduced) {
+        const observer = new IntersectionObserver(
+          (entradas) => {
+            for (const entrada of entradas) {
+              if (!entrada.isIntersecting) continue;
+              observer.disconnect();
+              montarOrb();
+            }
+          },
+          { threshold: 0.2 }
+        );
+        observer.observe(stage);
+      }
+
+      // --- Modo câmera (opt-in) — independente de prefers-reduced-motion:
+      // é uma ação explícita do usuário, não uma animação ambiente. -------
+      const video = stage.querySelector<HTMLVideoElement>(".face-viewer__video");
+      const botao = stage.querySelector<HTMLButtonElement>("[data-face-camera-toggle]");
+      const status = stage.querySelector<HTMLElement>("[data-face-camera-status]");
+      const botaoSalvar = stage.querySelector<HTMLButtonElement>("[data-face-save-btn]");
+      const consentConfirmar = stage.querySelector<HTMLButtonElement>("[data-face-consent-confirm]");
+      const consentCancelar = stage.querySelector<HTMLButtonElement>("[data-face-consent-cancel]");
+      let instanciaCamera: { destruir: () => void } | null = null;
+      // Recriado a cada ativação de câmera (ver ligarCamera) — assim a
+      // "prontidão" (rosto estável por >=1s) sempre reinicia do zero numa
+      // nova sessão, em vez de carregar estado da sessão anterior.
+      let capturaAtual: ReturnType<typeof criarBufferCaptura> | null = null;
+
+      function mensagemErroCamera(erro: unknown): string {
+        const nome = erro instanceof DOMException ? erro.name : "";
+        if (nome === "NotAllowedError") return "Câmera não autorizada — mostrando a ilustração de marca.";
+        if (nome === "NotFoundError") return "Nenhuma câmera encontrada neste dispositivo.";
+        if (!navigator.mediaDevices?.getUserMedia) return "Este navegador não suporta câmera aqui.";
+        return "Não foi possível ativar a câmera agora.";
+      }
+
+      function linkRevisao(capturaId: string): string {
+        return `/simulacao-3d/ver/?id=${encodeURIComponent(capturaId)}`;
+      }
+
+      function mostrarConsentimento() {
+        stage.dataset.consentOpen = "true";
+      }
+
+      function esconderConsentimento() {
+        delete stage.dataset.consentOpen;
+      }
+
+      async function confirmarSalvar() {
+        if (!capturaAtual) return;
+        esconderConsentimento();
+        if (status) status.textContent = "Salvando captura…";
+        if (botaoSalvar) botaoSalvar.disabled = true;
+        try {
+          const resultado: ResultadoCaptura = await capturaAtual.capturarESalvar();
+          if (status) {
+            status.textContent = "Captura salva. ";
+            const link = document.createElement("a");
+            link.href = linkRevisao(resultado.capturaId);
+            link.textContent = "Ver captura salva";
+            status.appendChild(link);
           }
-        },
-        { threshold: 0.2 }
-      );
-      observer.observe(stage);
+        } catch (erro) {
+          if (status) {
+            if (erro instanceof ErroCapturaInstavel || erro instanceof ErroCapturaIndisponivel) {
+              status.textContent = erro.message;
+            } else {
+              status.textContent = "Não foi possível salvar a captura agora. Tente novamente.";
+            }
+          }
+          if (botaoSalvar) botaoSalvar.disabled = false;
+        }
+      }
+
+      botaoSalvar?.addEventListener("click", () => {
+        if (status) status.textContent = "";
+        mostrarConsentimento();
+      });
+      consentConfirmar?.addEventListener("click", () => {
+        void confirmarSalvar();
+      });
+      consentCancelar?.addEventListener("click", () => {
+        esconderConsentimento();
+      });
+
+      async function ligarCamera() {
+        if (!video || !botao) return;
+        botao.disabled = true;
+        botao.textContent = "Ativando câmera…";
+        if (status) status.textContent = "";
+        try {
+          const { ativarCameraFaceMesh } = await import("./face-viewer-3d-camera.ts");
+          instanciaOrb?.destruir();
+          instanciaOrb = null;
+          capturaAtual = criarBufferCaptura(opcoes.variant);
+          if (botaoSalvar) botaoSalvar.disabled = true;
+          capturaAtual.aoMudarProntidao((pronto) => {
+            if (botaoSalvar) botaoSalvar.disabled = !pronto;
+          });
+          instanciaCamera = await ativarCameraFaceMesh(stage, canvas!, video, opcoes.variant, (marcos) => {
+            capturaAtual?.registrar(marcos);
+          });
+          stage.dataset.mode = "camera";
+          botao.textContent = "Parar câmera";
+          botao.disabled = false;
+        } catch (erro) {
+          if (status) status.textContent = mensagemErroCamera(erro);
+          botao.textContent = "Ativar câmera — ver seu rosto";
+          botao.disabled = false;
+          capturaAtual = null;
+          if (!instanciaOrb) montarOrb();
+        }
+      }
+
+      function desligarCamera() {
+        if (!botao) return;
+        instanciaCamera?.destruir();
+        instanciaCamera = null;
+        capturaAtual?.cancelar();
+        capturaAtual = null;
+        esconderConsentimento();
+        stage.dataset.mode = "";
+        botao.textContent = "Ativar câmera — ver seu rosto";
+        if (status) status.textContent = "";
+        if (botaoSalvar) botaoSalvar.disabled = true;
+        montarOrb();
+      }
+
+      botao?.addEventListener("click", () => {
+        if (instanciaCamera) desligarCamera();
+        else void ligarCamera();
+      });
     });
 </script>
