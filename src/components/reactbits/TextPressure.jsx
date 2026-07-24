@@ -36,18 +36,23 @@ const debounce = (fn, delay) => {
   };
 };
 
+// ATENÇÃO (bug real de produção): NADA de string com aspas/valores
+// compostos em style inline aqui — o minificador de HTML do build
+// (@playform/compress) mangla o atributo style quando há aspas simples
+// aninhadas (ex.: fontFamily com "'Bricolage Grotesque', ...") e o
+// browser passa a interpretar o resto das declarações como NOME DE
+// FONTE. Resultado real: serifa fallback + wrap "BEATRIZ LI/MA".
+// Estilo estático vive em CSS (AssinaturaPressao.astro, com token do
+// DS); inline só fica o que é dinâmico e numérico.
 export default function TextPressure({
   text = "BEATRIZ LIMA",
-  fontFamily = "'Bricolage Grotesque', 'Space Grotesk', system-ui, sans-serif",
   // Eixos da Bricolage — ranges diferentes do Roboto Flex do original.
   weightRange = [200, 800],
   widthRange = [75, 100],
   width = true,
   weight = true,
   alpha = false,
-  flex = true,
   scale = false,
-  textColor = "var(--text-heading)",
   className = "",
   minFontSize = 32,
 }) {
@@ -106,6 +111,14 @@ export default function TextPressure({
 
     requestAnimationFrame(() => {
       if (!titleRef.current) return;
+      // A régua original (containerW / chars/2) assume a Compressa,
+      // condensadíssima — na Bricolage estoura. Medimos o texto REAL e
+      // reescalamos pra caber SEM quebrar linha, aconteça o que for.
+      const larguraReal = titleRef.current.scrollWidth;
+      if (larguraReal > containerW) {
+        novoTamanho = Math.max(minFontSize, novoTamanho * (containerW / larguraReal) * 0.98);
+        setFontSize(novoTamanho);
+      }
       const rect = titleRef.current.getBoundingClientRect();
       if (scale && rect.height > 0) {
         const razao = containerH / rect.height;
@@ -177,32 +190,14 @@ export default function TextPressure({
         aria-label={text}
         className={[className, "text-pressure-titulo"].filter(Boolean).join(" ")}
         style={{
-          fontFamily,
-          color: textColor,
-          textTransform: "uppercase",
-          fontSize,
+          fontSize: `${fontSize}px`,
           lineHeight,
           transform: `scale(1, ${scaleY})`,
-          transformOrigin: "center top",
-          margin: 0,
-          textAlign: "center",
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          fontWeight: 200,
-          width: "100%",
-          display: flex ? "flex" : "block",
-          justifyContent: flex ? "space-between" : undefined,
         }}
       >
         {chars.map((char, i) => (
-          <span
-            key={i}
-            ref={(el) => (spansRef.current[i] = el)}
-            data-char={char}
-            aria-hidden="true"
-            style={{ display: "inline-block" }}
-          >
-            {char === " " ? " " : char}
+          <span key={i} ref={(el) => (spansRef.current[i] = el)} data-char={char} aria-hidden="true">
+            {char === " " ? "\u00A0" : char}
           </span>
         ))}
       </p>

@@ -32,6 +32,14 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
 </div>
 
 <script>
+  // MODO HÍBRIDO (spec do Max, 24/07/2026): parado, o vídeo toca
+  // sozinho; ao deslizar, o scroll comanda os frames NOS DOIS SENTIDOS,
+  // relativo ao frame atual — a cada gesto rebaseamos um offset
+  // (offset = tempoAtual − mapa(scroll)), então retomar o scroll nunca
+  // pula. 200ms sem scroll = volta a tocar de onde parou. Os arquivos
+  // *-scrub.mp4 têm GOP de 4 frames sem B-frames: seek bidirecional
+  // instantâneo com decode por hardware — é isso que permite scrubar
+  // <video> sem o jank que matou a arquitetura de frames em canvas.
   const caixa = document.querySelector<HTMLElement>("[data-fundo-vivo]");
   const video = document.querySelector<HTMLVideoElement>("[data-fundo-video]");
   if (caixa && video) {
@@ -50,12 +58,69 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
     video.poster = `${raiz}/${mobile ? "poster-mobile.jpg" : "poster-desktop.jpg"}`;
 
     if (!reduzido && !(mobile && lenta)) {
-      video.src = mobile
-        ? `${raiz}/hero-mobile-1080.mp4`
-        : `${raiz}/${window.innerWidth * (window.devicePixelRatio || 1) > 2200 ? "hero-1440" : "hero-1080"}.mp4`;
-      video.play().catch(() => {
-        /* autoplay bloqueado: fica o poster, sem erro no console */
+      const arquivo = mobile
+        ? (lenta ? "hero-mobile-720-scrub" : "hero-mobile-1080-scrub")
+        : (window.innerWidth * (window.devicePixelRatio || 1) > 2200
+            ? "hero-1440-scrub"
+            : "hero-1080-scrub");
+      video.src = `${raiz.replace("/web_video", "/scrub_video")}/${arquivo}.mp4`;
+      video.preload = "auto";
+      video.loop = true;
+
+      let modo: "tocando" | "scrubando" = "tocando";
+      let alvo = 0;
+      let offset = 0;
+      let idleTimer: ReturnType<typeof setTimeout> | undefined;
+
+      const progresso = () => {
+        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        return window.scrollY / max;
+      };
+      const mod = (t: number, d: number) => ((t % d) + d) % d;
+
+      video.addEventListener("loadedmetadata", () => {
+        video.play().catch(() => {
+          /* autoplay bloqueado: primeiro gesto de scroll assume */
+        });
       });
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (!video.duration) return;
+          if (modo === "tocando") {
+            // Rebase: o comando passa a ser RELATIVO ao frame atual.
+            modo = "scrubando";
+            video.pause();
+            offset = video.currentTime - progresso() * video.duration;
+          }
+          alvo = progresso() * video.duration + offset;
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(() => {
+            modo = "tocando";
+            video.play().catch(() => {});
+          }, 200);
+        },
+        { passive: true },
+      );
+
+      // Lerp do currentTime só enquanto scrubando — caminho mais curto
+      // considerando o wrap do loop (fim↔início são vizinhos).
+      const tick = () => {
+        if (modo === "scrubando" && video.duration) {
+          const atual = video.currentTime;
+          const alvoMod = mod(alvo, video.duration);
+          let delta = alvoMod - atual;
+          if (Math.abs(delta) > video.duration / 2) {
+            delta -= Math.sign(delta) * video.duration;
+          }
+          if (Math.abs(delta) > 0.02) {
+            video.currentTime = mod(atual + delta * 0.16, video.duration);
+          }
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
     }
   }
 </script>

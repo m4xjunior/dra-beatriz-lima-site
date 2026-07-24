@@ -36,6 +36,11 @@ html {
 
 body {
   margin: 0;
+  /* clip (não hidden): mata deslocamento lateral acidental sem criar
+     um scroll container novo. A causa-raiz do estouro visto em
+     24/07/2026 (assinatura TextPressure pré-clamp) foi corrigida no
+     componente; isto é cinto de segurança pra regressões. */
+  overflow-x: clip;
   font-family: var(--type-body-font, var(--font-body));
   color: var(--text-body);
 }
