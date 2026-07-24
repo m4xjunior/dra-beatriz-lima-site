@@ -72,11 +72,14 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
       let offset = 0;
       let idleTimer: ReturnType<typeof setTimeout> | undefined;
 
+      // clamp 0..1: o rubber-banding do macOS produz scrollY NEGATIVO
+      // no topo — sem clamp, o alvo ficava negativo e o wrap jogava o
+      // vídeo pro FIM (o "bug do frame inicial" visto em uso real).
       const progresso = () => {
         const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-        return window.scrollY / max;
+        return Math.min(1, Math.max(0, window.scrollY / max));
       };
-      const mod = (t: number, d: number) => ((t % d) + d) % d;
+      const limitar = (t: number, d: number) => Math.min(d - 0.05, Math.max(0, t));
 
       video.addEventListener("loadedmetadata", () => {
         video.play().catch(() => {
@@ -94,28 +97,25 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
             video.pause();
             offset = video.currentTime - progresso() * video.duration;
           }
-          alvo = progresso() * video.duration + offset;
+          alvo = limitar(progresso() * video.duration + offset, video.duration);
           clearTimeout(idleTimer);
           idleTimer = setTimeout(() => {
             modo = "tocando";
             video.play().catch(() => {});
-          }, 200);
+          }, 280);
         },
         { passive: true },
       );
 
-      // Lerp do currentTime só enquanto scrubando — caminho mais curto
-      // considerando o wrap do loop (fim↔início são vizinhos).
+      // Lerp do currentTime só enquanto scrubando. SEM wrap: alvo é
+      // clampado em [0, duração] — scrub no topo para no frame 0, não
+      // dá a volta. Guarda de seeking: nunca empilha um seek em cima de
+      // outro em andamento (era o stutter — seek thrash a cada rAF).
       const tick = () => {
-        if (modo === "scrubando" && video.duration) {
-          const atual = video.currentTime;
-          const alvoMod = mod(alvo, video.duration);
-          let delta = alvoMod - atual;
-          if (Math.abs(delta) > video.duration / 2) {
-            delta -= Math.sign(delta) * video.duration;
-          }
-          if (Math.abs(delta) > 0.02) {
-            video.currentTime = mod(atual + delta * 0.16, video.duration);
+        if (modo === "scrubando" && video.duration && !video.seeking) {
+          const delta = alvo - video.currentTime;
+          if (Math.abs(delta) > 0.03) {
+            video.currentTime = limitar(video.currentTime + delta * 0.22, video.duration);
           }
         }
         requestAnimationFrame(tick);
