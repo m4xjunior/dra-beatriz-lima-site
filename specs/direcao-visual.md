@@ -17,6 +17,18 @@ nunca "AI slop" (gradiente roxo, glow neon, cards idênticos em grade).
   rosto dela — hairlines, blooms e sombras jamais cruzam o rosto.
 - Conteúdo flutua **acima** do vídeo (`.conteudo-site`, z 1).
 
+## Proteção de texto sobre vídeo (política corrigida 25/07)
+
+REPROVADO pelo Max: halo/oval radial com blur atrás de blocos de texto
+(o ".veil" do handoff) — tapa o rosto dela. O certo (Smashing/WCAG):
+1. **Composição primeiro**: bloco de texto posicionado FORA da zona do
+   rosto — o rosto é espaço negativo protegido.
+2. **Faixa de gradiente retangular** ancorada à borda/coluna do texto,
+   dissolvendo na direção OPOSTA ao rosto.
+3. Fundo claro/ocupado → véu retangular radius-lg alinhado à caixa do
+   texto (tokens surface-glass*, remap de touch respeitado).
+4. Contraste AA 4.5:1 medido, sempre.
+
 ## Vidro com propósito (política anti-excesso)
 
 Vidro (surface-glass* + blur) existe pra UMA coisa: legibilidade de

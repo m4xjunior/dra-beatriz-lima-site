@@ -71,6 +71,23 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
       let alvo = 0;
       let offset = 0;
       let idleTimer: ReturnType<typeof setTimeout> | undefined;
+      let seekEmVoo = false;
+
+      // Entrega de frames v3 — fila de UM seek: o próximo só parte
+      // quando o 'seeked' confirma o anterior. A cadência se ajusta
+      // sozinha à capacidade real do decoder de cada aparelho — entrega
+      // UNIFORME, sem lerp defasado nem throttle fixo (spec do Max:
+      // "não fica uniforme a forma de entrega dos frames").
+      const emitirSeek = () => {
+        if (modo !== "scrubando" || !video.duration || seekEmVoo) return;
+        if (Math.abs(alvo - video.currentTime) < 1 / 32) return;
+        seekEmVoo = true;
+        video.currentTime = limitar(alvo, video.duration);
+      };
+      video.addEventListener("seeked", () => {
+        seekEmVoo = false;
+        emitirSeek();
+      });
 
       // clamp 0..1: o rubber-banding do macOS produz scrollY NEGATIVO
       // no topo — sem clamp, o alvo ficava negativo e o wrap jogava o
@@ -98,40 +115,26 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
             offset = video.currentTime - progresso() * video.duration;
           }
           alvo = limitar(progresso() * video.duration + offset, video.duration);
+          emitirSeek();
           clearTimeout(idleTimer);
+          // Delay generoso antes de ela voltar a viver sozinha (spec do
+          // Max): a pausa comunica que o controle era do usuário.
           idleTimer = setTimeout(() => {
             modo = "tocando";
             video.play().catch(() => {});
-          }, 280);
+          }, 1100);
         },
         { passive: true },
       );
 
-      // Lerp do currentTime só enquanto scrubando. SEM wrap: alvo é
-      // clampado em [0, duração] — scrub no topo para no frame 0, não
-      // dá a volta. Guarda de seeking: nunca empilha um seek em cima de
-      // outro em andamento (era o stutter — seek thrash a cada rAF).
-      // Em touch, seeks são ADICIONALMENTE limitados a ~11/s: o decoder
-      // de celular (Android medido em uso real) não acompanha seek por
-      // rAF nem com GOP-4 — o intervalo dá fôlego sem perder resposta.
-      const toque = window.matchMedia("(pointer: coarse)").matches;
-      const intervaloMinimo = toque ? 90 : 0;
-      let ultimoSeek = 0;
-      const tick = () => {
-        if (modo === "scrubando" && video.duration && !video.seeking) {
-          const agora = performance.now();
-          const delta = alvo - video.currentTime;
-          if (Math.abs(delta) > 0.03 && agora - ultimoSeek >= intervaloMinimo) {
-            ultimoSeek = agora;
-            video.currentTime = limitar(
-              video.currentTime + delta * (toque ? 0.34 : 0.22),
-              video.duration,
-            );
-          }
+      // Rede de segurança: se um 'seeked' se perder (aba trocada,
+      // decoder engasgado), o watchdog re-emite a cada 250ms.
+      setInterval(() => {
+        if (modo === "scrubando" && seekEmVoo && !video.seeking) {
+          seekEmVoo = false;
+          emitirSeek();
         }
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+      }, 250);
     }
   }
 </script>
@@ -147,6 +150,16 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  /* Mobile: a personagem principal MAIOR (spec do Max) — zoom óptico
+     barato via transform (GPU, sem re-render do vídeo), origem na
+     região do rosto do crop 9:16. */
+  @media (pointer: coarse) {
+    .fundo-vivo__video {
+      transform: scale(1.12);
+      transform-origin: 50% 26%;
+    }
   }
 
   /* Véu de contraste: o conteúdo em ilhas de vidro precisa de base
