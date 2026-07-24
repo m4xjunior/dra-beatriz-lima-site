@@ -14,7 +14,9 @@ const destaques = todos
 
 <section class="teaser-catalogo">
   <div class="teaser-catalogo__inner">
-    <div class="teaser-catalogo__cabecalho" data-bl-reveal>
+    <!-- cabeçalho em ilha de vidro: título/copy legíveis sobre o vídeo.
+         (os ServiceCards abaixo já são vidro por conta própria) -->
+    <div class="teaser-catalogo__cabecalho teaser-catalogo__ilha" data-bl-reveal>
       <p class="teaser-catalogo__eyebrow">PROCEDIMENTOS</p>
       <GradientTitle as="h2" size="2xl" align="center">
         Um catálogo por indicação, não por tendência
@@ -63,6 +65,19 @@ const destaques = todos
     margin-bottom: var(--space-stack-lg);
   }
 
+  /* ilha de vidro do cabeçalho (padrão .hero__ilha), centrada e contida */
+  .teaser-catalogo__ilha {
+    padding: var(--space-stack-lg);
+    max-width: var(--container-prose);
+    margin-inline: auto;
+    background: var(--surface-glass-strong);
+    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--bloom);
+  }
+
   .teaser-catalogo__eyebrow {
     font-family: var(--type-eyebrow-font);
     font-size: var(--font-size-xs);
@@ -100,6 +115,13 @@ const destaques = todos
          (texto sem quebra), o grid estufa além do container e vaza
          horizontalmente em telas ~768px — bug real medido, não teórico. */
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* mobile 360–430: ilha do cabeçalho respira menos, sem deformar */
+  @media (max-width: 899px) {
+    .teaser-catalogo__ilha {
+      padding: var(--space-stack-md);
     }
   }
 </style>

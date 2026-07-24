@@ -5,28 +5,33 @@ import Divider from "../Divider.astro";
 
 <section class="posicionamento">
   <div class="posicionamento__inner">
-    <Divider fade />
-    <p class="posicionamento__eyebrow" data-bl-reveal>POSICIONAMENTO</p>
+    <!-- ilha de vidro: o texto flutua sobre o FundoVivo, garantindo leitura
+         AA mesmo com o vídeo dela em movimento por trás (padrão .hero__ilha) -->
+    <div class="posicionamento__ilha" data-bl-reveal>
+      <!-- hairline dourada CONTIDA na ilha — nunca cruza o rosto no vídeo -->
+      <Divider fade />
+      <p class="posicionamento__eyebrow">POSICIONAMENTO</p>
 
-    <div class="posicionamento__citacao-bloco" data-bl-reveal>
-      <span class="posicionamento__chave" aria-hidden="true">{"{"}</span>
-      <div>
-        <blockquote class="posicionamento__citacao">
-          "Valor não é só preço. A estética deve valorizar quem você é —
-          nunca transformar você em outra pessoa."
-        </blockquote>
-        <cite class="posicionamento__atribuicao">
-          Dra. Beatriz Lima · Biomédica Esteta
-        </cite>
+      <div class="posicionamento__citacao-bloco">
+        <span class="posicionamento__chave" aria-hidden="true">{"{"}</span>
+        <div>
+          <blockquote class="posicionamento__citacao">
+            "Valor não é só preço. A estética deve valorizar quem você é —
+            nunca transformar você em outra pessoa."
+          </blockquote>
+          <cite class="posicionamento__atribuicao">
+            Dra. Beatriz Lima · Biomédica Esteta
+          </cite>
+        </div>
       </div>
-    </div>
 
-    <p class="posicionamento__corpo" data-bl-reveal>
-      Critério clínico acima de tendência. Cada avaliação parte da sua
-      individualidade, não de um padrão de rosto ou de uma referência de
-      rede social. Resultado natural, elegante e proporcional — sem
-      exageros.
-    </p>
+      <p class="posicionamento__corpo">
+        Critério clínico acima de tendência. Cada avaliação parte da sua
+        individualidade, não de um padrão de rosto ou de uma referência de
+        rede social. Resultado natural, elegante e proporcional — sem
+        exageros.
+      </p>
+    </div>
   </div>
 </section>
 
@@ -40,6 +45,17 @@ import Divider from "../Divider.astro";
     margin-inline: auto;
     padding-inline: var(--space-container-pad);
     text-align: center;
+  }
+
+  /* ilha de vidro do DS — mesma superfície do .hero__ilha */
+  .posicionamento__ilha {
+    padding: var(--space-stack-lg);
+    background: var(--surface-glass-strong);
+    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--bloom);
   }
 
   .posicionamento__eyebrow {
@@ -95,5 +111,12 @@ import Divider from "../Divider.astro";
     line-height: var(--type-body-leading);
     color: var(--text-muted);
     margin: 0;
+  }
+
+  /* mobile 360–430: ilha respira menos, sem deformar */
+  @media (max-width: 899px) {
+    .posicionamento__ilha {
+      padding: var(--space-stack-md);
+    }
   }
 </style>
