@@ -17,6 +17,7 @@ function estaAtivo(href: string) {
 ---
 
 <header class="nav">
+  <div class="nav__progress" data-nav-progress aria-hidden="true"></div>
   <div class="nav__inner">
     <a href="/" class="nav__brand" aria-label="Dra. Beatriz Lima — início">
       BL
@@ -97,11 +98,31 @@ function estaAtivo(href: string) {
     font-size: var(--font-size-lg);
     letter-spacing: var(--letter-spacing-wide);
     text-decoration: none;
+    /* ouro chapado (AA sobre a nav clara translúcida); o metal vivo fica
+       reservado à barra de progresso, onde o gradiente respira sem perder
+       legibilidade do monograma. */
     background: var(--gradient-gold-text);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     flex-shrink: 0;
+  }
+
+  /* Barra de progresso de leitura — fio metálico que preenche conforme
+     o scroll. Driver em JS (rAF): animation-timeline: scroll() ainda não
+     roda no iOS Safari (device primário da clientela), então progresso
+     confiável vem do --nav-progress escrito no scroll. */
+  .nav__progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    transform: scaleX(var(--nav-progress, 0));
+    transform-origin: 0 50%;
+    background: var(--gradient-metal);
+    box-shadow: var(--bloom-gold-soft);
+    will-change: transform;
   }
 
   .nav__links {
@@ -111,6 +132,7 @@ function estaAtivo(href: string) {
   }
 
   .nav__link {
+    position: relative;
     font-family: var(--type-eyebrow-font);
     font-size: var(--font-size-xs);
     text-transform: uppercase;
@@ -118,7 +140,22 @@ function estaAtivo(href: string) {
     color: var(--nav-fg);
     text-decoration: none;
     white-space: nowrap;
+    padding-block: 8px;
     transition: color var(--duration-base) var(--ease-standard);
+  }
+
+  /* fio que desenha da esquerda no hover/ativo (redesign editorial) */
+  .nav__link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+    height: 1px;
+    background: var(--border-hairline);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform var(--duration-base) var(--ease-entrance);
   }
 
   .nav__link:hover,
@@ -128,6 +165,12 @@ function estaAtivo(href: string) {
 
   .nav__link[data-active="true"] {
     color: var(--nav-fg-active);
+  }
+
+  .nav__link:hover::after,
+  .nav__link:focus-visible::after,
+  .nav__link[data-active="true"]::after {
+    transform: scaleX(1);
   }
 
   .nav__toggle {
@@ -232,4 +275,29 @@ function estaAtivo(href: string) {
     botao.setAttribute("aria-expanded", String(!aberto));
     if (painel) painel.hidden = aberto;
   });
+
+  // Progresso de leitura — escreve --nav-progress (0→1) no scroll.
+  // rAF-throttled; passive. Reduced-motion mantém o fio no fim (estático).
+  const barra = document.querySelector<HTMLElement>("[data-nav-progress]");
+  if (barra) {
+    let tickando = false;
+    const atualizar = () => {
+      const max = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+      const p = Math.min(1, Math.max(0, window.scrollY / max));
+      barra.style.setProperty("--nav-progress", String(p));
+      tickando = false;
+    };
+    const aoScroll = () => {
+      if (!tickando) {
+        tickando = true;
+        requestAnimationFrame(atualizar);
+      }
+    };
+    window.addEventListener("scroll", aoScroll, { passive: true });
+    window.addEventListener("resize", aoScroll, { passive: true });
+    atualizar();
+  }
 </script>

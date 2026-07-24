@@ -1,101 +1,104 @@
 ---
-// Posicionamento — o discurso central da marca, em texto editorial.
-import Divider from "../Divider.astro";
+// Posicionamento — o discurso central da marca, citação editorial grande.
+// Redesign (Claude Design, 25/07): secao__idx numerado + citação com chave
+// dourada e trecho em ouro. Véu RETANGULAR (política 25/07) no lugar do oval.
 ---
 
-<section class="posicionamento">
-  <div class="posicionamento__inner">
-    <!-- ilha de vidro: o texto flutua sobre o FundoVivo, garantindo leitura
-         AA mesmo com o vídeo dela em movimento por trás (padrão .hero__ilha) -->
-    <div class="posicionamento__ilha" data-bl-reveal>
-      <!-- hairline dourada CONTIDA na ilha — nunca cruza o rosto no vídeo -->
-      <Divider fade />
-      <p class="posicionamento__eyebrow">POSICIONAMENTO</p>
+<section class="secao posic" id="posicionamento">
+  <div class="secao__inner posic__inner">
+    <p class="secao__idx" data-bl-reveal>02 — Posicionamento</p>
 
-      <div class="posicionamento__citacao-bloco">
-        <span class="posicionamento__chave" aria-hidden="true">{"{"}</span>
-        <div>
-          <blockquote class="posicionamento__citacao">
-            "Valor não é só preço. A estética deve valorizar quem você é —
-            nunca transformar você em outra pessoa."
-          </blockquote>
-          <cite class="posicionamento__atribuicao">
-            Dra. Beatriz Lima · Biomédica Esteta
-          </cite>
-        </div>
-      </div>
-
-      <p class="posicionamento__corpo">
-        Critério clínico acima de tendência. Cada avaliação parte da sua
-        individualidade, não de um padrão de rosto ou de uma referência de
-        rede social. Resultado natural, elegante e proporcional — sem
-        exageros.
+    <!-- véu retangular: o texto flutua sobre o FundoVivo com AA garantido,
+         alinhado à coluna de leitura — nunca oval sobre o rosto -->
+    <div class="posic__veu" data-bl-reveal>
+      <blockquote class="posic__quote">
+        <span class="brace" aria-hidden="true">{"{"}</span>Valor não é só preço.
+        A estética deve <em>valorizar quem você é</em> — nunca transformar
+        você em outra pessoa.
+      </blockquote>
+      <cite class="posic__cite">Dra. Beatriz Lima · Biomédica Esteta</cite>
+      <p class="posic__body">
+        Cada avaliação parte da sua individualidade, não de um padrão de rosto
+        ou de uma referência de rede social. Resultado natural, elegante e
+        proporcional — sem exageros.
       </p>
     </div>
   </div>
 </section>
 
 <style>
-  .posicionamento {
-    padding-block: var(--space-section);
+  .secao {
+    position: relative;
+    padding-block: var(--space-section-lg);
   }
-
-  .posicionamento__inner {
-    max-width: var(--container-prose);
+  .secao__inner {
+    max-width: var(--container-lg);
     margin-inline: auto;
     padding-inline: var(--space-container-pad);
-    text-align: center;
   }
-
-  /* ilha de vidro do DS — mesma superfície do .hero__ilha */
-  .posicionamento__ilha {
-    padding: var(--space-stack-lg);
-    background: var(--surface-glass-strong);
-    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
-    backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
-    border: 1px solid var(--surface-glass-border);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--bloom);
-  }
-
-  .posicionamento__eyebrow {
+  .secao__idx {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
     font-family: var(--type-eyebrow-font);
     font-size: var(--font-size-xs);
     text-transform: uppercase;
     letter-spacing: var(--type-eyebrow-tracking);
     color: var(--text-accent);
-    margin: var(--space-stack-lg) 0 var(--space-stack-sm);
-  }
-
-  .posicionamento__citacao-bloco {
-    display: flex;
-    gap: var(--space-inline-md);
-    align-items: flex-start;
-    text-align: left;
     margin: 0 0 var(--space-stack-md);
   }
+  .secao__idx::before {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: var(--border-hairline);
+  }
 
-  .posicionamento__chave {
-    flex-shrink: 0;
+  .posic__inner {
+    max-width: var(--container-md);
+  }
+
+  /* véu retangular do DS (radius-lg), alinhado à caixa do texto */
+  .posic__veu {
+    padding: var(--space-stack-lg);
+    background: var(--surface-glass-strong);
+    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--bloom);
+  }
+
+  .posic__quote {
+    position: relative;
+    font-family: var(--type-quote-font);
+    font-style: italic;
+    font-size: clamp(2rem, 5.2vw, 3.6rem);
+    line-height: 1.1;
+    color: var(--text-heading);
+    margin: 0 0 var(--space-stack-md);
+    text-wrap: pretty;
+  }
+  .posic__quote .brace {
     font-family: var(--type-display-font);
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    line-height: 0.8;
+    font-style: normal;
+    font-size: 1.1em;
+    line-height: 0;
     background: var(--gradient-gold-text);
-    background-clip: text;
     -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-right: 0.12em;
+  }
+  .posic__quote em {
+    font-style: italic;
+    background: var(--gradient-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  .posicionamento__citacao {
-    font-family: var(--type-quote-font);
-    font-style: italic;
-    font-size: var(--font-size-2xl);
-    line-height: var(--line-height-snug);
-    color: var(--text-heading);
-    margin: 0 0 var(--space-stack-sm);
-  }
-
-  .posicionamento__atribuicao {
+  .posic__cite {
     display: block;
     font-family: var(--type-eyebrow-font);
     font-style: normal;
@@ -103,19 +106,21 @@ import Divider from "../Divider.astro";
     text-transform: uppercase;
     letter-spacing: var(--type-eyebrow-tracking);
     color: var(--text-accent);
-    margin: 0;
+    margin: 0 0 var(--space-stack-md);
   }
-
-  .posicionamento__corpo {
+  .posic__body {
     font-size: var(--font-size-md);
     line-height: var(--type-body-leading);
     color: var(--text-muted);
     margin: 0;
+    max-width: 54ch;
   }
 
-  /* mobile 360–430: ilha respira menos, sem deformar */
   @media (max-width: 899px) {
-    .posicionamento__ilha {
+    .secao {
+      padding-block: var(--space-section);
+    }
+    .posic__veu {
       padding: var(--space-stack-md);
     }
   }

@@ -63,9 +63,31 @@ const { slug, eyebrow, title, summary, featured = false } = Astro.props;
     pointer-events: none;
   }
 
+  /* fio metálico no topo (redesign editorial): revela no hover/foco e fica
+     sempre aceso no carro-chefe — assina o cartão sem pesar. */
+  .card-servico::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 2px;
+    border-radius: var(--card-service-radius) var(--card-service-radius) 0 0;
+    background: var(--gradient-metal);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-standard);
+    pointer-events: none;
+  }
+
   .card-servico:hover,
   .card-servico:focus-visible {
     box-shadow: var(--card-glass-inner), var(--card-glass-shadow), var(--tilt-glow);
+  }
+
+  .card-servico:hover::after,
+  .card-servico:focus-visible::after,
+  .card-servico[data-featured="true"]::after {
+    opacity: 1;
   }
 
   .card-servico[data-featured="true"]:hover,

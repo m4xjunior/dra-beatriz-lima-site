@@ -7,17 +7,50 @@
 import TextPressure from "../reactbits/TextPressure.jsx";
 ---
 
-<section class="assinatura" aria-label="Assinatura Beatriz Lima">
+<section class="assinatura" id="assinatura" aria-label="Assinatura Beatriz Lima">
+  <p class="assinatura__idx" data-bl-reveal>05 — A marca, em uma respiração</p>
   <div class="assinatura__area">
     <TextPressure client:visible text="BEATRIZ LIMA" />
   </div>
 </section>
 
 <style>
-  /* Transparente: a assinatura flutua direto sobre o fundo vivo. */
+  /* Transparente: a assinatura flutua direto sobre o fundo vivo. Um
+     escurecimento radial (retangular na caixa, não oval sobre o rosto) dá
+     contraste ao texto claro do TextPressure — política de proteção 25/07. */
   .assinatura {
+    position: relative;
     overflow: hidden;
-    padding-block: var(--space-section);
+    padding-block: var(--space-section-lg);
+  }
+
+  .assinatura > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .assinatura::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      74% 90% at 50% 50%,
+      rgba(12, 10, 7, 0.5) 0%,
+      rgba(12, 10, 7, 0.18) 54%,
+      transparent 78%
+    );
+  }
+
+  .assinatura__idx {
+    text-align: center;
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-accent-on-inverse);
+    margin: 0 0 var(--space-stack-md);
   }
 
   .assinatura__area {
