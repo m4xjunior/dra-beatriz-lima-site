@@ -3,7 +3,6 @@
 // output 'static': catálogo de procedimentos via Content Collections, sem
 // formulário/booking nesta etapa (ver readme.md, Roteiro).
 import { defineConfig } from "astro/config";
-import critters from "astro-critters";
 import compress from "@playform/compress";
 import react from "@astrojs/react";
 
@@ -18,8 +17,11 @@ export default defineConfig({
     // Ilhas React SÓ para os componentes ReactBits (TextPressure,
     // FloatingLines) — o resto do site segue Astro puro + BL·Motion.
     react(),
-    // Inlina o CSS crítico de cada página (perf-astro: LCP sem FOUC).
-    critters(),
+    // critters() REMOVIDO (25/07/2026): o inline de CSS crítico quebrava
+    // as @media em produção — build servia layout mobile no desktop
+    // (hambúrguer + grids 1 coluna; achado do QA do s002, medido em
+    // preview de build). LCP volta a depender só do CSS normal, que é
+    // pequeno; reavaliar critical CSS depois com config correta.
     // Minifica CSS/HTML/JS do build final. Imagem e SVG ficam de fora:
     // não há pipeline de imagem nesta etapa (sem fotografia oficial —
     // ver readme.md "Fontes recebidas") e os SVGs de ícone (Etapa 2+)

@@ -67,27 +67,14 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
       video.preload = "auto";
       video.loop = true;
 
+      // Entrega de frames v4 — algoritmo da versão DEFINITIVA (Claude
+      // Design, aprovada pelo Max): mapa ABSOLUTO scroll→tempo (mesmo
+      // ponto da página = mesmo frame, determinístico) e perseguição
+      // com CAP DE VELOCIDADE por passo — rolou rápido, o vídeo avança
+      // em ritmo constante (uniforme); chegando perto do alvo, suaviza.
       let modo: "tocando" | "scrubando" = "tocando";
       let alvo = 0;
-      let offset = 0;
       let idleTimer: ReturnType<typeof setTimeout> | undefined;
-      let seekEmVoo = false;
-
-      // Entrega de frames v3 — fila de UM seek: o próximo só parte
-      // quando o 'seeked' confirma o anterior. A cadência se ajusta
-      // sozinha à capacidade real do decoder de cada aparelho — entrega
-      // UNIFORME, sem lerp defasado nem throttle fixo (spec do Max:
-      // "não fica uniforme a forma de entrega dos frames").
-      const emitirSeek = () => {
-        if (modo !== "scrubando" || !video.duration || seekEmVoo) return;
-        if (Math.abs(alvo - video.currentTime) < 1 / 32) return;
-        seekEmVoo = true;
-        video.currentTime = limitar(alvo, video.duration);
-      };
-      video.addEventListener("seeked", () => {
-        seekEmVoo = false;
-        emitirSeek();
-      });
 
       // clamp 0..1: o rubber-banding do macOS produz scrollY NEGATIVO
       // no topo — sem clamp, o alvo ficava negativo e o wrap jogava o
@@ -109,32 +96,38 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
         () => {
           if (!video.duration) return;
           if (modo === "tocando") {
-            // Rebase: o comando passa a ser RELATIVO ao frame atual.
             modo = "scrubando";
             video.pause();
-            offset = video.currentTime - progresso() * video.duration;
           }
-          alvo = limitar(progresso() * video.duration + offset, video.duration);
-          emitirSeek();
+          alvo = limitar(progresso() * video.duration, video.duration);
           clearTimeout(idleTimer);
-          // Delay generoso antes de ela voltar a viver sozinha (spec do
-          // Max): a pausa comunica que o controle era do usuário.
+          // Segura o frame ~900ms antes de ela voltar a viver sozinha —
+          // a pausa comunica que o controle era do usuário.
           idleTimer = setTimeout(() => {
             modo = "tocando";
             video.play().catch(() => {});
-          }, 1100);
+          }, 900);
         },
         { passive: true },
       );
 
-      // Rede de segurança: se um 'seeked' se perder (aba trocada,
-      // decoder engasgado), o watchdog re-emite a cada 250ms.
-      setInterval(() => {
-        if (modo === "scrubando" && seekEmVoo && !video.seeking) {
-          seekEmVoo = false;
-          emitirSeek();
+      const toque = window.matchMedia("(pointer: coarse)").matches;
+      const intervaloMinimo = toque ? 90 : 0;
+      const capPasso = toque ? 0.05 : 0.09;
+      let ultimoSeek = 0;
+      const tick = () => {
+        if (modo === "scrubando" && video.duration && !video.seeking) {
+          const agora = performance.now();
+          const delta = alvo - video.currentTime;
+          if (Math.abs(delta) > 0.01 && agora - ultimoSeek >= intervaloMinimo) {
+            ultimoSeek = agora;
+            const passo = Math.max(-capPasso, Math.min(capPasso, delta * 0.32));
+            video.currentTime = limitar(video.currentTime + passo, video.duration);
+          }
         }
-      }, 250);
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
     }
   }
 </script>
@@ -146,35 +139,56 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
     z-index: 0;
   }
 
+  /* Enquadramento definitivo: ela à direita do centro no desktop (a
+     coluna de leitura vive à esquerda, sobre o scrim). */
   .fundo-vivo__video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: 62% 18%;
   }
 
-  /* Mobile: a personagem principal MAIOR (spec do Max) — zoom óptico
-     barato via transform (GPU, sem re-render do vídeo), origem na
-     região do rosto do crop 9:16. */
-  @media (pointer: coarse) {
+  /* Mobile: ela central e MAIOR (zoom óptico via transform, GPU) e o
+     scrim vira escurecimento vertical — texto ancorado no pé. */
+  @media (max-width: 920px) {
     .fundo-vivo__video {
+      object-position: 52% 16%;
       transform: scale(1.12);
-      transform-origin: 50% 26%;
+      transform-origin: 50% 22%;
+    }
+
+    .fundo-vivo__veu {
+      background: linear-gradient(
+        180deg,
+        rgba(10, 8, 5, 0.42) 0%,
+        rgba(10, 8, 5, 0.30) 42%,
+        rgba(10, 8, 5, 0.66) 100%
+      );
     }
   }
 
-  /* Véu de contraste: o conteúdo em ilhas de vidro precisa de base
-     estável de leitura sobre um fundo que se move — gradiente sutil do
-     tema, mais denso nas bordas onde vive o texto. */
+  /* SCRIM DIRECIONAL (versão definitiva): escurece a coluna de texto à
+     ESQUERDA e some antes do centro-direita — onde a Dra. fica NÍTIDA.
+     Faixas topo/pé dão contraste a nav e rodapé. Substitui os véus de
+     bloco (os ovais reprovados nunca voltam). */
   .fundo-vivo__veu {
     position: absolute;
     inset: 0;
     background:
       linear-gradient(
+        97deg,
+        rgba(10, 8, 5, 0.88) 0%,
+        rgba(10, 8, 5, 0.72) 26%,
+        rgba(10, 8, 5, 0.32) 50%,
+        rgba(10, 8, 5, 0.04) 68%,
+        transparent 80%
+      ),
+      linear-gradient(
         180deg,
-        rgba(26, 22, 17, 0.30) 0%,
-        rgba(26, 22, 17, 0.06) 30%,
-        rgba(26, 22, 17, 0.10) 70%,
-        rgba(26, 22, 17, 0.42) 100%
+        rgba(10, 8, 5, 0.5) 0%,
+        transparent 20%,
+        transparent 66%,
+        rgba(10, 8, 5, 0.5) 100%
       );
   }
 </style>

@@ -1,21 +1,558 @@
 ---
-// Landing — / . Composição de seções fixas (ver contrato de arquivos).
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Hero from "../components/secoes/Hero.astro";
-import Posicionamento from "../components/secoes/Posicionamento.astro";
-import Pilares from "../components/secoes/Pilares.astro";
-import TeaserCatalogo from "../components/secoes/TeaserCatalogo.astro";
-import AssinaturaPressao from "../components/secoes/AssinaturaPressao.astro";
+// Landing — porte 1:1 da versão DEFINITIVA do Claude Design (projeto
+// "Dra. Beatriz Lima redesign", Home.dc.html, importado via DesignSync
+// em 25/07/2026 e aprovado pelo Max como a versão a aplicar).
+//
+// ADR: esta rota NÃO usa BaseLayout nem os componentes de seção — é a
+// página inteira num arquivo, exatamente como o artefato de design,
+// para fidelidade total ("quero exatamente igual"). As demais rotas
+// (/procedimentos, /estetica) seguem no BaseLayout normal. Direção:
+// tema IMMERSIVE, scrim direcional (ela nítida à direita), coluna de
+// leitura .lead à esquerda, zero véus de bloco sobre o rosto.
+import "../design-system/styles.css";
+
+const RAIZ_VIDEO =
+  "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_video";
 ---
 
-<BaseLayout
-  title="Dra. Beatriz Lima — Biomédica Esteta"
-  description="Consultório de biomedicina estética em Goiânia. Critério clínico e avaliação individual — estética que valoriza você."
-  theme="brand"
->
-  <Hero />
-  <Posicionamento />
-  <Pilares />
-  <TeaserCatalogo />
-  <AssinaturaPressao />
-</BaseLayout>
+<!doctype html>
+<html lang="pt-BR" data-theme="immersive">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Dra. Beatriz Lima — Biomédica Esteta</title>
+    <meta
+      name="description"
+      content="Consultório de biomedicina estética em Goiânia. Critério clínico e avaliação individual — estética que valoriza você."
+    />
+    <meta name="theme-color" content="#0A0805" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dra. Beatriz Lima — Biomédica Esteta" />
+    <meta
+      property="og:description"
+      content="Consultório de biomedicina estética em Goiânia. Critério clínico e avaliação individual — estética que valoriza você."
+    />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:image" content="https://dra-beatriz-lima.pages.dev/imagens/og-capa.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+    />
+
+    <script is:inline defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script is:inline defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script is:inline defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script is:inline defer src="/design-system/motion/bl-motion.js"></script>
+    <script is:inline defer src="/design-system/motion/bl-init.js"></script>
+
+    <style is:global>
+      /* CSS da versão definitiva — verbatim do Home.dc.html (tokens do DS). */
+      :root { --edge: clamp(16px, 2.6vw, 44px); --lead: 40rem; }
+      html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height, 4rem); }
+      .site { position: relative; min-height: 100vh; }
+      .conteudo-site { container-type: inline-size; container-name: site; }
+      .display { font-family: var(--type-display-font); font-optical-sizing: auto; }
+
+      @keyframes blRise { from { transform: translateY(112%); } to { transform: translateY(0); } }
+      @keyframes blUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+      @keyframes blIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes blDraw { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+      @keyframes blScroll { 0%,100% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(7px); opacity: 1; } }
+
+      .fundo-vivo { position: fixed; inset: 0; z-index: 0; background: var(--color-obsidian-900, #0A0805); overflow: hidden; }
+      .fundo-vivo__poster, .fundo-vivo__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 62% 18%; }
+      .fundo-vivo__poster { background: 62% 18% / cover no-repeat #0A0805; }
+      .fundo-vivo__scrim {
+        position: absolute; inset: 0; pointer-events: none;
+        background:
+          linear-gradient(97deg, rgba(10,8,5,0.88) 0%, rgba(10,8,5,0.72) 26%, rgba(10,8,5,0.32) 50%, rgba(10,8,5,0.04) 68%, transparent 80%),
+          linear-gradient(180deg, rgba(10,8,5,0.5) 0%, transparent 20%, transparent 66%, rgba(10,8,5,0.5) 100%);
+      }
+      .fundo-vivo__grain { position: absolute; inset: 0; pointer-events: none; background-image: var(--grain); background-size: 190px 190px; opacity: 0.06; mix-blend-mode: overlay; }
+
+      .lead { width: min(100%, var(--lead)); }
+      .on-video { text-shadow: 0 1px 14px rgba(8,6,4,0.5); }
+
+      .nav { position: sticky; top: 0; z-index: var(--z-sticky); background-color: var(--nav-bg); -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--glass-saturate)); backdrop-filter: blur(var(--nav-blur)) saturate(var(--glass-saturate)); border-bottom: var(--border-width-hairline) solid var(--nav-border); }
+      .nav__progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; transform: scaleX(0); transform-origin: 0 50%; background: var(--gradient-metal); box-shadow: var(--bloom-gold-soft); animation: blProgress linear both; animation-timeline: scroll(root block); }
+      @keyframes blProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+      .nav__inner { height: var(--nav-height); max-width: var(--container-xl); margin-inline: auto; padding-inline: var(--edge); display: flex; align-items: center; justify-content: space-between; gap: var(--space-inline-md); }
+      .nav__brand { font-family: var(--type-display-font); font-variation-settings: 'opsz' 24,'wght' 620,'wdth' 100; font-size: var(--font-size-lg); letter-spacing: var(--letter-spacing-wide); text-decoration: none; background: var(--gradient-metal); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+      .nav__links { display: none; gap: var(--space-inline-lg); align-items: center; }
+      .nav__link { position: relative; font-family: var(--type-eyebrow-font); font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--nav-fg); text-decoration: none; white-space: nowrap; padding-block: 8px; transition: color var(--duration-base) var(--ease-standard); }
+      .nav__link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 1px; background: var(--border-hairline); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--duration-base) var(--ease-entrance); }
+      .nav__link:hover, .nav__link:focus-visible, .nav__link[data-active="true"] { color: var(--nav-fg-active); }
+      .nav__link:hover::after, .nav__link:focus-visible::after, .nav__link[data-active="true"]::after { transform: scaleX(1); }
+      .nav__toggle { display: inline-flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: var(--size-6); height: var(--size-6); background: transparent; border: none; cursor: pointer; padding: 0; }
+      .nav__toggle-bar { display: block; width: 22px; height: 1.5px; background: var(--nav-fg); transition: transform var(--duration-base) var(--ease-standard), opacity var(--duration-fast); }
+      .nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+      .nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(2) { opacity: 0; }
+      .nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+      .nav__mobile { display: none; flex-direction: column; padding: var(--space-stack-sm) var(--edge) var(--space-stack-md); border-top: var(--border-width-hairline) solid var(--nav-border); background-color: var(--nav-bg); -webkit-backdrop-filter: blur(var(--nav-blur)); backdrop-filter: blur(var(--nav-blur)); }
+      .nav__mobile[data-open="true"] { display: flex; }
+      .nav__mobile-link { font-family: var(--type-eyebrow-font); font-size: var(--font-size-sm); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--nav-fg); text-decoration: none; padding-block: var(--space-inline-md); border-bottom: var(--border-width-hairline) solid var(--nav-border); }
+      .nav__mobile-link:last-child { border-bottom: none; }
+
+      .hero { position: relative; min-height: calc(100svh - var(--nav-height, 4rem)); }
+      .hero__frame { position: absolute; inset: var(--edge); z-index: 3; pointer-events: none; }
+      .hero__frame i { position: absolute; width: 44px; height: 44px; opacity: 0; animation: blDraw var(--duration-slow) var(--ease-entrance) .15s both; }
+      .hero__frame i:nth-child(1) { top: 0; left: 0; border-top: 1px solid var(--border-hairline); border-left: 1px solid var(--border-hairline); }
+      .hero__frame i:nth-child(2) { top: 0; right: 0; border-top: 1px solid var(--border-hairline); border-right: 1px solid var(--border-hairline); }
+      .hero__frame i:nth-child(3) { bottom: 0; left: 0; border-bottom: 1px solid var(--border-hairline); border-left: 1px solid var(--border-hairline); }
+      .hero__frame i:nth-child(4) { bottom: 0; right: 0; border-bottom: 1px solid var(--border-hairline); border-right: 1px solid var(--border-hairline); }
+      .hero__wrap { position: absolute; inset: 0; padding: calc(var(--edge) + 30px) var(--edge) calc(var(--edge) + 20px); width: min(100% - 2*var(--edge), var(--container-xl)); margin-inline: auto; display: grid; grid-template-rows: auto 1fr auto; }
+      .hero__eyebrow { align-self: start; display: inline-flex; align-items: center; gap: var(--space-inline-sm); font-family: var(--type-eyebrow-font); font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--text-accent); margin: 0; animation: blUp var(--duration-slow) var(--ease-entrance) .1s both; }
+      .hero__eyebrow .rule { width: 34px; height: 1px; background: var(--border-hairline); }
+      .hero__foot { align-self: end; width: min(100%, var(--lead)); }
+      .hero__titulo { font-family: var(--type-display-font); font-optical-sizing: auto; font-variation-settings: 'opsz' 92,'wght' 640,'wdth' 94; font-size: clamp(3rem, 6.4vw + 1rem, 6.6rem); line-height: 0.96; letter-spacing: var(--letter-spacing-tighter); color: var(--text-heading); margin: 0 0 var(--space-stack-md); }
+      .hero__titulo .line { display: block; overflow: hidden; padding-top: 0.16em; padding-bottom: 0.16em; }
+      .hero__titulo .line > span { display: block; animation: blRise var(--duration-slower) var(--ease-entrance) both; }
+      .hero__titulo .line:nth-child(1) > span { animation-delay: .24s; }
+      .hero__titulo .line:nth-child(2) > span { animation-delay: .38s; }
+      .hero__voce { font-family: var(--type-quote-font); font-style: italic; font-weight: 500; font-variation-settings: normal; letter-spacing: 0; background: var(--gradient-gold-text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; }
+      .hero__corpo { font-size: var(--font-size-md); line-height: var(--type-body-leading); color: var(--text-body); max-width: 40ch; margin: 0 0 var(--space-stack-lg); animation: blUp var(--duration-slow) var(--ease-entrance) .62s both; }
+      .hero__acoes { display: flex; flex-wrap: wrap; gap: var(--space-inline-md); animation: blUp var(--duration-slow) var(--ease-entrance) .74s both; }
+      .hero__index { position: absolute; left: calc(var(--edge) + 2px); top: 50%; transform: translateY(-50%) rotate(180deg); writing-mode: vertical-rl; font-family: var(--type-eyebrow-font); font-size: var(--font-size-2xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--text-subtle); animation: blIn var(--duration-slower) ease .8s both; }
+      .hero__scroll { position: absolute; bottom: var(--edge); right: var(--edge); display: inline-flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; animation: blIn var(--duration-slower) ease .9s both; }
+      .hero__scroll span { width: 1px; height: 30px; background: linear-gradient(var(--color-gold-400), transparent); animation: blScroll 2.2s var(--ease-standard) infinite; }
+
+      .secao { position: relative; padding-block: var(--space-section-lg); }
+      .secao__inner { width: min(100% - 2*var(--edge), var(--container-xl)); margin-inline: auto; }
+      .secao__idx { display: inline-flex; align-items: center; gap: var(--space-inline-sm); font-family: var(--type-eyebrow-font); font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--text-accent); margin: 0 0 var(--space-stack-md); }
+      .secao__idx::before { content: ""; width: 34px; height: 1px; background: var(--border-hairline); }
+
+      .posic__quote { font-family: var(--type-quote-font); font-style: italic; font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.12; color: var(--text-heading); margin: 0 0 var(--space-stack-md); max-width: 20ch; text-wrap: pretty; }
+      .posic__quote .brace { font-family: var(--type-display-font); font-style: normal; font-size: 1.1em; line-height: 0; background: var(--gradient-gold-text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-right: 0.12em; text-shadow: none; }
+      .posic__quote em { font-style: italic; background: var(--gradient-gold-text); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; }
+      .posic__cite { display: block; font-family: var(--type-eyebrow-font); font-style: normal; font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--text-accent); margin: 0 0 var(--space-stack-md); }
+      .posic__body { font-size: var(--font-size-md); line-height: var(--type-body-leading); color: var(--text-muted); margin: 0; }
+
+      .pil__titulo { font-family: var(--type-display-font); font-variation-settings: 'opsz' 44,'wght' 600,'wdth' 96; font-size: clamp(2rem, 4.6vw, var(--font-size-4xl)); line-height: 1; letter-spacing: var(--type-display-tracking); color: var(--text-heading); margin: var(--space-stack-xs) 0 var(--space-stack-lg); max-width: 16ch; text-wrap: balance; }
+      .pil__lista { list-style: none; display: grid; grid-template-columns: 1fr; gap: 0; margin: 0; padding: 0; max-width: 46rem; }
+      .pil__item { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: var(--space-inline-lg); padding: var(--space-stack-md) var(--space-inline-sm); border-top: var(--border-width-hairline) solid var(--border-hairline); transition: padding-left var(--duration-base) var(--ease-entrance); }
+      .pil__item:last-child { border-bottom: var(--border-width-hairline) solid var(--border-hairline); }
+      .pil__item:hover { padding-left: var(--space-stack-sm); }
+      .pil__num { font-family: var(--type-display-font); font-variation-settings: 'opsz' 40,'wght' 300,'wdth' 88; font-size: clamp(1.8rem, 3.4vw, 2.8rem); line-height: 0.9; color: transparent; -webkit-text-stroke: 1px var(--color-gold-400); }
+      .pil__nome { font-family: var(--type-display-font); font-variation-settings: 'opsz' 22,'wght' 620; font-size: var(--font-size-xl); color: var(--text-heading); margin: 0 0 4px; }
+      .pil__desc { font-size: var(--font-size-sm); line-height: var(--type-body-leading); color: var(--text-muted); margin: 0; max-width: 52ch; }
+
+      .teaser__titulo { font-family: var(--type-display-font); font-variation-settings: 'opsz' 44,'wght' 600,'wdth' 96; font-size: clamp(1.9rem, 4.4vw, var(--font-size-3xl)); line-height: 1.02; letter-spacing: var(--type-display-tracking); margin: var(--space-stack-xs) 0 var(--space-stack-sm); max-width: 20ch; text-wrap: balance; color: var(--text-heading); }
+      .teaser__corpo { font-size: var(--font-size-md); line-height: var(--type-body-leading); color: var(--text-muted); max-width: 56ch; margin: 0 0 var(--space-stack-lg); }
+      .teaser__grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--space-gutter); perspective: 1300px; }
+      .card { position: relative; display: flex; flex-direction: column; gap: var(--space-stack-xs); text-decoration: none; color: inherit; background-color: var(--surface-glass-strong); background-image: var(--surface-glass-tint); border: var(--border-width-hairline) solid var(--surface-glass-border); border-radius: var(--card-glass-radius, var(--radius-lg)); padding: var(--card-service-pad, var(--space-stack-md)); -webkit-backdrop-filter: blur(var(--card-glass-blur, 14px)) saturate(var(--card-glass-saturate, 1.3)); backdrop-filter: blur(var(--card-glass-blur, 14px)) saturate(var(--card-glass-saturate, 1.3)); box-shadow: var(--surface-glass-inner), var(--elevation-floating); transition: box-shadow var(--duration-base) var(--ease-standard), transform var(--duration-base) var(--ease-standard); transform-style: preserve-3d; overflow: hidden; }
+      .card::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--gradient-metal); opacity: 0; transition: opacity var(--duration-base) var(--ease-standard); }
+      .card:hover, .card:focus-visible { box-shadow: var(--surface-glass-inner), var(--elevation-floating), var(--bloom); }
+      .card:hover::before, .card:focus-visible::before { opacity: 1; }
+      .card[data-featured="true"] { border-color: var(--color-gold-500); }
+      .card[data-featured="true"]::before { opacity: 1; }
+      .card[data-featured="true"]:hover { box-shadow: var(--surface-glass-inner), var(--elevation-floating), var(--bloom-strong); }
+      .card:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+      .card__selo { align-self: flex-start; display: inline-flex; align-items: center; font-family: var(--type-eyebrow-font); font-size: var(--badge-font-size); letter-spacing: var(--badge-tracking); text-transform: uppercase; border-radius: var(--badge-radius); padding: var(--space-inline-xs) var(--space-inline-sm); background: var(--surface-accent-soft); color: var(--text-accent-strong); }
+      .card__eyebrow { font-family: var(--type-eyebrow-font); font-size: var(--font-size-2xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--text-accent); }
+      .card__titulo { font-family: var(--type-display-font); font-variation-settings: 'opsz' 26,'wght' 620; font-size: var(--font-size-xl); letter-spacing: var(--type-display-tracking); color: var(--text-heading); margin: 0; }
+      .card__chave { color: var(--text-accent); margin-right: var(--space-inline-xs); }
+      .card__resumo { font-size: var(--font-size-sm); line-height: var(--type-body-leading); color: var(--text-muted); margin: 0; }
+      .card__cta { margin-top: auto; padding-top: var(--space-stack-xs); font-family: var(--type-eyebrow-font); font-size: var(--font-size-2xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--text-accent); display: inline-flex; gap: 6px; }
+      .card__cta b { font-weight: inherit; transition: transform var(--duration-base) var(--ease-entrance); }
+      .card:hover .card__cta b { transform: translateX(5px); }
+      .teaser__mais { margin-top: var(--space-stack-lg); }
+
+      .botao { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-inline-xs); font-family: var(--button-font); letter-spacing: var(--button-tracking); text-transform: uppercase; text-decoration: none; border-radius: var(--button-primary-radius); padding: var(--button-pad-y) var(--button-pad-x); font-size: var(--button-font-size); border: var(--border-width-thin) solid transparent; cursor: pointer; transition: filter var(--duration-base) var(--ease-standard), box-shadow var(--duration-base) var(--ease-standard), background-color var(--duration-base) var(--ease-standard), transform var(--duration-fast); }
+      .botao:focus-visible { outline: none; box-shadow: var(--ring-focus); }
+      .botao:active { transform: translateY(1px) scale(0.99); }
+      .botao[data-v="1"] { background: var(--button-primary-bg); color: var(--button-primary-fg); box-shadow: var(--bloom); }
+      .botao[data-v="1"]:hover, .botao[data-v="1"]:focus-visible { filter: var(--button-primary-hover-filter); box-shadow: var(--bloom-strong); }
+      .botao[data-v="2"] { background: rgba(20,16,10,0.3); color: var(--text-accent); border-color: var(--color-gold-500); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+      .botao[data-v="2"]:hover, .botao[data-v="2"]:focus-visible { background: var(--surface-hover); }
+      .botao[data-v="3"] { background: transparent; color: var(--text-accent); padding-inline: var(--space-inline-xs); }
+      .botao[data-v="3"]:hover, .botao[data-v="3"]:focus-visible { background: var(--surface-hover); }
+
+      .assinatura { position: relative; overflow: hidden; padding-block: var(--space-section-lg); }
+      .assinatura__idx { text-align: center; font-family: var(--type-eyebrow-font); font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); color: var(--text-accent); margin: 0 0 var(--space-stack-md); }
+      .assinatura__area { max-width: var(--container-xl); margin-inline: auto; padding-inline: var(--edge); height: clamp(6rem, 21vw, 18rem); }
+      .text-pressure-titulo { font-family: var(--type-display-font); font-weight: 200; color: var(--text-heading); text-transform: uppercase; text-align: center; white-space: nowrap; user-select: none; margin: 0; width: 100%; display: flex; justify-content: space-between; transform-origin: center top; text-shadow: 0 2px 60px rgba(247,237,214,0.35), 0 1px 3px rgba(8,6,4,0.5); }
+      .text-pressure-titulo span { display: inline-block; font-variation-settings: 'wght' 200,'wdth' 100; }
+
+      .footer { color: var(--text-body); padding: var(--space-section) var(--edge) var(--space-section-lg); }
+      .footer__inner { position: relative; width: min(100% - 2*var(--edge), var(--container-xl)); margin-inline: auto; display: grid; gap: var(--space-stack-md); padding-top: var(--space-stack-lg); border-top: var(--border-width-hairline) solid var(--border-hairline); }
+      .footer__mono { font-family: var(--type-display-font); font-variation-settings: 'opsz' 96,'wght' 300; font-size: clamp(4rem, 15vw, 8.5rem); line-height: 0.82; background: var(--gradient-metal); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+      .footer__nome { font-family: var(--type-display-font); text-transform: uppercase; letter-spacing: var(--type-eyebrow-tracking); font-size: var(--font-size-sm); color: var(--text-heading); }
+      .footer__nome span { display: block; color: var(--text-accent); font-size: var(--font-size-2xs); margin-top: 4px; }
+      .footer__row { display: flex; flex-wrap: wrap; gap: var(--space-inline-lg); align-items: baseline; font-size: var(--font-size-sm); }
+      .footer__pilares { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-inline-lg); padding: 0; margin: 0; font-size: var(--font-size-sm); color: var(--text-body); }
+      .footer__pilares .k { color: var(--text-accent); margin-right: 6px; font-family: var(--type-display-font); }
+      .footer__ig { color: var(--text-accent); text-decoration: none; }
+      .footer__ig:hover { text-decoration: underline; }
+      .footer__local { color: var(--text-muted); }
+      .footer__legal { font-size: var(--font-size-xs); line-height: var(--type-body-leading); max-width: 66ch; color: var(--text-muted); margin: 0; }
+      .footer__copy { font-size: var(--font-size-2xs); color: var(--text-subtle); margin: 0; }
+
+      a { color: var(--text-accent); }
+      a:hover { color: var(--text-accent-strong); }
+
+      @container site (min-width: 768px) {
+        .nav__links { display: flex; }
+        .nav__toggle { display: none; }
+        .nav__mobile { display: none !important; }
+        .footer__inner { grid-template-columns: auto 1fr auto; align-items: start; }
+        .footer__legal, .footer__copy { grid-column: 1 / -1; }
+      }
+
+      @container site (max-width: 920px) {
+        .hero__wrap { display: flex; flex-direction: column; justify-content: space-between; padding: calc(var(--edge) + 22px) var(--edge) calc(var(--edge) + 6px); }
+        .hero__foot { width: 100%; }
+        .hero__eyebrow { letter-spacing: var(--letter-spacing-wider); }
+        .hero__titulo { font-size: clamp(2.3rem, 11vw, 3.6rem); }
+        .hero__index, .hero__scroll { display: none; }
+        .hero__acoes .botao { flex: 1 1 auto; }
+        .secao { padding-block: var(--space-section); }
+        .assinatura__area { height: clamp(4.5rem, 27vw, 9rem); }
+        .footer__mono { font-size: clamp(4.5rem, 30vw, 8rem); }
+      }
+
+      @media (max-width: 920px) {
+        .fundo-vivo__poster, .fundo-vivo__video { object-position: 52% 16%; }
+        .fundo-vivo__scrim { background: linear-gradient(180deg, rgba(10,8,5,0.42) 0%, rgba(10,8,5,0.30) 42%, rgba(10,8,5,0.66) 100%); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .nav__progress, .hero__scroll span { animation: none; }
+        .hero__frame i, .hero__eyebrow, .hero__titulo .line > span, .hero__corpo, .hero__acoes, .hero__index, .hero__scroll { animation: none !important; opacity: 1 !important; transform: none !important; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="site">
+      <div
+        class="fundo-vivo"
+        aria-hidden="true"
+        data-fundo-vivo
+        data-raiz={RAIZ_VIDEO}
+      >
+        <div class="fundo-vivo__poster" data-fundo-poster></div>
+        <video class="fundo-vivo__video" data-fundo-video muted loop playsinline preload="metadata"></video>
+        <div class="fundo-vivo__scrim"></div>
+        <div class="fundo-vivo__grain"></div>
+      </div>
+
+      <div class="conteudo-site">
+        <header class="nav">
+          <div class="nav__progress"></div>
+          <div class="nav__inner">
+            <a href="#topo" class="nav__brand" aria-label="Dra. Beatriz Lima — início">BL</a>
+            <nav class="nav__links" aria-label="Navegação principal">
+              <a href="#topo" class="nav__link" data-active="true">Início</a>
+              <a href="#procedimentos" class="nav__link">Procedimentos</a>
+              <a href="#assinatura" class="nav__link">Estética</a>
+            </nav>
+            <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="nav-mobile" data-nav-toggle>
+              <span class="nav__toggle-bar"></span><span class="nav__toggle-bar"></span><span class="nav__toggle-bar"></span>
+            </button>
+          </div>
+          <nav id="nav-mobile" class="nav__mobile" data-open="false" aria-label="Navegação (mobile)" data-nav-mobile>
+            <a href="#topo" class="nav__mobile-link">Início</a>
+            <a href="#procedimentos" class="nav__mobile-link">Procedimentos</a>
+            <a href="#assinatura" class="nav__mobile-link">Estética</a>
+          </nav>
+        </header>
+
+        <main>
+          <section class="hero" id="topo">
+            <div class="hero__frame"><i></i><i></i><i></i><i></i></div>
+            <div class="hero__wrap">
+              <p class="hero__eyebrow on-video"><span class="rule"></span>Goiânia — Biomedicina estética</p>
+              <div class="hero__foot">
+                <h1 class="hero__titulo display on-video">
+                  <span class="line"><span>Estética que</span></span>
+                  <span class="line"><span>valoriza <em class="hero__voce">você</em></span></span>
+                </h1>
+                <p class="hero__corpo on-video">Critério clínico acima de tendência. Cada procedimento parte de uma avaliação individual sobre o seu rosto — nunca de um padrão pronto.</p>
+                <div class="hero__acoes">
+                  <a href="/procedimentos" class="botao" data-v="1">Ver procedimentos</a>
+                  <a href="https://www.instagram.com/biomedica.beatrizz" target="_blank" rel="noopener noreferrer" class="botao" data-v="2">Agendar avaliação</a>
+                </div>
+              </div>
+              <span class="hero__index on-video" aria-hidden="true">01 — A presença</span>
+              <a class="hero__scroll" href="#posicionamento" aria-label="Rolar para ver mais"><span></span></a>
+            </div>
+          </section>
+
+          <section class="secao posic" id="posicionamento">
+            <div class="secao__inner">
+              <div class="lead">
+                <p class="secao__idx" data-bl-reveal>02 — Posicionamento</p>
+                <blockquote class="posic__quote on-video" data-bl-reveal><span class="brace" aria-hidden="true">&#123;</span>Valor não é só preço. A estética deve <em>valorizar quem você é</em> — nunca transformar você em outra pessoa.</blockquote>
+                <cite class="posic__cite" data-bl-reveal>Dra. Beatriz Lima · Biomédica Esteta</cite>
+                <p class="posic__body on-video" data-bl-reveal>Cada avaliação parte da sua individualidade, não de um padrão de rosto ou de uma referência de rede social. Resultado natural, elegante e proporcional — sem exageros.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="secao pil" id="pilares">
+            <div class="secao__inner">
+              <div class="lead" data-bl-reveal>
+                <p class="secao__idx">03 — Pilares</p>
+                <h2 class="pil__titulo display on-video">O que sustenta cada avaliação</h2>
+              </div>
+              <ul class="pil__lista">
+                <li class="pil__item on-video" data-bl-reveal><span class="pil__num" aria-hidden="true">01</span><div><h3 class="pil__nome">Ciência</h3><p class="pil__desc">Cada indicação parte de critério clínico, não de tendência.</p></div></li>
+                <li class="pil__item on-video" data-bl-reveal><span class="pil__num" aria-hidden="true">02</span><div><h3 class="pil__nome">Ética</h3><p class="pil__desc">Transparência sobre o que um procedimento pode e não pode entregar.</p></div></li>
+                <li class="pil__item on-video" data-bl-reveal><span class="pil__num" aria-hidden="true">03</span><div><h3 class="pil__nome">Escuta</h3><p class="pil__desc">Cada rosto é único, e o cuidado começa por ouvir o que você busca.</p></div></li>
+                <li class="pil__item on-video" data-bl-reveal><span class="pil__num" aria-hidden="true">04</span><div><h3 class="pil__nome">Respeito</h3><p class="pil__desc">Ao seu tempo, ao seu histórico e aos seus limites.</p></div></li>
+                <li class="pil__item on-video" data-bl-reveal><span class="pil__num" aria-hidden="true">05</span><div><h3 class="pil__nome">Individualidade</h3><p class="pil__desc">Nenhum protocolo é padrão — cada avaliação é sobre você.</p></div></li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="secao teaser" id="procedimentos">
+            <div class="secao__inner">
+              <div class="lead" data-bl-reveal>
+                <p class="secao__idx">04 — Procedimentos</p>
+                <h2 class="teaser__titulo display on-video">Um catálogo por indicação, não por tendência</h2>
+                <p class="teaser__corpo on-video">Preenchimento labial, bioestimuladores de colágeno, toxina botulínica e harmonização, peelings e protocolos de pele — cada um com indicações e contraindicações claras, para você decidir com informação, não com pressa.</p>
+              </div>
+              <div class="teaser__grade">
+                <a href="/procedimentos/preenchimento-labial" class="card" data-featured="true" data-bl-tilt data-bl-reveal>
+                  <span class="card__selo">Carro-chefe</span>
+                  <span class="card__eyebrow">Preenchimento labial</span>
+                  <h3 class="card__titulo"><span class="card__chave" aria-hidden="true">&#123;</span>Preenchimento labial</h3>
+                  <p class="card__resumo">Ácido hialurônico com técnica milimétrica, para reforçar contorno e hidratação em proporção com o rosto.</p>
+                  <span class="card__cta" aria-hidden="true">Ver detalhes <b>→</b></span>
+                </a>
+                <a href="/procedimentos/bioestimuladores-de-colageno" class="card" data-bl-tilt data-bl-reveal>
+                  <span class="card__eyebrow">Bioestimuladores</span>
+                  <h3 class="card__titulo"><span class="card__chave" aria-hidden="true">&#123;</span>Bioestimuladores de colágeno</h3>
+                  <p class="card__resumo">Estímulo gradual à produção natural de colágeno, para firmeza e qualidade de pele ao longo do tempo.</p>
+                  <span class="card__cta" aria-hidden="true">Ver detalhes <b>→</b></span>
+                </a>
+                <a href="/procedimentos/toxina-botulinica-harmonizacao" class="card" data-bl-tilt data-bl-reveal>
+                  <span class="card__eyebrow">Toxina · Harmonização</span>
+                  <h3 class="card__titulo"><span class="card__chave" aria-hidden="true">&#123;</span>Toxina botulínica e harmonização</h3>
+                  <p class="card__resumo">Suavização de linhas de expressão e equilíbrio de proporções, preservando a sua expressão natural.</p>
+                  <span class="card__cta" aria-hidden="true">Ver detalhes <b>→</b></span>
+                </a>
+              </div>
+              <div class="teaser__mais lead" data-bl-reveal><a href="/procedimentos" class="botao" data-v="3">Ver todos os procedimentos →</a></div>
+            </div>
+          </section>
+
+          <section class="assinatura" id="assinatura" aria-label="Assinatura Beatriz Lima">
+            <p class="assinatura__idx" data-bl-reveal>05 — A marca, em uma respiração</p>
+            <div class="assinatura__area" data-pressure-area>
+              <p class="text-pressure-titulo" data-pressure-titulo aria-label="BEATRIZ LIMA">
+                <span aria-hidden="true">B</span><span aria-hidden="true">E</span><span aria-hidden="true">A</span><span aria-hidden="true">T</span><span aria-hidden="true">R</span><span aria-hidden="true">I</span><span aria-hidden="true">Z</span><span aria-hidden="true">&nbsp;</span><span aria-hidden="true">L</span><span aria-hidden="true">I</span><span aria-hidden="true">M</span><span aria-hidden="true">A</span>
+              </p>
+            </div>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <div class="footer__inner" data-bl-reveal>
+            <div>
+              <p class="footer__mono">BL</p>
+              <p class="footer__nome">Dra. Beatriz Lima<span>Biomédica Esteta · Goiânia</span></p>
+            </div>
+            <ul class="footer__pilares" aria-label="Pilares da prática">
+              <li><span class="k" aria-hidden="true">&#123;</span>Ciência</li>
+              <li><span class="k" aria-hidden="true">&#123;</span>Ética</li>
+              <li><span class="k" aria-hidden="true">&#123;</span>Escuta</li>
+              <li><span class="k" aria-hidden="true">&#123;</span>Respeito</li>
+              <li><span class="k" aria-hidden="true">&#123;</span>Individualidade</li>
+            </ul>
+            <div class="footer__row">
+              <a href="https://www.instagram.com/biomedica.beatrizz" target="_blank" rel="noopener noreferrer" class="footer__ig">@biomedica.beatrizz</a>
+              <span class="footer__local">Goiânia · GO</span>
+            </div>
+            <p class="footer__legal">Conteúdo informativo — não substitui avaliação clínica presencial. Todo procedimento é individual; resultados dependem de indicação e histórico de cada paciente, conforme a Resolução CFBM nº 330/2020.</p>
+            <p class="footer__copy">© 2026 Dra. Beatriz Lima. Todos os direitos reservados.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      // Comportamento da página definitiva (porte 1:1 do DC script):
+      // menu mobile, fundo vivo v4 e pressão tipográfica — vanilla, sem
+      // React. PT-BR, tokens e guardas preservados.
+
+      // ---- menu mobile ----
+      const alternador = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+      const menuMobile = document.querySelector<HTMLElement>("[data-nav-mobile]");
+      if (alternador && menuMobile) {
+        const fechar = () => {
+          alternador.setAttribute("aria-expanded", "false");
+          menuMobile.dataset.open = "false";
+        };
+        alternador.addEventListener("click", () => {
+          const aberto = alternador.getAttribute("aria-expanded") === "true";
+          alternador.setAttribute("aria-expanded", String(!aberto));
+          menuMobile.dataset.open = String(!aberto);
+        });
+        menuMobile.querySelectorAll("a").forEach((a) => a.addEventListener("click", fechar));
+      }
+
+      // ---- fundo vivo v4 (definitivo): mapa absoluto + cap de velocidade ----
+      const caixa = document.querySelector<HTMLElement>("[data-fundo-vivo]");
+      const video = document.querySelector<HTMLVideoElement>("[data-fundo-video]");
+      const poster = document.querySelector<HTMLElement>("[data-fundo-poster]");
+      if (caixa && video) {
+        const raiz = caixa.dataset.raiz ?? "";
+        const mobile = window.matchMedia("(max-width: 920px)").matches;
+        const reduzido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const nav = navigator as { connection?: { effectiveType?: string; saveData?: boolean } };
+        const lenta =
+          nav.connection?.saveData === true ||
+          ["slow-2g", "2g", "3g"].includes(nav.connection?.effectiveType ?? "");
+
+        const posterUrl = `${raiz}/${mobile ? "poster-mobile.jpg" : "poster-desktop.jpg"}`;
+        if (poster) poster.style.backgroundImage = `url("${posterUrl}")`;
+        video.poster = posterUrl;
+
+        if (!reduzido && !(mobile && lenta)) {
+          const arquivo = mobile
+            ? (lenta ? "hero-mobile-720-scrub" : "hero-mobile-1080-scrub")
+            : (window.innerWidth * (window.devicePixelRatio || 1) > 2200
+                ? "hero-1440-scrub"
+                : "hero-1080-scrub");
+          video.src = `${raiz.replace("/web_video", "/scrub_video")}/${arquivo}.mp4`;
+          video.preload = "auto";
+          video.loop = true;
+
+          let modo: "tocando" | "scrubando" = "tocando";
+          let alvo = 0;
+          let idleTimer: ReturnType<typeof setTimeout> | undefined;
+          const limitar = (t: number, d: number) => Math.min(d - 0.04, Math.max(0, t));
+          const progresso = () => {
+            const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+            return Math.min(1, Math.max(0, window.scrollY / max));
+          };
+
+          video.addEventListener("loadedmetadata", () => {
+            video.play().catch(() => {});
+          });
+
+          window.addEventListener(
+            "scroll",
+            () => {
+              if (!video.duration) return;
+              if (modo === "tocando") {
+                modo = "scrubando";
+                video.pause();
+              }
+              alvo = limitar(progresso() * video.duration, video.duration);
+              clearTimeout(idleTimer);
+              // Segura o frame ~900ms antes de ela voltar a viver sozinha.
+              idleTimer = setTimeout(() => {
+                modo = "tocando";
+                video.play().catch(() => {});
+              }, 900);
+            },
+            { passive: true },
+          );
+
+          const toque = window.matchMedia("(pointer: coarse)").matches;
+          const intervaloMinimo = toque ? 90 : 0;
+          const capPasso = toque ? 0.05 : 0.09;
+          let ultimoSeek = 0;
+          const tick = () => {
+            if (modo === "scrubando" && video.duration && !video.seeking) {
+              const agora = performance.now();
+              const delta = alvo - video.currentTime;
+              if (Math.abs(delta) > 0.01 && agora - ultimoSeek >= intervaloMinimo) {
+                ultimoSeek = agora;
+                const passo = Math.max(-capPasso, Math.min(capPasso, delta * 0.32));
+                video.currentTime = limitar(video.currentTime + passo, video.duration);
+              }
+            }
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      }
+
+      // ---- pressão tipográfica (assinatura), vanilla ----
+      const area = document.querySelector<HTMLElement>("[data-pressure-area]");
+      const titulo = document.querySelector<HTMLElement>("[data-pressure-titulo]");
+      if (area && titulo) {
+        const spans = Array.from(titulo.querySelectorAll("span"));
+        const minFont = window.matchMedia("(max-width: 920px)").matches ? 34 : 52;
+        const n = spans.length;
+        const dimensionar = () => {
+          const cw = area.getBoundingClientRect().width;
+          if (!cw) return;
+          let tamanho = Math.max(cw / (n / 2), minFont);
+          titulo.style.fontSize = `${tamanho}px`;
+          requestAnimationFrame(() => {
+            const real = titulo.scrollWidth;
+            if (real > cw) {
+              tamanho = Math.max(minFont, tamanho * (cw / real) * 0.98);
+              titulo.style.fontSize = `${tamanho}px`;
+            }
+          });
+        };
+        dimensionar();
+        let deb: ReturnType<typeof setTimeout> | undefined;
+        window.addEventListener("resize", () => {
+          clearTimeout(deb);
+          deb = setTimeout(dimensionar, 120);
+        });
+
+        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          const mouse = { x: 0, y: 0 };
+          const cursor = { x: 0, y: 0 };
+          const r0 = area.getBoundingClientRect();
+          mouse.x = cursor.x = r0.left + r0.width / 2;
+          mouse.y = cursor.y = r0.top + r0.height / 2;
+          window.addEventListener("mousemove", (e) => {
+            cursor.x = e.clientX;
+            cursor.y = e.clientY;
+          });
+          window.addEventListener(
+            "touchmove",
+            (e) => {
+              const t = e.touches[0];
+              if (t) {
+                cursor.x = t.clientX;
+                cursor.y = t.clientY;
+              }
+            },
+            { passive: true },
+          );
+
+          const atributo = (d: number, maxD: number, min: number, max: number) =>
+            Math.max(min, max - Math.abs((max * d) / maxD) + min);
+          let visivel = true;
+          new IntersectionObserver((es) => {
+            visivel = es[0].isIntersecting;
+          }).observe(area);
+
+          const animar = () => {
+            if (visivel) {
+              mouse.x += (cursor.x - mouse.x) / 15;
+              mouse.y += (cursor.y - mouse.y) / 15;
+              const rt = titulo.getBoundingClientRect();
+              const maxD = rt.width / 2 || 1;
+              for (const span of spans) {
+                const r = span.getBoundingClientRect();
+                const d = Math.hypot(r.x + r.width / 2 - mouse.x, r.y + r.height / 2 - mouse.y);
+                const wght = Math.floor(atributo(d, maxD, 200, 800));
+                const wdth = Math.floor(atributo(d, maxD, 75, 100));
+                const s = `'wght' ${wght}, 'wdth' ${wdth}`;
+                if (span.style.fontVariationSettings !== s) span.style.fontVariationSettings = s;
+              }
+            }
+            requestAnimationFrame(animar);
+          };
+          requestAnimationFrame(animar);
+        }
+      }
+    </script>
+  </body>
+</html>

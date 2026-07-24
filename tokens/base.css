@@ -66,8 +66,26 @@ body {
     --surface-glass-strong: var(--veil-light-3);
   }
 
+  /* No tema immersive o véu denso é o ESCURO — remapear pro claro
+     acenderia cartões brancos no tema escuro. */
+  [data-theme="immersive"] {
+    --surface-glass: var(--veil-dark-3);
+    --surface-glass-strong: var(--veil-dark-3);
+  }
+
   * {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
+}
+
+/* Utilitários da direção IMMERSIVE (versão definitiva do Claude Design):
+   coluna de leitura à esquerda + sombra de segurança pra texto sobre
+   frames variáveis do vídeo. Vivem aqui por serem cross-seção. */
+.lead {
+  width: min(100%, 40rem);
+}
+
+.on-video {
+  text-shadow: 0 1px 14px rgba(8, 6, 4, 0.5);
 }
