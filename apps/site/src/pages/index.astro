@@ -208,7 +208,14 @@ const RAIZ_VIDEO =
 
       @container site (max-width: 920px) {
         .hero__wrap { display: flex; flex-direction: column; justify-content: space-between; padding: calc(var(--edge) + 22px) var(--edge) calc(var(--edge) + 6px); }
-        .hero__foot { width: 100%; }
+        /* Chão de leitura do hero no mobile: no desktop o texto vive na
+           coluna escura à esquerda; no mobile ele ancora no pé sobre o
+           rosto. Faixa retangular ancorada ao pé, dissolvendo PRA CIMA
+           (longe do rosto) — política de proteção de texto 25/07, nunca
+           oval/box sobre o rosto. ::before = 1º na ordem de árvore, pinta
+           sob o texto do .hero__wrap. */
+        .hero::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 64%; background: linear-gradient(180deg, transparent 0%, rgba(10,8,5,0.30) 44%, rgba(10,8,5,0.78) 100%); pointer-events: none; }
+        .hero__foot { position: relative; width: 100%; }
         .hero__eyebrow { letter-spacing: var(--letter-spacing-wider); }
         .hero__titulo { font-size: clamp(2.3rem, 11vw, 3.6rem); }
         .hero__index, .hero__scroll { display: none; }
