@@ -21,10 +21,5 @@ tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 url = "2.5.8"
 uuid = { version = "1.24.0", features = ["v4", "serde"] }
 
-# Profile de release recomendado para deploy self-hosted (binário otimizado, sem símbolos de debug)
-[profile.release]
-opt-level = 3
-lto = "fat"
-codegen-units = 1
-panic = "abort"
-strip = true
+# [profile.release] vive no Cargo.toml da RAIZ do workspace — o Cargo ignora
+# profiles de membros não-raiz (aviso do clippy). Ver ../../Cargo.toml.

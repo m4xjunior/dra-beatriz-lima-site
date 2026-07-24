@@ -1,3 +1,13 @@
 [workspace]
 resolver = "2"
 members = ["apps/server"]
+
+# Profile de release do deploy self-hosted (binário otimizado, sem símbolos).
+# Num workspace o Cargo SÓ respeita [profile.*] no manifesto da RAIZ — se ficasse
+# em apps/server/ seria ignorado (aviso do clippy). Por isso vive aqui.
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
