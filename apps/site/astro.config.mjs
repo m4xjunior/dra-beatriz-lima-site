@@ -9,7 +9,10 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://drabeatrizlima.com.br",
+  // Domínio VIVO atual (Cloudflare Pages). Quando drabeatrizlima.com.br
+  // apontar pro projeto Pages, voltar este valor — o og:image do preview
+  // de WhatsApp usa esta base e precisa resolver de verdade.
+  site: "https://dra-beatriz-lima.pages.dev",
   output: "static",
   integrations: [
     // Ilhas React SÓ para os componentes ReactBits (TextPressure,
