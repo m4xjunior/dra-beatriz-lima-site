@@ -19,6 +19,7 @@ use tower_http::{
 };
 use tracing_subscriber::EnvFilter;
 
+mod cache;
 mod capturas;
 mod simulacoes;
 
@@ -64,13 +65,20 @@ async fn main() -> anyhow::Result<()> {
             not_found_fallback,
         ));
 
+    // Cache de resposta (Redis) — só nas rotas de API, nunca no estático servido pelo
+    // Astro/ServeDir. Degrada sozinho sem REDIS_URL (ver `cache::CacheRedis::desde_entorno`).
+    let cache_estado = Arc::new(cache::CacheRedis::desde_entorno());
+    let router_api = Router::new()
+        .merge(capturas::rotas())
+        .merge(simulacoes::rotas(pool_simulacoes))
+        .layer(middleware::from_fn_with_state(cache_estado, cache::camada_cache));
+
     // ORDEM CRÍTICA (gotcha real do axum): rotas/sub-routers mesclados DEPOIS
     // de um `.layer()` não passam por esse layer. CORS/compressão/limite de
     // corpo/trace abaixo são globais (aplicados depois do merge), então valem
     // tanto para /api/capturas quanto para os arquivos estáticos.
     let app = Router::new()
-        .merge(capturas::rotas())
-        .merge(simulacoes::rotas(pool_simulacoes))
+        .merge(router_api)
         .merge(router_estatico)
         .layer(CompressionLayer::new())
         .layer(CorsLayer::permissive())
