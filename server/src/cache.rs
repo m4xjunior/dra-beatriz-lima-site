@@ -27,9 +27,17 @@ use sha2::{Digest, Sha256};
 /// TTL default quando `CACHE_TTL_SEGUNDOS` não está definida ou é inválida.
 const TTL_SEGUNDOS_DEFAULT: u64 = 30;
 
-/// Tamanho máximo de corpo que vale a pena cachear — respostas maiores só desperdiçam
-/// memória do Redis para um caso de uso que hoje é status JSON pequeno.
+/// Tamanho máximo de corpo que vale a pena CACHEAR — respostas maiores só desperdiçam
+/// memória do Redis para um caso de uso que hoje é status JSON pequeno. NÃO é um limite de
+/// leitura: uma resposta maior que isso ainda é servida ao cliente por inteiro, só não é
+/// gravada no Redis (ver `guardar_se_cacheavel`).
 const TAMANHO_MAXIMO_CACHEAVEL: usize = 256 * 1024;
+
+/// Teto absoluto de leitura do corpo em memória — proteção contra um handler futuro que
+/// devolva algo gigantesco sem querer (streaming de arquivo, por exemplo) travar o processo.
+/// Bem acima de qualquer resposta real da API hoje (status JSON pequeno); se isso disparar,
+/// é sinal de bug em outro lugar (uma rota que não devia estar sob este middleware).
+const LIMITE_ABSOLUTO_LEITURA: usize = 16 * 1024 * 1024;
 
 #[derive(Debug, thiserror::Error)]
 enum ErroCache {
@@ -107,11 +115,27 @@ fn chave_cache(req: &Request) -> String {
 
 /// Middleware de cache — aplicar só nas sub-rotas `/api/*` que fazem sentido cachear
 /// (GET, idempotentes). Requisições não-GET passam direto, nunca são cacheadas.
+///
+/// Roda hoje só dentro de `router_api` (ver `main.rs`), então o `starts_with("/api/")`
+/// abaixo é redundante NA PRÁTICA — mas fica como defense-in-depth: se algum dia este
+/// middleware for movido/reaproveitado num router mais amplo por engano, ele continua
+/// só afetando `/api/*`, nunca o estático do Astro.
+///
+/// ORDEM COM COMPRESSÃO: este middleware fica DENTRO de `router_api`, que é mesclado em
+/// `app` ANTES do `.layer(CompressionLayer::new())` (aplicado no `app` já mesclado, em
+/// `main.rs`). Layers aplicados por último envolvem os anteriores por fora — na resposta,
+/// o corpo passa por este middleware (que lê/cacheia) ANTES de chegar à compressão. Ou
+/// seja, o que fica gravado no Redis é sempre o corpo NÃO-comprimido — se um dia a ordem
+/// em `main.rs` mudar (CompressionLayer entrar dentro de `router_api`), isso quebra essa
+/// premissa e precisa ser revisto aqui também.
 pub async fn camada_cache(
     State(cache): State<Arc<CacheRedis>>,
     req: Request,
     next: Next,
 ) -> Response {
+    if !req.uri().path().starts_with("/api/") {
+        return next.run(req).await;
+    }
     let Some(pool) = &cache.pool else {
         return next.run(req).await;
     };
@@ -156,9 +180,11 @@ fn reconstruir_resposta(entrada: EntradaCache) -> Response {
     resposta
 }
 
-/// Só cacheia respostas 2xx dentro do limite de tamanho — o corpo precisa ser lido pra
-/// decidir isso, então a resposta é reconstruída de qualquer forma (cache hit ou não, quem
-/// chamou sempre recebe uma `Response` válida com o corpo intacto).
+/// Lê o corpo INTEIRO (até `LIMITE_ABSOLUTO_LEITURA`, bem acima de qualquer resposta real)
+/// e só então decide se ele é pequeno o bastante para valer a pena cachear
+/// (`TAMANHO_MAXIMO_CACHEAVEL`). As duas coisas são propositalmente separadas: "não cabe no
+/// cache" NUNCA pode significar "não chega ao cliente" — bug real da primeira versão deste
+/// módulo, corrigido após revisão do s002/s010 (ver histórico do commit).
 async fn guardar_se_cacheavel(
     pool: Pool,
     chave: String,
@@ -173,23 +199,30 @@ async fn guardar_se_cacheavel(
         .map(str::to_string);
     let (partes, corpo) = resposta.into_parts();
 
-    let bytes = match to_bytes(corpo, TAMANHO_MAXIMO_CACHEAVEL).await {
+    let bytes = match to_bytes(corpo, LIMITE_ABSOLUTO_LEITURA).await {
         Ok(bytes) => bytes,
         Err(erro) => {
-            tracing::warn!(%erro, chave = %chave, "corpo da resposta excede o limite cacheável — servindo sem cachear");
-            return Response::from_parts(partes, Body::empty());
+            // Corpo maior que `LIMITE_ABSOLUTO_LEITURA` (16MB) — não dá pra bufferizar em
+            // memória nem pra cachear nem pra reenviar íntegro por este caminho. Isso indica
+            // uma rota que não devia estar sob este middleware, não um caso normal da API.
+            tracing::error!(%erro, chave = %chave, "corpo da resposta excede o teto absoluto de leitura — não é possível servir por este caminho");
+            return (StatusCode::INTERNAL_SERVER_ERROR, "erro interno ao processar resposta").into_response();
         }
     };
 
     if status.is_success() {
-        let entrada = EntradaCache { status: status.as_u16(), content_type, corpo: bytes.to_vec() };
-        // Guarda em background: quem pediu a página não deve esperar o round-trip do
-        // Redis para receber a resposta que já está pronta em `bytes`.
-        tokio::spawn(async move {
-            if let Err(erro) = escrever(&pool, &chave, &entrada, ttl_segundos).await {
-                tracing::warn!(%erro, chave = %chave, "falha ao gravar no cache — resposta já foi servida normalmente");
-            }
-        });
+        if bytes.len() <= TAMANHO_MAXIMO_CACHEAVEL {
+            let entrada = EntradaCache { status: status.as_u16(), content_type, corpo: bytes.to_vec() };
+            // Guarda em background: quem pediu a página não deve esperar o round-trip do
+            // Redis para receber a resposta que já está pronta em `bytes`.
+            tokio::spawn(async move {
+                if let Err(erro) = escrever(&pool, &chave, &entrada, ttl_segundos).await {
+                    tracing::warn!(%erro, chave = %chave, "falha ao gravar no cache — resposta já foi servida normalmente");
+                }
+            });
+        } else {
+            tracing::debug!(chave = %chave, tamanho = bytes.len(), "resposta maior que o limite cacheável — servindo íntegra, sem cachear");
+        }
     }
 
     Response::from_parts(partes, Body::from(bytes))
@@ -224,6 +257,28 @@ mod tests {
         let r1 = HttpRequest::builder().uri("/api/simulacoes/x").body(Body::empty()).unwrap();
         let r2 = HttpRequest::builder().uri("/api/simulacoes/y").body(Body::empty()).unwrap();
         assert_ne!(chave_cache(&r1), chave_cache(&r2));
+    }
+
+    /// Regressão do bug real (revisão s002/s010): uma resposta MAIOR que
+    /// `TAMANHO_MAXIMO_CACHEAVEL` tem de chegar ÍNTEGRA ao cliente — só não é cacheada.
+    /// A versão original devolvia `Body::empty()` nesse caso, descartando o corpo.
+    #[tokio::test]
+    async fn guardar_se_cacheavel_nunca_descarta_corpo_grande_demais_pra_cachear() {
+        let corpo_grande = vec![b'x'; TAMANHO_MAXIMO_CACHEAVEL + 1024];
+        let resposta = (StatusCode::OK, corpo_grande.clone()).into_response();
+
+        // URL bem-formada mas nunca discada nesse caminho (corpo grande demais pula
+        // qualquer chamada ao pool) — só precisa type-check, `deadpool` não conecta
+        // até o primeiro `.get()`.
+        let pool = RedisConfig::from_url("redis://127.0.0.1:1/")
+            .create_pool(Some(Runtime::Tokio1))
+            .expect("config de pool bem-formada não deveria falhar ao construir");
+
+        let resultado = guardar_se_cacheavel(pool, "cache:v1:teste".into(), resposta, 30).await;
+
+        assert_eq!(resultado.status(), StatusCode::OK);
+        let bytes = to_bytes(resultado.into_body(), usize::MAX).await.unwrap();
+        assert_eq!(bytes.as_ref(), corpo_grande.as_slice());
     }
 
     #[test]
