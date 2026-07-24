@@ -111,11 +111,22 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
       // clampado em [0, duração] — scrub no topo para no frame 0, não
       // dá a volta. Guarda de seeking: nunca empilha um seek em cima de
       // outro em andamento (era o stutter — seek thrash a cada rAF).
+      // Em touch, seeks são ADICIONALMENTE limitados a ~11/s: o decoder
+      // de celular (Android medido em uso real) não acompanha seek por
+      // rAF nem com GOP-4 — o intervalo dá fôlego sem perder resposta.
+      const toque = window.matchMedia("(pointer: coarse)").matches;
+      const intervaloMinimo = toque ? 90 : 0;
+      let ultimoSeek = 0;
       const tick = () => {
         if (modo === "scrubando" && video.duration && !video.seeking) {
+          const agora = performance.now();
           const delta = alvo - video.currentTime;
-          if (Math.abs(delta) > 0.03) {
-            video.currentTime = limitar(video.currentTime + delta * 0.22, video.duration);
+          if (Math.abs(delta) > 0.03 && agora - ultimoSeek >= intervaloMinimo) {
+            ultimoSeek = agora;
+            video.currentTime = limitar(
+              video.currentTime + delta * (toque ? 0.34 : 0.22),
+              video.duration,
+            );
           }
         }
         requestAnimationFrame(tick);

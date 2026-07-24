@@ -52,3 +52,22 @@ body {
   position: relative;
   z-index: 1;
 }
+
+/* PERF REAL medida em Android (24/07/2026, "trava pra caralho"):
+   backdrop-filter sobre vídeo em movimento é o maior custo de GPU do
+   site em celular. Em aparelho de toque o vidro NÃO desfoca — o token
+   de glass é remapeado pro véu mais denso (0.80), que mantém a
+   legibilidade AA sem blur, e todo backdrop-filter é desligado.
+   Desktop (pointer fino) segue com o vidro completo. */
+@media (pointer: coarse) {
+  :root,
+  [data-theme="brand"] {
+    --surface-glass: var(--veil-light-3);
+    --surface-glass-strong: var(--veil-light-3);
+  }
+
+  * {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
