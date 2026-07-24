@@ -5,6 +5,7 @@
 // divergentes entre páginas construídas por agentes diferentes.
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import FundoVivo from "../components/FundoVivo.astro";
 import "../design-system/styles.css";
 
 interface Props {
@@ -61,22 +62,26 @@ const urlOgImage = ogImage
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
       onload="this.onload=null;this.rel='stylesheet'"
     />
     <noscript>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
       />
     </noscript>
 
     <slot name="head" />
   </head>
   <body class={bodyClass}>
-    <Nav />
-    <slot />
-    <Footer />
+    <FundoVivo />
+    <!-- Todo o conteúdo acima do fundo vivo (z 1 > z 0 do vídeo). -->
+    <div class="conteudo-site">
+      <Nav />
+      <slot />
+      <Footer />
+    </div>
 
     <!-- Motor de movimento — GSAP via CDN, camada BL·Motion por cima.
          Carregado uma única vez por página, nesta ordem (ver readme.md

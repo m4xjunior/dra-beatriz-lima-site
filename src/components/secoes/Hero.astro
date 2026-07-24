@@ -1,59 +1,73 @@
 ---
-// Hero — abertura da landing. Sem props: copy fixa (ver readme.md §
-// CONTENT FUNDAMENTALS para o tom de voz de referência).
+// Hero — abertura da landing como ILHAS DE VIDRO sobre o FundoVivo
+// (a Dra. em vídeo nativo cobre o site inteiro — ver FundoVivo.astro).
+//
+// ADR (24/07/2026): o retrato estático recortado, o canvas de scrub de
+// frames e o fundo FloatingLines saíram NESTA arquitetura — o vídeo de
+// fundo assumiu os três papéis (presença dela, movimento e atmosfera).
+// Motivo: performance real (scrub + shader travavam até em M4 Pro; o
+// vídeo nativo decodifica por hardware). Git guarda as versões antigas.
+//
+// Copy fixa (ver readme.md § CONTENT FUNDAMENTALS).
 import Button from "../Button.astro";
 ---
 
 <section class="hero">
-  <div class="hero__mesh" aria-hidden="true"></div>
-  <div class="hero__grain" aria-hidden="true"></div>
-
   <div class="hero__conteudo">
-    <p class="hero__eyebrow" data-bl-reveal>GOIÂNIA · BIOMEDICINA ESTÉTICA</p>
-    <h1 class="hero__titulo" data-bl-split>
-      Estética que valoriza <span class="hero__destaque">você</span>
-    </h1>
-    <p class="hero__corpo" data-bl-reveal>
-      Critério clínico acima de tendência. Cada procedimento parte de uma
-      avaliação individual sobre o seu rosto — nunca de um padrão pronto.
-    </p>
-
-    <div class="hero__acoes" data-bl-reveal>
-      <Button href="/procedimentos" variante="primaria">Ver procedimentos</Button>
-      <Button href="/simulacao-3d" variante="secundaria">Iniciar simulação 3D</Button>
+    <div class="hero__ilha" data-bl-reveal>
+      <p class="hero__eyebrow">GOIÂNIA · BIOMEDICINA ESTÉTICA</p>
+      <h1 class="hero__titulo" data-bl-split>
+        Estética que valoriza <span class="hero__destaque">você</span>
+      </h1>
+      <p class="hero__corpo">
+        Critério clínico acima de tendência. Cada procedimento parte de uma
+        avaliação individual sobre o seu rosto — nunca de um padrão pronto.
+      </p>
+      <div class="hero__acoes">
+        <Button href="/procedimentos" variante="primaria">Ver procedimentos</Button>
+      </div>
     </div>
+
+    <aside class="hero__meta" data-bl-reveal>
+      <p class="hero__meta-linha">Harmonização · Pele · Colágeno</p>
+      <p class="hero__meta-linha hero__meta-linha--suave">Goiânia · GO</p>
+      <p class="hero__meta-texto">Agenda aberta para avaliação individual</p>
+    </aside>
   </div>
 </section>
 
 <style>
+  /* 100svh deixa o vídeo (ela) dominar a primeira dobra; o conteúdo
+     ancora no pé, como legenda de cena — não compete com o rosto. */
   .hero {
-    position: relative;
-    overflow: hidden;
-    padding-block: var(--space-section-lg) var(--space-section);
-  }
-
-  .hero__mesh {
-    position: absolute;
-    inset: 0;
-    background-color: var(--surface-base);
-    background-image: var(--surface-mesh);
-    z-index: -2;
-  }
-
-  .hero__grain {
-    position: absolute;
-    inset: 0;
-    background-image: var(--grain);
-    opacity: var(--grain-opacity);
-    mix-blend-mode: overlay;
-    pointer-events: none;
-    z-index: -1;
+    min-height: calc(100svh - var(--nav-height, 4rem));
+    display: grid;
+    align-items: end;
   }
 
   .hero__conteudo {
+    width: 100%;
     max-width: var(--container-xl);
     margin-inline: auto;
     padding-inline: var(--space-container-pad);
+    padding-block: var(--space-section);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-inline-md);
+  }
+
+  /* Ilha de vidro — o padrão de superfície desta arquitetura: tudo que
+     é texto/controle flutua sobre o vídeo em vidro do DS. */
+  .hero__ilha {
+    max-width: 34rem;
+    padding: var(--space-stack-lg) var(--space-stack-lg);
+    background: var(--surface-glass-strong);
+    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--bloom);
   }
 
   .hero__eyebrow {
@@ -68,7 +82,7 @@ import Button from "../Button.astro";
   .hero__titulo {
     font-family: var(--type-display-font);
     font-weight: var(--font-weight-bold);
-    font-size: clamp(2.625rem, 6vw + 1rem, 5.5rem);
+    font-size: clamp(2.25rem, 3.4vw + 1rem, 4rem);
     line-height: var(--type-display-leading);
     letter-spacing: var(--type-display-tracking);
     color: var(--text-heading);
@@ -77,6 +91,9 @@ import Button from "../Button.astro";
   }
 
   .hero__destaque {
+    font-family: var(--type-quote-font);
+    font-style: italic;
+    font-weight: 500;
     background: var(--gradient-gold-text);
     -webkit-background-clip: text;
     background-clip: text;
@@ -88,15 +105,11 @@ import Button from "../Button.astro";
      mask:"chars"). Isso move os glyphs de "você" para dentro de divs
      filhas que herdam -webkit-text-fill-color:transparent do
      .hero__destaque mas NÃO herdam o background (background não é
-     propriedade herdável) — resultado: a palavra some por completo,
-     0% opaca e sem nada atrás. O clip precisa estar no elemento que
-     realmente contém o glyph (o .bl-char folha), não só no ancestral.
-
-     :global() é obrigatório aqui: SplitText cria o .bl-char em runtime,
-     depois do build — ele nunca ganha o atributo data-astro-cid-* que o
-     Astro usa pra escopar CSS, então ".hero__destaque .bl-char" sem
-     :global() (viraria ".hero__destaque[data-astro-cid-x] .bl-char
-     [data-astro-cid-x]") jamais bateria em nada. */
+     propriedade herdável) — resultado: a palavra some por completo.
+     O clip precisa estar no elemento que realmente contém o glyph
+     (o .bl-char folha), não só no ancestral. :global() é obrigatório:
+     o .bl-char nasce em runtime e nunca ganha o data-astro-cid-* do
+     escopo de CSS do Astro. */
   .hero__destaque :global(.bl-char) {
     background: var(--gradient-gold-text);
     -webkit-background-clip: text;
@@ -107,8 +120,8 @@ import Button from "../Button.astro";
   .hero__corpo {
     font-size: var(--font-size-md);
     line-height: var(--type-body-leading);
-    color: var(--text-muted);
-    max-width: 42ch;
+    color: var(--text-body);
+    max-width: 40ch;
     margin: 0 0 var(--space-stack-lg);
   }
 
@@ -116,5 +129,61 @@ import Button from "../Button.astro";
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-inline-md);
+  }
+
+  /* Micro-ilha de metadados à direita — informação clínica curta. */
+  .hero__meta {
+    padding: var(--space-stack-md);
+    background: var(--surface-glass);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-lg);
+    text-align: right;
+    max-width: 20rem;
+  }
+
+  .hero__meta-linha {
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--type-eyebrow-tracking);
+    color: var(--text-heading);
+    margin: 0;
+  }
+
+  .hero__meta-linha--suave {
+    color: var(--text-subtle);
+    margin-bottom: var(--space-stack-sm);
+  }
+
+  .hero__meta-texto {
+    font-size: var(--font-size-sm);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  /* Mobile: uma ilha só, ancorada no pé, largura total menos o
+     respiro — o rosto dela (crop com pan) fica livre acima. */
+  @media (max-width: 899px) {
+    .hero__conteudo {
+      flex-direction: column;
+      align-items: stretch;
+      padding-block: var(--space-section) var(--space-stack-lg);
+    }
+
+    .hero__ilha {
+      max-width: none;
+      padding: var(--space-stack-md);
+    }
+
+    .hero__titulo {
+      font-size: clamp(2rem, 8.5vw, 3rem);
+    }
+
+    .hero__meta {
+      display: none;
+    }
   }
 </style>

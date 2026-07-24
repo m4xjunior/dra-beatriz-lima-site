@@ -5,12 +5,16 @@
 import { defineConfig } from "astro/config";
 import critters from "astro-critters";
 import compress from "@playform/compress";
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://drabeatrizlima.com.br",
   output: "static",
   integrations: [
+    // Ilhas React SÓ para os componentes ReactBits (TextPressure,
+    // FloatingLines) — o resto do site segue Astro puro + BL·Motion.
+    react(),
     // Inlina o CSS crítico de cada página (perf-astro: LCP sem FOUC).
     critters(),
     // Minifica CSS/HTML/JS do build final. Imagem e SVG ficam de fora:

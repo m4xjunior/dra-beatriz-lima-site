@@ -18,11 +18,32 @@
    é importado por último em styles.css, depois de todos os
    tokens já existirem.
    ============================================================ */
+/* BUG REAL (QA visual remoto, 24/07/2026): sem estas duas regras o
+   body ficava com os 8px de margin do user-agent (moldura branca em
+   volta de tudo — hero nunca full-bleed) e box-sizing content-box
+   estourava overflow-x no 360px (.card-servico: track de 341px + 64px
+   de padding = 405px). Reset mínimo, aqui porque este é o único
+   arquivo do sistema que mira elementos crus. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   font-family: var(--font-body);
 }
 
 body {
+  margin: 0;
   font-family: var(--type-body-font, var(--font-body));
   color: var(--text-body);
+}
+
+/* Arquitetura fundo-vivo: o vídeo da marca vive fixo em z 0
+   (FundoVivo.astro) e TODO o conteúdo do site sobe pra z 1 neste
+   wrapper — sem ele, seções sem background ficariam atrás do vídeo. */
+.conteudo-site {
+  position: relative;
+  z-index: 1;
 }
