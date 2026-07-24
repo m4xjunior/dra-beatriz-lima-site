@@ -38,10 +38,11 @@ async fn main() -> anyhow::Result<()> {
         std::env::var("DATABASE_URL").unwrap_or_else(|_| DEFAULT_DATABASE_URL.to_string());
     let pool_simulacoes = simulacoes::conectar(&database_url).await;
 
-    // Caminho relativo à raiz do crate (server/), então ../dist aponta para
-    // "Dra. Beatriz Lima — Design System/dist" independente do cwd de invocação
-    // (o binário é tipicamente rodado via `cargo run`/systemd com working-dir = server/).
-    let dist_dir = Arc::new(PathBuf::from("../dist"));
+    // Path do build do Astro, configurável por env (DIST_DIR). Default relativo à
+    // raiz do crate `apps/server/`: `../site/dist` = `apps/site/dist` (saída do
+    // `astro build`). Em Docker define-se DIST_DIR=/app/dist (absoluto). Assim o
+    // caminho não fica preso ao cwd de invocação.
+    let dist_dir = Arc::new(PathBuf::from(std::env::var("DIST_DIR").unwrap_or_else(|_| "../site/dist".to_string())));
 
     if !dist_dir.is_dir() {
         tracing::warn!(

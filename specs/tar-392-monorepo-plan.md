@@ -57,10 +57,8 @@ resolver = "2"
 members = ["apps/server"]
 ```
 
-### 2. `package.json` (raiz — NOVO)
-```json
-{ "name": "dra-beatriz-lima-monorepo", "private": true, "workspaces": ["apps/site"] }
-```
+### 2. Sem npm workspace na raiz
+`apps/site` fica **standalone** (seu próprio `package.json` + `package-lock.json`). Docker e CI rodam `npm ci` dentro de `apps/site`. Um `package.json` raiz com `"workspaces"` faria o `npm ci` no filho exigir o lockfile na raiz → erro `EUSAGE`. (Cargo workspace na raiz continua — só o npm que fica por app.)
 
 ### 3. `apps/server/src/main.rs` — path do `dist` (OBRIGATÓRIO)
 Hoje: `let dist_dir = Arc::new(PathBuf::from("../dist"));` (relativo à raiz do crate `server/`).
@@ -68,10 +66,10 @@ Após o move o crate vira `apps/server/`, então `../dist` apontaria `apps/dist`
 **Fix (env-configurável, segue regra Rust: sem hardcode de path de deploy):**
 ```rust
 let dist_dir = Arc::new(PathBuf::from(
-    std::env::var("DIST_DIR").unwrap_or_else(|_| "../../dist".to_string()),
+    std::env::var("DIST_DIR").unwrap_or_else(|_| "../site/dist".to_string()),
 ));
 ```
-- Dev/local (rodando de `apps/server/`): `../../dist` → raiz/`dist` ✓
+- Dev/local (rodando de `apps/server/`): `../site/dist` → raiz/`dist` ✓
 - Docker: define `DIST_DIR=/app/dist` (absoluto) no runtime ✓
 
 ### 4. `Dockerfile` (context continua a RAIZ)
@@ -90,7 +88,7 @@ let dist_dir = Arc::new(PathBuf::from(
 ## Verificação pós-move (o script roda e falha se quebrar)
 1. `cd apps/site && npm ci && npx astro check && npm run build` → `dist/` gerado igual ao atual.
 2. `cargo build --release -p bl-design-system-server` (da raiz) → compila.
-3. Rodar o binário local e `curl` a home → 200 servindo `dist/` (valida o `DIST_DIR`/`../../dist`).
+3. Rodar o binário local e `curl` a home → 200 servindo `dist/` (valida o `DIST_DIR`/`../site/dist`).
 4. `dados/capturas` gravável a partir de `apps/server/`.
 
 ## Riscos / notas

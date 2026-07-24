@@ -29,19 +29,15 @@ resolver = "2"
 members = ["apps/server"]
 EOF
 
-# --- 3) package.json raiz (npm workspaces) ------------------------
-cat > package.json <<'EOF'
-{
-  "name": "dra-beatriz-lima-monorepo",
-  "private": true,
-  "workspaces": ["apps/site"]
-}
-EOF
+# --- 3) SEM npm workspace raiz ------------------------------------
+# apps/site fica standalone (seu próprio package.json + package-lock.json).
+# Docker e CI rodam `npm ci` dentro de apps/site. Um package.json raiz com
+# "workspaces" faria o npm ci no filho exigir o lockfile na raiz -> erro.
 
 # --- 4) main.rs: dist path configurável por env -------------------
 MAIN="apps/server/src/main.rs"
 grep -q 'PathBuf::from("../dist")' "$MAIN" || { echo "AVISO: linha do dist mudou no main.rs — ajuste manual (ver plano)."; }
-perl -0pi -e 's{Arc::new\(PathBuf::from\("\.\./dist"\)\)}{Arc::new(PathBuf::from(std::env::var("DIST_DIR").unwrap_or_else(|_| "../../dist".to_string())))}g' "$MAIN"
+perl -0pi -e 's{Arc::new\(PathBuf::from\("\.\./dist"\)\)}{Arc::new(PathBuf::from(std::env::var("DIST_DIR").unwrap_or_else(|_| "../site/dist".to_string())))}g' "$MAIN"
 
 # --- 5) Dockerfile (context = raiz) -------------------------------
 cat > Dockerfile <<'EOF'

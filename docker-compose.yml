@@ -38,7 +38,7 @@ services:
     volumes:
       # Dados de captura (só pontos numéricos, nunca imagem) sobrevivem a um
       # `docker compose up` novo — mesmo espírito do /dados/ no .gitignore.
-      - capturas_dados:/app/server/dados
+      - capturas_dados:/app/apps/server/dados
 
 volumes:
   postgres_dados:

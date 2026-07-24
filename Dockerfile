@@ -1,36 +1,33 @@
 # syntax=docker/dockerfile:1
-#
-# Build multi-stage: site Astro (estático) + servidor Rust, empacotados
-# numa única imagem final — deploy em qualquer VPS vira `docker compose up`,
-# sem precisar de Node/Rust instalados no host. Context desta imagem é a
-# RAIZ do projeto (não server/), porque o stage do Astro precisa de src/,
-# public/, package.json etc. da raiz.
+# Build multi-stage: site Astro (apps/site) + servidor Rust (apps/server),
+# numa única imagem. Context desta imagem é a RAIZ do monorepo.
 
-# --- Stage 1: build do site Astro (estático) ---------------------------
+# --- Stage 1: build do site Astro ---------------------------------
 FROM node:22-slim AS astro-builder
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY apps/site/package.json apps/site/package-lock.json ./
 RUN npm ci
-COPY astro.config.mjs tsconfig.json ./
-COPY src ./src
-COPY public ./public
+COPY apps/site/astro.config.mjs apps/site/tsconfig.json ./
+COPY apps/site/src ./src
+COPY apps/site/public ./public
 RUN npm run build
 
-# --- Stage 2: build do servidor Rust (release, otimizado) ---------------
+# --- Stage 2: build do servidor Rust (workspace) ------------------
 FROM rust:1-slim-bookworm AS rust-builder
-WORKDIR /app/server
+WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends pkg-config libssl-dev \
     && rm -rf /var/lib/apt/lists/*
-COPY server/Cargo.toml server/Cargo.lock ./
-COPY server/src ./src
-RUN cargo build --release
+COPY Cargo.toml Cargo.lock ./
+COPY apps/server ./apps/server
+RUN cargo build --release -p bl-design-system-server
 
-# --- Stage 3: runtime — só os binários/arquivos finais, sem toolchain ---
+# --- Stage 3: runtime ---------------------------------------------
 FROM debian:bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates \
     && rm -rf /var/lib/apt/lists/*
-WORKDIR /app/server
-COPY --from=rust-builder /app/server/target/release/bl-design-system-server ./bl-design-system-server
+WORKDIR /app/apps/server
+ENV DIST_DIR=/app/dist
+COPY --from=rust-builder /app/target/release/bl-design-system-server ./bl-design-system-server
 COPY --from=astro-builder /app/dist /app/dist
 
 ENV PORT=8080
