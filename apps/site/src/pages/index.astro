@@ -53,7 +53,10 @@ const RAIZ_VIDEO =
     <style is:global>
       /* CSS da versão definitiva — verbatim do Home.dc.html (tokens do DS). */
       :root { --edge: clamp(16px, 2.6vw, 44px); --lead: 40rem; }
-      html { scroll-behavior: smooth; scroll-padding-top: var(--nav-height, 4rem); }
+      /* html escuro: sem isto, quando o repaint do vídeo fixed atrasa no
+         scroll, o BRANCO default do browser vaza atrás (flash medido no
+         QA do s002 — 1 frame 100% branco). Escopado a esta página. */
+      html { background: var(--color-obsidian-900, #0A0805); scroll-behavior: smooth; scroll-padding-top: var(--nav-height, 4rem); }
       .site { position: relative; min-height: 100vh; }
       .conteudo-site { container-type: inline-size; container-name: site; }
       .display { font-family: var(--type-display-font); font-optical-sizing: auto; }
