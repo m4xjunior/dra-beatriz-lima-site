@@ -83,6 +83,10 @@ import Button from "../Button.astro";
     font-family: var(--type-display-font);
     font-weight: var(--font-weight-bold);
     font-size: clamp(2.25rem, 3.4vw + 1rem, 4rem);
+    /* Corte óptico display da Bricolage variável: em tamanho grande o
+       desenho de texto fica pesado — opsz alto afina junções e abre
+       contraste (direção visual § Tipografia). */
+    font-variation-settings: "opsz" 96;
     line-height: var(--type-display-leading);
     letter-spacing: var(--type-display-tracking);
     color: var(--text-heading);
@@ -131,16 +135,14 @@ import Button from "../Button.astro";
     gap: var(--space-inline-md);
   }
 
-  /* Micro-ilha de metadados à direita — informação clínica curta. */
+  /* Meta à direita SEM caixa — variação de linguagem da direção visual
+     (vidro só em bloco de leitura; micro-informação é momento
+     tipográfico). Texto claro apoiado no véu inferior escuro do
+     FundoVivo — por isso os tokens on-inverse. */
   .hero__meta {
-    padding: var(--space-stack-md);
-    background: var(--surface-glass);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    border: 1px solid var(--surface-glass-border);
-    border-radius: var(--radius-lg);
     text-align: right;
     max-width: 20rem;
+    padding-bottom: var(--space-stack-sm);
   }
 
   .hero__meta-linha {
@@ -148,19 +150,20 @@ import Button from "../Button.astro";
     font-size: var(--font-size-xs);
     text-transform: uppercase;
     letter-spacing: var(--type-eyebrow-tracking);
-    color: var(--text-heading);
+    color: var(--text-on-inverse);
     margin: 0;
   }
 
   .hero__meta-linha--suave {
-    color: var(--text-subtle);
+    color: var(--text-accent-on-inverse);
     margin-bottom: var(--space-stack-sm);
   }
 
   .hero__meta-texto {
     font-size: var(--font-size-sm);
     line-height: var(--type-body-leading);
-    color: var(--text-muted);
+    color: var(--text-on-inverse);
+    opacity: 0.86;
     margin: 0;
   }
 
