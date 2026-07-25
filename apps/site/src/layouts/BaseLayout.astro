@@ -6,6 +6,7 @@
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import FundoVivo from "../components/FundoVivo.astro";
+import DockProcedimentos from "../components/DockProcedimentos.astro";
 import "../design-system/styles.css";
 
 interface Props {
@@ -93,6 +94,7 @@ const urlOgImage = ogImage
         <slot />
       </main>
       <Footer />
+      <DockProcedimentos />
     </div>
 
     <!-- Motor de movimento — GSAP via CDN, camada BL·Motion por cima.

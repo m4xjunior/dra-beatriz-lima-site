@@ -49,6 +49,10 @@ html {
 
 body {
   margin: 0;
+  /* Chão para o Dock fixo (DockProcedimentos.astro): sem isto o rodapé
+     fica coberto pelos últimos ~86px, e a linha do CFBM é justamente a
+     que não pode sumir. */
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
   /* clip (não hidden): mata deslocamento lateral acidental sem criar
      um scroll container novo. A causa-raiz do estouro visto em
      24/07/2026 (assinatura TextPressure pré-clamp) foi corrigida no
