@@ -19,6 +19,7 @@ jobs:
           cache-dependency-path: apps/site/package-lock.json
       - run: npm ci
       - run: npx astro check
+      - run: npm test
       - run: npm run build
 
   servidor-rust:

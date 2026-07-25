@@ -58,9 +58,35 @@ const itens = procedimentos.map((item) => {
 });
 ---
 
-<div class="dock-ancora">
+<div class="dock-ancora" data-dock-ancora>
   <Dock client:visible itens={itens} />
 </div>
+
+<script>
+  // O Dock vive no pé da tela; os CTAs do hero também. Encolher o hero
+  // não resolve — uma barra centralizada e fixa sempre vai cruzar o que
+  // estiver ancorado embaixo. Então ela só entra depois que o hero sai:
+  // a primeira tela fica limpa, e o atalho aparece exatamente quando
+  // passa a ser útil.
+  //
+  // IntersectionObserver, não listener de scroll: dispara duas vezes na
+  // vida da página em vez de a cada quadro do gesto — que é o custo que
+  // este trabalho está justamente tirando do celular.
+  const ancora = document.querySelector<HTMLElement>("[data-dock-ancora]");
+  const hero = document.querySelector<HTMLElement>("#topo");
+
+  if (ancora && hero) {
+    ancora.dataset.oculto = "true";
+    new IntersectionObserver(
+      ([entrada]) => {
+        ancora.dataset.oculto = String(entrada.isIntersecting);
+      },
+      // Some assim que o hero ocupa mais de um terço da tela.
+      { threshold: 0.34 },
+    ).observe(hero);
+  }
+  // Sem hero (todas as rotas menos a home) o Dock nasce visível.
+</script>
 
 <style>
   /* No desktop o dock flutua sobre o rodapé; no toque ele ancora no pé
@@ -77,6 +103,25 @@ const itens = procedimentos.map((item) => {
     pointer-events: none;
     /* iPhone com barra de gestos: sem isto o dock fica sob a barra. */
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    transition:
+      transform var(--duration-slow) var(--ease-entrance),
+      opacity var(--duration-base) var(--ease-standard);
+  }
+
+  .dock-ancora[data-oculto="true"] {
+    transform: translateY(115%);
+    opacity: 0;
+  }
+
+  /* Escondido de verdade: um link invisível ainda seria tabulável. */
+  .dock-ancora[data-oculto="true"] :global(.dock) {
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock-ancora {
+      transition: none;
+    }
   }
 
   .dock-ancora :global(.dock) {

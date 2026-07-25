@@ -32,11 +32,13 @@
 
 html {
   font-family: var(--font-body);
-  /* FLASH BRANCO (medido no QA do s002): quando o repaint do <video>
-     fixed atrasa no scroll, o branco default do navegador vaza atrás
-     por 1 frame inteiro. O fundo escuro no html mata isso na raiz.
-     Vale em todas as rotas — o FundoVivo está em todas elas. */
-  background: var(--color-obsidian-900, #0a0805);
+  /* FLASH (medido no QA do s002): quando o repaint do <video> fixed
+     atrasa no scroll, o fundo default do navegador vaza atrás por 1
+     frame inteiro. A cura é o html já nascer da cor do tema.
+     --surface-base, não um obsidiana fixo: as rotas de tema `brand`
+     são CLARAS, e pintar o html de escuro nelas inverte a página
+     enquanto o vídeo não chega (visto comparando com a main). */
+  background: var(--surface-base);
   scroll-behavior: smooth;
   scroll-padding-top: var(--nav-height, 4rem);
 }
@@ -52,7 +54,7 @@ body {
   /* Chão para o Dock fixo (DockProcedimentos.astro): sem isto o rodapé
      fica coberto pelos últimos ~86px, e a linha do CFBM é justamente a
      que não pode sumir. */
-  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(var(--dock-altura) + env(safe-area-inset-bottom, 0px));
   /* clip (não hidden): mata deslocamento lateral acidental sem criar
      um scroll container novo. A causa-raiz do estouro visto em
      24/07/2026 (assinatura TextPressure pré-clamp) foi corrigida no
@@ -132,9 +134,12 @@ body {
   transition: transform var(--duration-fast) var(--ease-entrance);
 }
 
+/* Aparecer não é indicador suficiente: quem chega aqui pelo Tab precisa
+   do mesmo anel que todo o resto do site usa. */
 .pular-para-conteudo:focus-visible {
   transform: translateY(0);
   outline: none;
+  box-shadow: var(--ring-focus);
 }
 
 /* Puxa o corte display da Bricolage variável (opsz alto = desenho de
@@ -142,6 +147,53 @@ body {
 .display {
   font-family: var(--type-display-font);
   font-optical-sizing: auto;
+}
+
+/* ShinyText — porte do componente homônimo do ReactBits, como
+   utilitário CSS em vez de ilha React: o efeito é 100% pintura, não
+   precisa de JS nenhum.
+
+   Uma faixa de champagne atravessa o texto dourado devagar. A base
+   continua sendo --text-accent (o AA medido é dela); o brilho só
+   CLAREIA de passagem, então o contraste nunca cai abaixo do aprovado.
+
+   Só em ponteiro fino: em toque isto seria repaint contínuo de um
+   elemento na tela enquanto o vídeo de fundo decodifica — exatamente o
+   custo que este trabalho está tirando do celular. E 7s de período, não
+   2: brilho rápido em texto pequeno lê como banner piscando. */
+@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  @keyframes blBrilho {
+    from {
+      background-position: 180% 0;
+    }
+    to {
+      background-position: -80% 0;
+    }
+  }
+
+  /* O gradiente carrega a própria cor de base nas pontas: assim o
+     texto continua exatamente --text-accent fora da faixa, e dentro
+     dela só CLAREIA pro champagne. Fosse `transparent` nas pontas, o
+     texto sumiria — com background-clip: text é o gradiente que pinta
+     as letras, não a propriedade color. */
+  .brilho {
+    background-image: linear-gradient(
+      100deg,
+      var(--text-accent) 38%,
+      var(--color-champagne) 50%,
+      var(--text-accent) 62%
+    );
+    background-size: 220% 100%;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* text-shadow com fill transparente vira silhueta borrada atrás
+       das letras. Por isso o brilho não vai em texto sobre o vídeo,
+       que depende da sombra do .on-video pra contrastar. */
+    text-shadow: none;
+    animation: blBrilho 7s var(--ease-standard) infinite;
+  }
 }
 
 /* O tema escuro é o único em que o link precisa do dourado pra separar

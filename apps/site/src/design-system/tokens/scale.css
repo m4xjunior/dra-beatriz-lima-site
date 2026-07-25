@@ -75,4 +75,10 @@
   /* Largura da coluna de leitura da direção IMMERSIVE (o texto vive à
      esquerda, sobre o scrim; a Dra. ocupa a direita). */
   --lead: 40rem;
+
+  /* Espaço que o Dock fixo ocupa no pé da tela. Um token só, lido pelo
+     padding do body E pela altura do hero — sem isso o Dock passava
+     por cima dos CTAs do hero, que também vivem no pé (visto em
+     captura a 1440x900). */
+  --dock-altura: 5.5rem;
 }

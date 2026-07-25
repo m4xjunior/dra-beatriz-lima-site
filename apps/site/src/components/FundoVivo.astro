@@ -54,7 +54,11 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
     z-index: 0;
     overflow: hidden;
     contain: strict;
-    background: var(--color-obsidian-900, #0a0805);
+    /* Cor de espera atrás do vídeo, enquanto ele não pinta. Tem que ser
+       a do TEMA: um obsidiana fixo aqui invertia as rotas de tema
+       `brand`, que são claras (regressão pega na comparação com a
+       main). No immersive --surface-base já é o obsidiana. */
+    background: var(--surface-base);
   }
 
   /* Enquadramento definitivo: ela à direita do centro no desktop (a
@@ -70,7 +74,7 @@ const RAIZ = "https://storage.googleapis.com/dra-beatriz-lima-estetica/v2/web_vi
   }
 
   .fundo-vivo__poster {
-    background: 62% 18% / cover no-repeat var(--color-obsidian-900, #0a0805);
+    background: 62% 18% / cover no-repeat var(--surface-base);
   }
 
   /* SCRIM DIRECIONAL: escurece a coluna de texto à ESQUERDA e some

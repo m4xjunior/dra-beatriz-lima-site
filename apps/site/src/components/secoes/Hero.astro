@@ -108,7 +108,9 @@ import Button from "../Button.astro";
   }
 
   /* svh (não vh): no mobile a barra do navegador recolhe e o vh trava no
-     tamanho ALTO, empurrando o pé do hero pra fora da tela. */
+     tamanho ALTO, empurrando o pé do hero pra fora da tela.
+     A altura é a do design, sem descontar o Dock: ele fica escondido
+     enquanto o hero está na tela (ver DockProcedimentos.astro). */
   .hero {
     position: relative;
     min-height: calc(100svh - var(--nav-height, 4rem));
