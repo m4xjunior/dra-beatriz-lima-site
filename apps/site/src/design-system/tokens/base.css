@@ -32,6 +32,19 @@
 
 html {
   font-family: var(--font-body);
+  /* FLASH BRANCO (medido no QA do s002): quando o repaint do <video>
+     fixed atrasa no scroll, o branco default do navegador vaza atrás
+     por 1 frame inteiro. O fundo escuro no html mata isso na raiz.
+     Vale em todas as rotas — o FundoVivo está em todas elas. */
+  background: var(--color-obsidian-900, #0a0805);
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--nav-height, 4rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -51,6 +64,11 @@ body {
 .conteudo-site {
   position: relative;
   z-index: 1;
+  /* container das seções: as dobras da home consultam a largura do
+     CONTEÚDO, não a da viewport — assim uma seção reaproveitada dentro
+     de uma coluna estreita se adapta sozinha. */
+  container-type: inline-size;
+  container-name: site;
 }
 
 /* PERF REAL medida em Android (24/07/2026, "trava pra caralho"):
@@ -83,9 +101,90 @@ body {
    coluna de leitura à esquerda + sombra de segurança pra texto sobre
    frames variáveis do vídeo. Vivem aqui por serem cross-seção. */
 .lead {
-  width: min(100%, 40rem);
+  width: min(100%, var(--lead));
 }
 
 .on-video {
   text-shadow: 0 1px 14px rgba(8, 6, 4, 0.5);
+}
+
+/* Skip link: invisível até receber foco por teclado, aí vira o primeiro
+   elemento da página. */
+.pular-para-conteudo {
+  position: absolute;
+  left: var(--edge);
+  top: 0;
+  z-index: var(--z-overlay);
+  transform: translateY(-120%);
+  padding: var(--space-inline-sm) var(--space-inline-md);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: var(--color-gold-600);
+  color: var(--color-obsidian-950);
+  font-family: var(--type-eyebrow-font);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-decoration: none;
+  transition: transform var(--duration-fast) var(--ease-entrance);
+}
+
+.pular-para-conteudo:focus-visible {
+  transform: translateY(0);
+  outline: none;
+}
+
+/* Puxa o corte display da Bricolage variável (opsz alto = desenho de
+   titulação). Utilitário porque toda dobra tem um título. */
+.display {
+  font-family: var(--type-display-font);
+  font-optical-sizing: auto;
+}
+
+/* O tema escuro é o único em que o link precisa do dourado pra separar
+   do corpo; no brand os componentes já definem a cor de cada link. */
+[data-theme="immersive"] a {
+  color: var(--text-accent);
+}
+
+[data-theme="immersive"] a:hover {
+  color: var(--text-accent-strong);
+}
+
+/* Nada de fonte cheia de peso no vazio: seções sem conteúdo ainda
+   ocupam a mesma coluna de leitura. */
+.secao {
+  position: relative;
+  padding-block: var(--space-section-lg);
+}
+
+.secao__inner {
+  width: min(100% - 2 * var(--edge), var(--container-xl));
+  margin-inline: auto;
+}
+
+/* Eyebrow numerada das dobras ("02 — Posicionamento"): o fio dourado à
+   esquerda é o acento cirúrgico da marca. */
+.secao__idx {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-inline-sm);
+  font-family: var(--type-eyebrow-font);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--type-eyebrow-tracking);
+  color: var(--text-accent);
+  margin: 0 0 var(--space-stack-md);
+}
+
+.secao__idx::before {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: var(--border-hairline);
+}
+
+@container site (max-width: 920px) {
+  .secao {
+    padding-block: var(--space-section);
+  }
 }

@@ -1,15 +1,38 @@
 ---
-// Button — CTA da marca. href é sempre rota real do site, nunca "#".
+// Button — CTA da marca.
+//
+// href é sempre rota real do site ou URL externa, nunca "#".
+// `externo` cuida do par target/rel que quase sempre é esquecido a mão
+// (noopener é segurança, não estilo).
+// `magnetico` liga o efeito Magnet: o botão é atraído pelo ponteiro
+// dentro de um raio. É puramente decorativo e só existe em ponteiro
+// fino — em toque não há hover, e o custo seria por nada.
 interface Props {
   href: string;
   variante?: "primaria" | "secundaria" | "texto";
   tamanho?: "sm" | "md";
+  externo?: boolean;
+  magnetico?: boolean;
 }
 
-const { href, variante = "primaria", tamanho = "md" } = Astro.props;
+const {
+  href,
+  variante = "primaria",
+  tamanho = "md",
+  externo = false,
+  magnetico = false,
+} = Astro.props;
 ---
 
-<a href={href} class="botao" data-variant={variante} data-size={tamanho}>
+<a
+  href={href}
+  class="botao"
+  data-variant={variante}
+  data-size={tamanho}
+  data-bl-magnet={magnetico ? "" : undefined}
+  target={externo ? "_blank" : undefined}
+  rel={externo ? "noopener noreferrer" : undefined}
+>
   <slot />
 </a>
 
@@ -29,7 +52,8 @@ const { href, variante = "primaria", tamanho = "md" } = Astro.props;
     transition:
       filter var(--duration-base) var(--ease-standard),
       background-color var(--duration-base) var(--ease-standard),
-      box-shadow var(--duration-base) var(--ease-standard);
+      box-shadow var(--duration-base) var(--ease-standard),
+      transform var(--duration-fast) var(--ease-standard);
     border: var(--border-width-thin) solid transparent;
   }
 
@@ -38,16 +62,23 @@ const { href, variante = "primaria", tamanho = "md" } = Astro.props;
     box-shadow: var(--ring-focus);
   }
 
+  /* Feedback de toque: o dedo tapa o botão, então a única confirmação
+     que sobra é o deslocamento. */
+  .botao:active {
+    transform: translateY(1px) scale(0.99);
+  }
+
   /* --- Primária: metálico dourado + bloom --- */
   .botao[data-variant="primaria"] {
     background: var(--button-primary-bg);
     color: var(--button-primary-fg);
     border-color: var(--button-primary-border);
+    box-shadow: var(--bloom);
   }
   .botao[data-variant="primaria"]:hover,
   .botao[data-variant="primaria"]:focus-visible {
     filter: var(--button-primary-hover-filter);
-    box-shadow: var(--button-primary-bloom);
+    box-shadow: var(--bloom-strong);
   }
 
   /* --- Secundária: contorno / vidro --- */
@@ -76,5 +107,11 @@ const { href, variante = "primaria", tamanho = "md" } = Astro.props;
   .botao[data-size="sm"] {
     padding: calc(var(--button-pad-y) * 0.7) calc(var(--button-pad-x) * 0.75);
     font-size: var(--font-size-2xs);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .botao:active {
+      transform: none;
+    }
   }
 </style>

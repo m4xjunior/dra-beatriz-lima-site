@@ -102,8 +102,15 @@ export default function TextPressure({
 
     const { width: containerW, height: containerH } = containerRef.current.getBoundingClientRect();
 
+    // Piso responsivo: a assinatura precisa continuar sendo um ATO no
+    // desktop (a caixa é alta) sem estourar a largura no celular.
+    const piso = Math.max(
+      minFontSize,
+      window.matchMedia("(max-width: 920px)").matches ? 34 : 52,
+    );
+
     let novoTamanho = containerW / (chars.length / 2);
-    novoTamanho = Math.max(novoTamanho, minFontSize);
+    novoTamanho = Math.max(novoTamanho, piso);
 
     setFontSize(novoTamanho);
     setScaleY(1);
@@ -116,7 +123,7 @@ export default function TextPressure({
       // reescalamos pra caber SEM quebrar linha, aconteça o que for.
       const larguraReal = titleRef.current.scrollWidth;
       if (larguraReal > containerW) {
-        novoTamanho = Math.max(minFontSize, novoTamanho * (containerW / larguraReal) * 0.98);
+        novoTamanho = Math.max(piso, novoTamanho * (containerW / larguraReal) * 0.98);
         setFontSize(novoTamanho);
       }
       const rect = titleRef.current.getBoundingClientRect();
@@ -139,8 +146,29 @@ export default function TextPressure({
     // AA: sem movimento para quem pediu menos movimento.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let rafId;
-    const animar = () => {
+    const alvo = containerRef.current;
+    if (!alvo) return;
+
+    // PERF (medida no Android durante o scrub do fundo vivo): o loop
+    // abaixo chama getBoundingClientRect() em CADA letra a CADA frame.
+    // Com a assinatura fora da tela isso é layout puro jogado fora,
+    // competindo com o decode do vídeo justamente durante o gesto de
+    // scroll. O observer não só pula o trabalho — ele DESLIGA o rAF.
+    let rafId = null;
+    let visivel = false;
+
+    const observador = new IntersectionObserver((entradas) => {
+      visivel = entradas[0].isIntersecting;
+      if (visivel && rafId === null) {
+        rafId = requestAnimationFrame(animar);
+      } else if (!visivel && rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    });
+    observador.observe(alvo);
+
+    function animar() {
       mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
       mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
 
@@ -174,10 +202,12 @@ export default function TextPressure({
       }
 
       rafId = requestAnimationFrame(animar);
-    };
+    }
 
-    animar();
-    return () => cancelAnimationFrame(rafId);
+    return () => {
+      observador.disconnect();
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
   }, [width, weight, alpha, weightRange, widthRange]);
 
   return (

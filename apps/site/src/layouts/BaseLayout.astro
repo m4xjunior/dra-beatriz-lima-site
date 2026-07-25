@@ -14,6 +14,9 @@ interface Props {
   theme?: "brand" | "immersive"; // nunca "ops" no site público — tipo já impede
   ogImage?: string;
   bodyClass?: string;
+  /** Cor da barra do navegador — o tema immersive precisa do obsidiana
+   *  quente, senão o iOS pinta a status bar com o claro do brand. */
+  themeColor?: string;
 }
 
 const {
@@ -25,6 +28,7 @@ const {
   // sobrescrever via prop.
   ogImage = "/imagens/og-capa.jpg",
   bodyClass,
+  themeColor = theme === "immersive" ? "#0A0805" : "#1A1611",
 } = Astro.props;
 
 const urlOgImage = ogImage
@@ -42,7 +46,7 @@ const urlOgImage = ogImage
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#1A1611" />
+    <meta name="theme-color" content={themeColor} />
 
     <!-- Open Graph — sóbrio, sem clickbait -->
     <meta property="og:type" content="website" />
@@ -81,8 +85,13 @@ const urlOgImage = ogImage
     <FundoVivo />
     <!-- Todo o conteúdo acima do fundo vivo (z 1 > z 0 do vídeo). -->
     <div class="conteudo-site">
+      <!-- Nenhuma rota tinha landmark <main> — o leitor de tela não
+           conseguia pular a navegação. Fica aqui, uma vez, pra todas. -->
+      <a class="pular-para-conteudo" href="#conteudo">Pular para o conteúdo</a>
       <Nav />
-      <slot />
+      <main id="conteudo">
+        <slot />
+      </main>
       <Footer />
     </div>
 

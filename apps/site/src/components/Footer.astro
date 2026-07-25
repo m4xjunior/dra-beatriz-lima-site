@@ -1,32 +1,39 @@
 ---
-// Footer — rodapé fixo do site, herdando tema do [data-theme] do <html>.
-// Sem props obrigatórias. Slot nomeado "extra" opcional (link legal — Etapa 3).
+// Footer — fecho do site, herdando tema do [data-theme] do <html>.
+//
+// Sem ilha de vidro: o rodapé é o único bloco que pode ficar sobre a
+// parte já escurecida do scrim (faixa de pé), então uma caixa aqui
+// seria vidro decorativo — o que a política anti-excesso proíbe. Um fio
+// hairline no topo basta pra separar do corpo da página.
+//
+// Slot nomeado "extra" opcional (link legal — Etapa 3).
 const pilares = ["Ciência", "Ética", "Escuta", "Respeito", "Individualidade"];
 const ano = new Date().getFullYear();
 ---
 
 <footer class="footer">
-  <div class="footer__inner">
-    <div class="footer__lockup" data-bl-reveal>
-      <span class="footer__mono">BL</span>
-      <div class="footer__nome">
-        <span>Dra. Beatriz Lima</span>
-        <span class="footer__sub">Biomédica Esteta</span>
-      </div>
+  <div class="footer__inner" data-bl-reveal>
+    <div class="footer__lockup">
+      <p class="footer__mono">BL</p>
+      <p class="footer__nome">
+        Dra. Beatriz Lima<span>Biomédica Esteta · Goiânia</span>
+      </p>
     </div>
 
-    <ul class="footer__pilares" aria-label="Pilares da prática" data-bl-reveal>
+    <ul class="footer__pilares" aria-label="Pilares da prática">
       {
         pilares.map((pilar) => (
           <li>
-            <span class="footer__chave" aria-hidden="true">{"{"}</span>
+            <span class="footer__chave" aria-hidden="true">
+              {"{"}
+            </span>
             {pilar}
           </li>
         ))
       }
     </ul>
 
-    <div class="footer__contato" data-bl-reveal>
+    <div class="footer__contato">
       <a
         href="https://www.instagram.com/biomedica.beatrizz"
         target="_blank"
@@ -41,97 +48,85 @@ const ano = new Date().getFullYear();
     <slot name="extra" />
 
     <p class="footer__legal">
-      Conteúdo informativo — não substitui avaliação clínica presencial.
-      Todo procedimento é individual; resultados dependem de indicação e
-      histórico de cada paciente.
+      Conteúdo informativo — não substitui avaliação clínica presencial. Todo
+      procedimento é individual; resultados dependem de indicação e histórico de
+      cada paciente, conforme a Resolução CFBM nº 330/2020.
     </p>
 
-    <p class="footer__copy">© {ano} Dra. Beatriz Lima. Todos os direitos reservados.</p>
+    <p class="footer__copy">
+      © {ano} Dra. Beatriz Lima. Todos os direitos reservados.
+    </p>
   </div>
 </footer>
 
 <style>
-  /* fundo TRANSPARENTE: o vídeo dela aparece atrás; o rodapé vive numa
-     ilha de vidro (antes tinha footer-bg opaco). Texto retintado pros
-     tokens on-glass do DS pra manter AA sobre o vidro. */
   .footer {
     color: var(--text-body);
-    padding: var(--space-section) var(--space-container-pad);
+    padding: var(--space-section) var(--edge) var(--space-section-lg);
   }
 
-  /* .footer__inner É a ilha de vidro (padrão .hero__ilha) */
   .footer__inner {
-    max-width: var(--container-xl);
+    position: relative;
+    width: min(100% - 2 * var(--edge), var(--container-xl));
     margin-inline: auto;
-    padding: var(--space-stack-lg);
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: var(--space-stack-md);
-    background: var(--surface-glass-strong);
-    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
-    backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
-    border: 1px solid var(--surface-glass-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--bloom);
+    padding-top: var(--space-stack-lg);
+    border-top: var(--border-width-hairline) solid var(--border-hairline);
   }
 
-  /* redesign editorial: monograma BL em escala de assinatura, empilhado
-     sobre o nome — presença total no fecho da página. */
-  .footer__lockup {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-stack-xs);
-  }
-
+  /* Monograma em escala de assinatura: presença total no fecho, e o
+     único lugar da página onde o metal ocupa área grande — porque aqui
+     ele não compete com o rosto dela. */
   .footer__mono {
     font-family: var(--type-display-font);
     font-variation-settings: "opsz" 96, "wght" 300;
-    font-size: clamp(4rem, 16vw, 9rem);
-    letter-spacing: var(--letter-spacing-normal);
+    font-size: clamp(4rem, 15vw, 8.5rem);
+    line-height: 0.82;
     background: var(--gradient-metal);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    line-height: 0.82;
+    margin: 0;
   }
 
   .footer__nome {
-    display: flex;
-    flex-direction: column;
     font-family: var(--type-display-font);
     text-transform: uppercase;
     letter-spacing: var(--type-eyebrow-tracking);
     font-size: var(--font-size-sm);
+    color: var(--text-heading);
+    margin: 0;
   }
 
-  .footer__sub {
+  .footer__nome span {
+    display: block;
     color: var(--text-accent);
     font-size: var(--font-size-2xs);
-    margin-top: var(--space-inline-xs);
+    margin-top: 4px;
   }
 
   .footer__pilares {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-inline-lg) var(--space-inline-lg);
+    gap: var(--space-inline-lg);
     padding: 0;
     margin: 0;
-    font-family: var(--type-body-font);
     font-size: var(--font-size-sm);
+    color: var(--text-body);
   }
 
   .footer__chave {
     color: var(--text-accent);
-    margin-right: var(--space-inline-xs);
+    margin-right: 6px;
     font-family: var(--type-display-font);
   }
 
   .footer__contato {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-inline-md);
+    gap: var(--space-inline-lg);
     align-items: baseline;
     font-size: var(--font-size-sm);
   }
@@ -153,22 +148,21 @@ const ano = new Date().getFullYear();
   .footer__legal {
     font-size: var(--font-size-xs);
     line-height: var(--type-body-leading);
-    max-width: 62ch;
-    opacity: 0.75;
-    border-top: var(--border-width-hairline) solid var(--border-hairline);
-    padding-top: var(--space-stack-sm);
+    max-width: 66ch;
+    color: var(--text-muted);
+    margin: 0;
   }
 
   .footer__copy {
     font-size: var(--font-size-2xs);
-    opacity: 0.55;
+    color: var(--text-subtle);
+    margin: 0;
   }
 
-  @media (min-width: 768px) {
+  @container site (min-width: 768px) {
     .footer__inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      column-gap: var(--space-gutter);
+      grid-template-columns: auto 1fr auto;
+      align-items: start;
     }
     .footer__legal,
     .footer__copy {

@@ -11,4 +11,18 @@
 // arquivo com src="" + defer resolve: agora ela entra na mesma fila
 // ordenada dos outros 4 e só roda depois que bl-motion.js define
 // `window.BLMotion`.
-BLMotion.ready().then(() => BLMotion.auto());
+//
+// O catch não é decoração: movimento é ENFEITE, e enfeite quebrado não
+// pode derrubar a página. Se o CDN do GSAP não responder, o site tem que
+// continuar legível e navegável — só sem as entradas coreografadas. Cada
+// receita do BL·Motion já cai no estado final estático sozinha, então
+// não há nada a restaurar aqui.
+if (typeof BLMotion === "undefined") {
+  console.warn("BL·Motion não carregou — o site segue estático.");
+} else {
+  BLMotion.ready()
+    .then(() => BLMotion.auto())
+    .catch((erro) => {
+      console.warn("BL·Motion desligado:", erro.message);
+    });
+}

@@ -66,4 +66,13 @@
   --container-lg: 64rem;
   --container-xl: 75rem;
   --container-prose: 38rem;
+
+  /* Respiro da borda da página: fluido, para a margem crescer com a
+     tela em vez de saltar em breakpoints. É o recuo que ancora hero,
+     seções e rodapé na mesma vertical. */
+  --edge: clamp(16px, 2.6vw, 44px);
+
+  /* Largura da coluna de leitura da direção IMMERSIVE (o texto vive à
+     esquerda, sobre o scrim; a Dra. ocupa a direita). */
+  --lead: 40rem;
 }

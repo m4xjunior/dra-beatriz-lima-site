@@ -41,6 +41,13 @@
   /* --- carrega GSAP + plugins se ainda não estiverem presentes --- */
   function loadScript(src) {
     return new Promise(function (res, rej) {
+      // ARMADILHA (vista em ambiente com o CDN bloqueado): o BaseLayout
+      // já coloca estas MESMAS tags no HTML. Se elas falharem ao baixar,
+      // a tag continua no DOM — então este querySelector encontrava o
+      // script "existente" e resolvia como sucesso, mesmo sem o GSAP ter
+      // carregado. auto() seguia adiante e estourava em gsap.utils.
+      // Por isso quem valida de verdade é a checagem de global.gsap no
+      // ready(); aqui só evitamos baixar duas vezes.
       if (document.querySelector('script[src="' + src + '"]')) return res();
       var s = document.createElement("script");
       s.src = src; s.async = false;
@@ -55,7 +62,10 @@
       return p.then(function () { return loadScript(src); });
     }, Promise.resolve())).then(function () {
       var g = global.gsap;
-      if (g && g.registerPlugin) {
+      // Sem isto o ready() resolvia com gsap undefined (ver armadilha em
+      // loadScript) e auto() estourava em g.utils.toArray.
+      if (!g) throw new Error("BLMotion: GSAP indisponível (CDN bloqueado ou offline)");
+      if (g.registerPlugin) {
         if (global.ScrollTrigger) g.registerPlugin(global.ScrollTrigger);
         if (global.SplitText) g.registerPlugin(global.SplitText);
       }
@@ -100,7 +110,16 @@
     g.set(els, { opacity: 0, y: y });
     ST.batch(els, {
       scroller: opts.scroller || null,
-      start: opts.start || "top 86%",
+      // "top 100%" (não "top 86%"): bug real visto em tela — qualquer
+      // elemento data-bl-reveal que já nasce dentro do viewport inicial
+      // mas abaixo da faixa dos 86% (ex.: os CTAs do Hero, com telas de
+      // ~700-850px de altura) nunca cruza esse gatilho porque ninguém
+      // rola a página — ele fica preso em opacity:0 pra sempre, sem
+      // nenhuma ação do usuário disparar o reveal. "top 100%" cobre
+      // exatamente o que já está visível no load, então acima-da-dobra
+      // sempre revela imediatamente; abaixo da dobra continua revelando
+      // ao entrar na tela, como antes.
+      start: opts.start || "top 100%",
       once: opts.once !== false,
       onEnter: function (b) { g.to(b, { opacity: 1, y: 0, duration: D.slow(), ease: EASE.entrance, stagger: stagger, overwrite: true }); }
     });
@@ -182,7 +201,25 @@
     var rv = root.querySelectorAll("[data-bl-reveal]");
     if (rv.length) reveal(rv, { scroller: null });
     root.querySelectorAll("[data-bl-tilt]").forEach(function (el) { tilt(el); });
-    root.querySelectorAll("[data-bl-split]").forEach(function (el) { split(el); });
+
+    // SplitText mede a caixa de cada caractere na fonte ATUAL da tela.
+    // Se a webfont (Bricolage/Mulish) ainda não terminou de trocar
+    // (font-display: swap), o split é calculado em cima do fallback e
+    // o layout muda debaixo dele quando a fonte chega — o headline fica
+    // dessincronizado, com letras cortadas/deslocadas por vários
+    // segundos (visto em produção: aviso do GSAP "SplitText called
+    // before fonts loaded" no console). Esperar document.fonts.ready
+    // antes de splitar resolve na raiz, sem tocar a duração da animação.
+    var splitEls = root.querySelectorAll("[data-bl-split]");
+    if (splitEls.length) {
+      var runSplit = function () { splitEls.forEach(function (el) { split(el); }); };
+      if (global.document.fonts && global.document.fonts.status !== "loaded") {
+        global.document.fonts.ready.then(runSplit);
+      } else {
+        runSplit();
+      }
+    }
+
     var px = root.querySelectorAll("[data-bl-parallax]");
     if (px.length) parallax(px);
   }

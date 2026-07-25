@@ -1,9 +1,17 @@
 ---
-// AssinaturaPressao — assinatura tipográfica que fecha a landing:
-// "BEATRIZ LIMA" gigante em Bricolage variável, com as letras reagindo
-// à pressão do cursor/dedo (TextPressure, ReactBits — ver
-// reactbits/TextPressure.jsx). client:visible: o JS da ilha React só
-// baixa quando a seção entra no viewport — custo zero no LCP do hero.
+// AssinaturaPressao — dobra 05, a assinatura tipográfica que fecha a
+// landing: "BEATRIZ LIMA" gigante em Bricolage variável, com as letras
+// reagindo à pressão do cursor/dedo (TextPressure, ReactBits — ver
+// reactbits/TextPressure.jsx).
+//
+// É o ÚNICO momento interativo da página (direção visual § Movimento),
+// e por isso merece o respiro de um ato inteiro.
+//
+// client:visible: o JS da ilha React só baixa quando a seção entra no
+// viewport — custo zero no LCP do hero. Até 25/07 existia uma segunda
+// implementação, em vanilla, inline na index.astro; as duas divergiram
+// (só a vanilla tinha o gate de visibilidade). Sobrou esta, com o gate
+// portado pra dentro do componente.
 import TextPressure from "../reactbits/TextPressure.jsx";
 ---
 
@@ -15,32 +23,14 @@ import TextPressure from "../reactbits/TextPressure.jsx";
 </section>
 
 <style>
-  /* Transparente: a assinatura flutua direto sobre o fundo vivo. Um
-     escurecimento radial (retangular na caixa, não oval sobre o rosto) dá
-     contraste ao texto claro do TextPressure — política de proteção 25/07. */
+  /* Sem véu próprio: a assinatura flutua direto sobre o fundo vivo. O
+     escurecimento de pé do scrim direcional já entrega o AA — o halo
+     radial que existia aqui foi retirado pela política de proteção de
+     texto de 25/07 (nada de oval sobre o rosto dela). */
   .assinatura {
     position: relative;
     overflow: hidden;
     padding-block: var(--space-section-lg);
-  }
-
-  .assinatura > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .assinatura::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      74% 90% at 50% 50%,
-      rgba(12, 10, 7, 0.5) 0%,
-      rgba(12, 10, 7, 0.18) 54%,
-      transparent 78%
-    );
   }
 
   .assinatura__idx {
@@ -49,17 +39,15 @@ import TextPressure from "../reactbits/TextPressure.jsx";
     font-size: var(--font-size-xs);
     text-transform: uppercase;
     letter-spacing: var(--type-eyebrow-tracking);
-    color: var(--text-accent-on-inverse);
+    color: var(--text-accent);
     margin: 0 0 var(--space-stack-md);
   }
 
   .assinatura__area {
     max-width: var(--container-xl);
     margin-inline: auto;
-    padding-inline: var(--space-container-pad);
-    /* Mais presença: a assinatura é o momento interativo da página
-       (direção visual § Movimento) — merece o respiro de um ato. */
-    height: clamp(8rem, 26vw, 22rem);
+    padding-inline: var(--edge);
+    height: clamp(6rem, 21vw, 18rem);
   }
 
   /* Estilo ESTÁTICO do TextPressure vive aqui (não em style inline no
@@ -70,7 +58,7 @@ import TextPressure from "../reactbits/TextPressure.jsx";
   .assinatura__area :global(.text-pressure-titulo) {
     font-family: var(--type-display-font);
     font-weight: 200;
-    color: var(--text-on-inverse);
+    color: var(--text-heading);
     text-transform: uppercase;
     text-align: center;
     white-space: nowrap;
@@ -80,9 +68,21 @@ import TextPressure from "../reactbits/TextPressure.jsx";
     display: flex;
     justify-content: space-between;
     transform-origin: center top;
+    /* Bloom champagne difuso + sombra curta: o texto claro sobrevive a
+       QUALQUER frame do vídeo por baixo, inclusive os mais claros. */
+    text-shadow:
+      0 2px 60px rgba(247, 237, 214, 0.35),
+      0 1px 3px rgba(8, 6, 4, 0.5);
   }
 
   .assinatura__area :global(.text-pressure-titulo span) {
     display: inline-block;
+    font-variation-settings: "wght" 200, "wdth" 100;
+  }
+
+  @container site (max-width: 920px) {
+    .assinatura__area {
+      height: clamp(4.5rem, 27vw, 9rem);
+    }
   }
 </style>

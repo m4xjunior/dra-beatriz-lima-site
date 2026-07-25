@@ -1,35 +1,38 @@
 ---
-// TeaserCatalogo — amostra do catálogo na landing (2–3 procedimentos).
-// Lê a collection 'procedimentos' — nunca hardcoda dado clínico aqui.
+// TeaserCatalogo — dobra 04, amostra do catálogo na landing.
+//
+// Lê a collection 'procedimentos'; nunca hardcoda dado clínico. Até
+// 25/07 a home trazia estes três cartões escritos à mão no HTML, com os
+// resumos REESCRITOS — duas fontes de verdade para o mesmo conteúdo
+// clínico, que já tinham divergido do .md. O cartão é o ServiceCard,
+// mesmo componente do catálogo completo.
 import { getCollection } from "astro:content";
 import ServiceCard from "../ServiceCard.astro";
 import Button from "../Button.astro";
-import GradientTitle from "../GradientTitle.astro";
 
-const todos = await getCollection("procedimentos", ({ data }) => data.publicado);
-const destaques = todos
+const destaques = (
+  await getCollection("procedimentos", ({ data }) => data.publicado)
+)
   .sort((a, b) => a.data.ordem - b.data.ordem)
   .slice(0, 3);
 ---
 
-<section class="teaser-catalogo">
-  <div class="teaser-catalogo__inner">
-    <!-- cabeçalho em ilha de vidro: título/copy legíveis sobre o vídeo.
-         (os ServiceCards abaixo já são vidro por conta própria) -->
-    <div class="teaser-catalogo__cabecalho teaser-catalogo__ilha" data-bl-reveal>
-      <p class="teaser-catalogo__eyebrow">04 — Procedimentos</p>
-      <GradientTitle as="h2" size="2xl" align="center">
+<section class="secao teaser" id="procedimentos">
+  <div class="secao__inner">
+    <div class="lead" data-bl-reveal>
+      <p class="secao__idx">04 — Procedimentos</p>
+      <h2 class="teaser__titulo display on-video">
         Um catálogo por indicação, não por tendência
-      </GradientTitle>
-      <p class="teaser-catalogo__corpo">
-        Preenchimento labial, bioestimuladores de colágeno, toxina botulínica
-        e harmonização, peelings e protocolos de pele — cada um com
-        indicações e contraindicações claras, para você decidir com
-        informação, não com pressa.
+      </h2>
+      <p class="teaser__corpo on-video">
+        Preenchimento labial, bioestimuladores de colágeno, toxina botulínica e
+        harmonização, peelings e protocolos de pele — cada um com indicações e
+        contraindicações claras, para você decidir com informação, não com
+        pressa.
       </p>
     </div>
 
-    <div class="teaser-catalogo__grade">
+    <div class="teaser__grade">
       {
         destaques.map((item) => (
           <ServiceCard
@@ -43,85 +46,45 @@ const destaques = todos
       }
     </div>
 
-    <div class="teaser-catalogo__acao" data-bl-reveal>
-      <Button href="/procedimentos" variante="texto">Ver todos os procedimentos →</Button>
+    <div class="teaser__mais lead" data-bl-reveal>
+      <Button href="/procedimentos" variante="texto">
+        Ver todos os procedimentos →
+      </Button>
     </div>
   </div>
 </section>
 
 <style>
-  .teaser-catalogo {
-    padding-block: var(--space-section);
+  .teaser__titulo {
+    font-variation-settings: "opsz" 44, "wght" 600, "wdth" 96;
+    font-size: clamp(1.9rem, 4.4vw, var(--font-size-3xl));
+    line-height: 1.02;
+    letter-spacing: var(--type-display-tracking);
+    margin: var(--space-stack-xs) 0 var(--space-stack-sm);
+    max-width: 20ch;
+    text-wrap: balance;
+    color: var(--text-heading);
   }
 
-  .teaser-catalogo__inner {
-    max-width: var(--container-xl);
-    margin-inline: auto;
-    padding-inline: var(--space-container-pad);
-  }
-
-  .teaser-catalogo__cabecalho {
-    text-align: center;
-    margin-bottom: var(--space-stack-lg);
-  }
-
-  /* ilha de vidro do cabeçalho (padrão .hero__ilha), centrada e contida */
-  .teaser-catalogo__ilha {
-    padding: var(--space-stack-lg);
-    max-width: var(--container-prose);
-    margin-inline: auto;
-    background: var(--surface-glass-strong);
-    -webkit-backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
-    backdrop-filter: blur(18px) saturate(var(--glass-saturate, 1.4));
-    border: 1px solid var(--surface-glass-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--bloom);
-  }
-
-  .teaser-catalogo__eyebrow {
-    font-family: var(--type-eyebrow-font);
-    font-size: var(--font-size-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--type-eyebrow-tracking);
-    color: var(--text-accent);
-    margin: 0 0 var(--space-stack-xs);
-  }
-
-  .teaser-catalogo__corpo {
+  .teaser__corpo {
     font-size: var(--font-size-md);
     line-height: var(--type-body-leading);
     color: var(--text-muted);
-    max-width: 62ch;
-    margin-inline: auto;
-    margin-top: var(--space-stack-sm);
+    max-width: 56ch;
+    margin: 0 0 var(--space-stack-lg);
   }
 
-  .teaser-catalogo__grade {
+  /* minmax(min(100%, 15rem), 1fr): o min() interno é o que impede o
+     track de ficar mais largo que a coluna no 360px — bug real de
+     overflow lateral, não estética. */
+  .teaser__grade {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
     gap: var(--space-gutter);
+    perspective: 1300px;
   }
 
-  .teaser-catalogo__acao {
-    display: flex;
-    justify-content: center;
+  .teaser__mais {
     margin-top: var(--space-stack-lg);
-  }
-
-  @media (min-width: 768px) {
-    .teaser-catalogo__grade {
-      /* minmax(0, 1fr), não só 1fr: tracks 1fr têm mínimo implícito
-         "auto" (= min-content do filho). Se o ServiceCard não encolhe
-         (texto sem quebra), o grid estufa além do container e vaza
-         horizontalmente em telas ~768px — bug real medido, não teórico. */
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  /* mobile 360–430: ilha do cabeçalho respira menos, sem deformar */
-  @media (max-width: 899px) {
-    .teaser-catalogo__ilha {
-      padding: var(--space-stack-md);
-    }
   }
 </style>

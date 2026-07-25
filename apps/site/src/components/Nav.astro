@@ -85,7 +85,9 @@ function estaAtivo(href: string) {
     height: var(--nav-height);
     max-width: var(--container-xl);
     margin-inline: auto;
-    padding-inline: var(--space-container-pad);
+    /* --edge (não --space-container-pad): é o mesmo recuo das seções e
+       do rodapé, então o monograma nasce na mesma vertical do texto. */
+    padding-inline: var(--edge);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -109,9 +111,13 @@ function estaAtivo(href: string) {
   }
 
   /* Barra de progresso de leitura — fio metálico que preenche conforme
-     o scroll. Driver em JS (rAF): animation-timeline: scroll() ainda não
-     roda no iOS Safari (device primário da clientela), então progresso
-     confiável vem do --nav-progress escrito no scroll. */
+     o scroll.
+     O caminho preferido é animation-timeline: scroll(), que roda no
+     compositor e NÃO custa um listener de scroll — importante porque
+     durante o scrub do fundo vivo cada listener a mais disputa a mesma
+     thread que decodifica o vídeo. Onde não houver suporte (iOS Safari
+     antigo, device primário da clientela), o bloco @supports não
+     aplica e o driver em JS abaixo assume escrevendo --nav-progress. */
   .nav__progress {
     position: absolute;
     left: 0;
@@ -123,6 +129,28 @@ function estaAtivo(href: string) {
     background: var(--gradient-metal);
     box-shadow: var(--bloom-gold-soft);
     will-change: transform;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @keyframes navProgresso {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    .nav__progress {
+      animation: navProgresso linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav__progress {
+      transition: none;
+    }
   }
 
   .nav__links {
@@ -189,10 +217,19 @@ function estaAtivo(href: string) {
 
   .nav__toggle-bar {
     display: block;
-    width: 100%;
+    width: 22px;
     height: 1.5px;
     background: var(--nav-fg);
     border-radius: var(--radius-none);
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      opacity var(--duration-fast) var(--ease-standard);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav__toggle-bar {
+      transition: none;
+    }
   }
 
   .nav__toggle[aria-expanded="true"] .nav__toggle-bar:nth-child(1) {
@@ -208,7 +245,7 @@ function estaAtivo(href: string) {
   .nav__mobile {
     display: flex;
     flex-direction: column;
-    padding: var(--space-stack-sm) var(--space-container-pad) var(--space-stack-md);
+    padding: var(--space-stack-sm) var(--edge) var(--space-stack-md);
     border-top: var(--border-width-hairline) solid var(--nav-border);
     background-color: var(--nav-bg);
     background-image: var(--surface-glass-tint);
@@ -276,9 +313,18 @@ function estaAtivo(href: string) {
     if (painel) painel.hidden = aberto;
   });
 
-  // Progresso de leitura — escreve --nav-progress (0→1) no scroll.
-  // rAF-throttled; passive. Reduced-motion mantém o fio no fim (estático).
-  const barra = document.querySelector<HTMLElement>("[data-nav-progress]");
+  // Progresso de leitura — FALLBACK. Onde o browser suporta
+  // animation-timeline: scroll(), o CSS já resolve no compositor e este
+  // listener não deve nem existir: durante o scrub do fundo vivo, cada
+  // handler de scroll a mais disputa a thread que decodifica o vídeo.
+  const temScrollTimeline =
+    typeof CSS !== "undefined" &&
+    CSS.supports?.("animation-timeline", "scroll()");
+
+  const barra = temScrollTimeline
+    ? null
+    : document.querySelector<HTMLElement>("[data-nav-progress]");
+
   if (barra) {
     let tickando = false;
     const atualizar = () => {

@@ -41,6 +41,13 @@
   /* --- carrega GSAP + plugins se ainda não estiverem presentes --- */
   function loadScript(src) {
     return new Promise(function (res, rej) {
+      // ARMADILHA (vista em ambiente com o CDN bloqueado): o BaseLayout
+      // já coloca estas MESMAS tags no HTML. Se elas falharem ao baixar,
+      // a tag continua no DOM — então este querySelector encontrava o
+      // script "existente" e resolvia como sucesso, mesmo sem o GSAP ter
+      // carregado. auto() seguia adiante e estourava em gsap.utils.
+      // Por isso quem valida de verdade é a checagem de global.gsap no
+      // ready(); aqui só evitamos baixar duas vezes.
       if (document.querySelector('script[src="' + src + '"]')) return res();
       var s = document.createElement("script");
       s.src = src; s.async = false;
@@ -55,7 +62,10 @@
       return p.then(function () { return loadScript(src); });
     }, Promise.resolve())).then(function () {
       var g = global.gsap;
-      if (g && g.registerPlugin) {
+      // Sem isto o ready() resolvia com gsap undefined (ver armadilha em
+      // loadScript) e auto() estourava em g.utils.toArray.
+      if (!g) throw new Error("BLMotion: GSAP indisponível (CDN bloqueado ou offline)");
+      if (g.registerPlugin) {
         if (global.ScrollTrigger) g.registerPlugin(global.ScrollTrigger);
         if (global.SplitText) g.registerPlugin(global.SplitText);
       }

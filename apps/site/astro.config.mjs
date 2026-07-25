@@ -22,12 +22,26 @@ export default defineConfig({
     // (hambúrguer + grids 1 coluna; achado do QA do s002, medido em
     // preview de build). LCP volta a depender só do CSS normal, que é
     // pequeno; reavaliar critical CSS depois com config correta.
-    // Minifica CSS/HTML/JS do build final. Imagem e SVG ficam de fora:
+    // Minifica HTML/JS do build final. Imagem e SVG ficam de fora:
     // não há pipeline de imagem nesta etapa (sem fotografia oficial —
     // ver readme.md "Fontes recebidas") e os SVGs de ícone (Etapa 2+)
     // não devem ser reotimizados às cegas.
+    //
+    // CSS: false (25/07/2026) — CAUSA-RAIZ do bug que foi atribuído ao
+    // critters. O Astro já minifica o CSS com lightningcss, que reescreve
+    // `@media (min-width: 768px)` na sintaxe de range moderna
+    // `@media (width>=768px)`. O parser do compressor não entende essa
+    // sintaxe e DESCARTA o bloco inteiro em silêncio. Medido no build:
+    // com CSS:true a folha final não tinha NENHUMA media query de
+    // largura — só as de (pointer:coarse) e (prefers-reduced-motion),
+    // que não usam range. Efeito em produção: o desktop recebia o layout
+    // mobile (hambúrguer no lugar do menu, grids de 1 coluna) — o mesmo
+    // sintoma que fez o critters ser removido em 25/07, e que continuou
+    // acontecendo depois porque o culpado era este segundo passe.
+    // O passe extra economizava 1,79 KB (~3,5%) sobre um CSS que já
+    // vinha minificado. Não vale o layout do site.
     compress({
-      CSS: true,
+      CSS: false,
       HTML: true,
       JavaScript: true,
       Image: false,
