@@ -1,0 +1,49 @@
+/* Ponto de entrada de estilo do site em Next.js.
+ *
+ * Importa a folha da RAIZ do monorepo, que é a fonte única do design
+ * system. Não copiar tokens para cá: até 05/08/2026 existiam duas cópias
+ * (raiz e apps/site/src/design-system) e elas divergiram de verdade — a
+ * de apps/site tinha --bloom-strong e --gradient-gold-text-on-inverse que
+ * a raiz não tinha. É por isso que o next.config.mjs aponta o
+ * outputFileTracingRoot para cá em cima.
+ */
+@import "../../../styles.css";
+@import "./clinico.css";
+
+/* Liga os tokens do design system às fontes auto-hospedadas pelo
+   next/font. Os nomes --font-* continuam sendo o contrato que os
+   componentes consomem; só a origem do arquivo muda. Manter esta ponte
+   aqui (e não editar typography.css) preserva o design system utilizável
+   por outros consumidores — o Tauri do ops, por exemplo, que vai
+   auto-hospedar de outro jeito. */
+:root {
+  --font-display: var(--fonte-display), "Space Grotesk", system-ui, sans-serif;
+  --font-body: var(--fonte-corpo), "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-serif: var(--fonte-serif), Garamond, Georgia, serif;
+}
+
+/* O palco do scrub é fixo e ocupa a viewport inteira; a página rola por
+   cima dele. A altura de rolagem é o que dá comprimento à linha do
+   tempo — ver PalcoHero.jsx. */
+body {
+  margin: 0;
+  background: var(--palco, var(--surface-base));
+  color: var(--text-body);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* iOS: sem isto o overscroll elástico mostra a cor do user-agent atrás
+   do palco fixo por um quadro inteiro durante o fling. */
+html {
+  background: var(--palco, var(--surface-base));
+  overscroll-behavior-y: none;
+}
+
+/* Regra do design system, não sugestão: quem pediu menos movimento
+   recebe o quadro parado. O driver do scrub também não liga. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

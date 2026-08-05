@@ -59,7 +59,7 @@ camera-right, gentle rim light separating the jawline. Even, clinical but
 flattering — visible skin texture, real pores, no smoothing, no beauty
 filter.
 
-Background: flat, evenly lit CHROMA KEY GREEN (#00B140), completely
+Background: flat, evenly lit CHROMA KEY BLUE (#0047BB), completely
 uniform, no gradient, no shadow falling on the background, subject
 separated from background by at least one metre.
 
@@ -75,90 +75,171 @@ as cenas.
 
 ---
 
+## 2b. Por que azul e não verde
+
+Decidido em 05/08/2026, contra a primeira versão desta spec.
+
+Verde fica ao lado do amarelo e do laranja no espectro, que é exatamente
+onde vive o tom de pele. O verde reflete na pele, o `despill` tenta
+tirar, e leva junto a saturação do rosto — a pessoa sai acinzentada. Pele
+quase não tem azul, então o key separa limpo sem tocar no tom.
+
+A agulha piora o caso do verde: aço polido espelha o fundo inteiro.
+
+**Valor medido**, não estimado: o Seedance 2.0 pedido em "blue screen"
+entrega `#0006F9` (0, 6, 249), com variação de ±2 em todo o quadro.
+Medido sobre `ElevenLabs_video_seedance-2-0_The burger rota_2026-08-04.mp4`,
+que o Max gerou como teste. É azul digital praticamente puro, uniforme o
+bastante para keyar com tolerância apertada.
+
+Formato nativo de saída daquele teste: **496×864 (9:16), 24 fps, 10 s,
+241 quadros**. Contagem da mesma ordem da lata do Hungry Tiger (342), o
+que confirma que o material sai pronto para o scrub sem reamostragem.
+
+---
+
 ## 3. Animação do procedimento
 
 Modelo: **Seedance 2.0**, imagem→vídeo, partindo do master acima.
-5 s por cena, 1080p.
+Saída nativa medida no teste do Max: 496×864 (9:16), 24 fps, 10 s.
 
 Regras que valem para todas as cenas, e que precisam estar no prompt
 porque o modelo tende a violá-las sozinho:
 
 - **Só a agulha entra em quadro. Nenhuma mão, nenhum braço, nenhuma luva.**
-  A agulha flutua e se move com intenção. É o pedido explícito e é o que
-  dá o tom cirúrgico-abstrato em vez de vídeo de procedimento.
-- **O fundo verde nunca muda de cor nem recebe sombra** — se receber, o
-  recorte no chroma key vaza.
-- **A cabeça não sai do enquadramento** e não gira mais que 15 graus.
+  A agulha flutua e se move com intenção. É o que dá o tom
+  cirúrgico-abstrato em vez de vídeo de procedimento.
+- **O fundo azul nunca muda de cor nem recebe sombra** — se receber, o
+  recorte vaza.
+- **Pele com textura visível e poro real**, sem suavização. É a diferença
+  entre parecer clínica e parecer filtro.
 
-### Cena A — aproximação (toxina, terço superior)
+### O problema do plano travado
+
+A primeira versão desta spec pedia `camera locked off` na cena da
+transformação, para o antes e o depois registrarem pixel a pixel. O Max
+recusou, com razão: o resultado é institucional e morto.
+
+A saída não é escolher entre as duas coisas. É fazer a câmera **manter a
+mesma trajetória atravessando o flare**. O match acontece dentro de um
+movimento contínuo, e o olho aceita porque o movimento nunca parou. É
+como match-cut de verdade funciona. O que precisa ser idêntico dos dois
+lados do clarão não é a posição da câmera: é a **velocidade e a direção**.
+
+### Cena A — descida e aproximação
 
 ```
-The camera slowly pushes in on the woman's face, from head-and-shoulders
-to a tight framing on the forehead and brow. A single fine surgical
-needle enters from the upper right of frame, isolated — no hand, no arm,
-no glove, only the needle and syringe barrel floating with deliberate,
-steady motion. The needle approaches the glabella and holds a few
-centimetres from the skin.
+Slow cinematic crane-down from above the woman's head, descending into a
+tight three-quarter framing on her forehead and brow, the move
+decelerating into stillness. As the camera settles, a single fine
+surgical needle glides in from the upper right of frame — isolated,
+floating, no hand, no arm, no glove, only the polished needle and syringe
+barrel moving with deliberate surgical intent. It approaches the glabella
+and holds two centimetres from the skin.
 
-Camera: slow dolly-in, subtle parallax, shallow depth of field pulling
-focus from the needle tip to the eyes.
+Camera: crane down on a jib arm, easing out, combined with a slow 15
+degree orbital drift to camera-left. Shallow depth of field, rack focus
+pulling from her eyes to the needle tip as it enters. Subtle handheld
+micro-float, never shaky.
 
-Lighting: studio softbox key from camera-left, silver fill, crisp
-specular highlight travelling along the polished needle as it moves.
+Lighting: large softbox key at 45 degrees camera-left, silver fill
+camera-right, hard rim light carving the jawline. A crisp specular
+highlight travels the length of the polished needle as it moves.
 
-Background: flat uniform chroma key green, evenly lit, no shadows cast on
-it, no colour shift.
+Background: flat, evenly lit PURE DIGITAL BLUE (#0000FF) blue screen,
+completely uniform, no gradient, no shadow cast on it, no colour shift.
 
-Photorealistic, cinematic, 4K, 24fps, no text, no watermark.
+Photorealistic skin with visible texture and real pores, no smoothing, no
+beauty filter. Anamorphic, cinematic, 4K, 24fps. No text, no watermark.
 ```
 
 ### Cena B — o instante (flare de transformação)
 
-Esta é a cena que faz o antes virar depois no mesmo plano. O corte não é
-corte: é um clarão que cobre a troca.
+A cena principal. O antes vira depois no mesmo plano, sem corte.
 
 ```
-Tight framing on the woman's forehead, the fine surgical needle held
-still against the skin — no hand, no arm, no glove visible. A soft
-anamorphic lens flare blooms from the needle tip and expands to fill the
-frame in pure warm white light over roughly eight frames. As the light
-recedes just as fast, the same face is revealed from the exact same
-camera position and the same lighting, now with the forehead lines fully
-relaxed and the skin smooth and luminous. The needle is gone.
+Continuous slow orbital arc around the woman's head, travelling from
+three-quarter left toward frontal at a constant speed, a fine surgical
+needle held against the glabella — isolated, floating, no hand, no arm,
+no glove.
 
-Camera: locked off, absolutely no movement, so the before and after
-register pixel to pixel.
+At the midpoint of the arc a warm anamorphic lens flare blooms from the
+needle tip, streaking horizontally across the frame and blowing out to
+white over roughly eight frames. The camera never stops — it continues
+the same arc at the same speed straight through the light. As the flare
+recedes just as fast, the move resolves on her face with the forehead
+lines fully relaxed, skin smooth and luminous. The needle is gone.
 
-Lighting: identical before and after — same key, same fill, same rim.
-Only the flare changes.
+Camera: uninterrupted 40 degree orbit on a motion-control arm, constant
+velocity, no stop and no reframe across the flare. Shallow depth of
+field. A gentle speed ramp slows time as the flare peaks, then returns to
+normal speed as it clears.
 
-Background: flat uniform chroma key green throughout, unaffected by the
-flare.
+Lighting: identical before and after the flare — same key, same fill,
+same rim, same colour temperature. Only the flare changes. Volumetric
+haze catching the light.
 
-Photorealistic, cinematic, 4K, 24fps, no text, no watermark.
+Background: flat, evenly lit PURE DIGITAL BLUE (#0000FF) blue screen
+throughout, completely uniform, unaffected by the flare, no shadow, no
+colour shift.
+
+Photorealistic skin with visible texture and real pores, no smoothing, no
+beauty filter. Anamorphic, cinematic, 4K, 24fps. No text, no watermark.
 ```
 
-> O "camera locked off" é o detalhe que faz a peça funcionar. Se a câmera
-> derivar um pixel durante o flare, o antes e o depois deixam de estar
-> no mesmo lugar e o olho lê como dois vídeos colados.
+> O que faz a peça funcionar é o **constant velocity, no stop across the
+> flare**. Se o modelo parar a câmera para trocar o rosto, o clarão vira
+> emenda visível e o plano lê como dois vídeos colados.
 
 ### Cena C — afastamento (resultado)
 
 ```
-Slow pull back from the tight forehead framing to head and shoulders,
-revealing the woman's full face, skin relaxed and luminous, expression
-calm, a faint smile forming. No needle, no hand, no instrument in frame.
+Slow cinematic pull-back and crane-up from the tight forehead framing,
+opening to head and shoulders and revealing the woman's full face — skin
+relaxed and luminous, expression calm, a faint smile forming. No needle,
+no hand, no instrument anywhere in frame.
 
-Camera: slow dolly-out with a gentle arc to camera-right, shallow depth
-of field opening up.
+Camera: dolly-out on a curved track arcing to camera-right while craning
+up, accelerating gently out of the move. Depth of field opening as the
+lens pulls back, focus holding on her eyes throughout.
 
-Lighting: studio softbox key from camera-left, silver fill, rim light on
-the jawline.
+Lighting: large softbox key at 45 degrees camera-left, silver fill, rim
+light on the jawline, a soft kiss of light building on her cheekbone as
+the camera rises.
 
-Background: flat uniform chroma key green, evenly lit, no shadows.
+Background: flat, evenly lit PURE DIGITAL BLUE (#0000FF) blue screen,
+completely uniform, no shadow, no colour shift.
 
-Photorealistic, cinematic, 4K, 24fps, no text, no watermark.
+Photorealistic skin with visible texture and real pores, no smoothing, no
+beauty filter. Anamorphic, cinematic, 4K, 24fps. No text, no watermark.
 ```
+
+### Cena D — órbita de vitrine (a que vira o scrub do hero)
+
+O equivalente exato do teste do hambúrguer, aplicado ao rosto. É esta que
+vira sequência de frames scrubada pelo scroll.
+
+```
+The woman's head and shoulders float centred in frame, rotating slowly
+and continuously on a vertical axis through a full 360 degrees, like a
+product on a turntable. Nothing supports her. Expression calm and
+neutral, eyes open, hair pulled back off the face.
+
+Camera: completely static, centred, 85mm equivalent — the subject does
+all the movement. Constant rotation speed with no easing, so the loop is
+seamless end to end.
+
+Lighting: large softbox key at 45 degrees camera-left, silver fill
+camera-right, hard rim light that travels around the jaw and cheekbone as
+she turns, specular highlights sliding across the skin.
+
+Background: flat, evenly lit PURE DIGITAL BLUE (#0000FF) blue screen,
+completely uniform, no gradient, no shadow, no colour shift.
+
+Photorealistic skin with visible texture and real pores, no smoothing, no
+beauty filter. Cinematic, 4K, 24fps, 10 seconds. No text, no watermark.
+```
+
 
 ### Variantes por procedimento
 
@@ -176,34 +257,74 @@ Trocar só a região e o instrumento; o resto do prompt fica igual:
 
 ## 4. Recorte do fundo e fatiamento
 
+Tudo abaixo foi **testado no vídeo real** que o Max gerou
+(`ElevenLabs_video_seedance-2-0_The burger rota_2026-08-04.mp4`), não
+deduzido. Os valores são os que passaram.
+
+### A erosão do matte não é opcional
+
+`chromakey` + `despill` sozinhos deixam uma **orla azul de 1 px** no
+contorno. Conferido compondo sobre magenta: a linha azul aparece em volta
+do pão inteiro. Mexer no `blend` não resolve — testei 0.02, 0.10 e 0.18 e
+a orla continua igual, porque o pixel culpado é a borda anti-aliased, não
+o fundo.
+
+O que resolve é encolher o matte em 1 px e suavizar: `alphaextract` →
+`erosion` → `alphamerge`. Com isso a borda fica limpa.
+
 ```bash
-# 1. Chroma key → alpha. O similarity 0.12 é o ponto onde o verde sai
-#    sem comer o contorno do cabelo; subir mais recorta fio de cabelo.
-ffmpeg -i cena-b.mp4 \
-  -vf "chromakey=0x00B140:0.12:0.02,despill,format=rgba" \
+# 1. Chroma key AZUL + erosão do matte → alpha limpo.
+#    0x0006F9 é o azul MEDIDO na saída do Seedance. Como o fundo varia
+#    só ±2 em todo o quadro, a tolerância fica apertada (0.10); no verde
+#    ela precisaria ser frouxa e comeria fio de cabelo.
+ffmpeg -i cena-b.mp4 -filter_complex "\
+  chromakey=0x0006F9:0.10:0.05,despill=type=blue,format=rgba,split[a][b];\
+  [a]alphaextract,erosion,erosion,boxblur=1:1[m];\
+  [b][m]alphamerge" \
   -c:v png cena-b-alpha.mov
 
-# 2. Fatiar em frames WebP com alpha, 1440px de largura (desktop)
-ffmpeg -i cena-b-alpha.mov -vf "scale=1440:-2,fps=24" \
-  -c:v libwebp -lossless 0 -q:v 78 -compression_level 6 \
-  frames/desk/frame-%03d.webp
+# 2. CONFERIR antes de fatiar. Magenta é o pior fundo possível para
+#    resto de azul — se passar aqui, passa em qualquer lugar.
+ffmpeg -f lavfi -i color=magenta:s=810x1412 -i cena-b-alpha.mov \
+  -filter_complex "[0][1]overlay=shortest=1" -frames:v 1 /tmp/conferir.png
 
-# 3. O mesmo em 720px (celular) — metade da largura, ~1/4 dos bytes
-ffmpeg -i cena-b-alpha.mov -vf "scale=720:-2,fps=24" \
-  -c:v libwebp -lossless 0 -q:v 74 -compression_level 6 \
-  frames/mob/frame-%03d.webp
+# 3. Fatiar. O `-resize L 0` do cwebp preserva a proporção sozinho.
+ffmpeg -i cena-b-alpha.mov quadros/f-%03d.png
+for p in quadros/*.png; do
+  cwebp -quiet -q 72 -m 6 -alpha_q 85 -resize 810 0 "$p" \
+    -o "frames/desk/$(basename ${p%.png}).webp"
+done
 
 # 4. Subir
 gsutil -m -h "Cache-Control:public, max-age=31536000, immutable" \
   cp frames/desk/*.webp gs://dra-beatriz-lima-estetica/procedimento/desk/
-gsutil -m -h "Cache-Control:public, max-age=31536000, immutable" \
-  cp frames/mob/*.webp  gs://dra-beatriz-lima-estetica/procedimento/mob/
 ```
 
-Orçamento: 90 frames × ~18 KB = **~1,6 MB no desktop**, ~450 KB no
-celular. Contra 11 MB da referência.
+### Orçamento — medido, não estimado
 
----
+Uma versão anterior desta spec dizia "~1,6 MB". Estava errada, era
+estimativa. Os 241 quadros do teste, com alpha:
+
+| Largura | Qualidade | Taxa | Quadros | Média | **Total** |
+|---|---|---|---|---|---|
+| 1440 px | q78 | 24 fps | 241 | 132,1 KB | **31,09 MB** |
+| 900 px | q70 | 12 fps | 121 | 63,8 KB | **7,54 MB** |
+| **810 px** | **q72** | **12 fps** | **121** | **56,9 KB** | **6,72 MB** |
+| 720 px | q68 | 12 fps | 121 | 47,1 KB | **5,56 MB** |
+| 810 px | q64 | 8 fps | 81 | 53,2 KB | **4,21 MB** |
+
+Escolha: **810 px, q72, 1 quadro a cada 2**. Fica abaixo dos 11 MB da
+referência e o scrub não precisa de 24 fps — quem dita a cadência é o
+scroll, e 121 quadros ao longo de uma viewport inteira já passa da
+resolução do gesto.
+
+1440 px está fora de questão: 31 MB para um hero é o triplo da
+referência, num site cujo público chega por celular.
+
+**Ressalva:** o hambúrguer é o pior caso de textura (gergelim, alface,
+relevo em cada pixel). Um rosto em plano fechado tem áreas grandes de
+pele lisa e deve comprimir melhor. Remedir quando o vídeo real existir,
+com o mesmo comando, antes de fixar a largura.
 
 ## 5. Ligar ao scroll
 
