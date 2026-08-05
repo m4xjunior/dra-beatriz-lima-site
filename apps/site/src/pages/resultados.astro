@@ -1,0 +1,17 @@
+---
+// /resultados — a galeria completa.
+//
+// Rota própria, e não uma âncora da home, porque é o link que a Dra.
+// manda no direct quando a paciente pergunta "você tem foto?". Precisa
+// abrir já no assunto, com título e og:image próprios.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Resultados from "../components/secoes/Resultados.astro";
+
+const titulo = "Resultados — Dra. Beatriz Lima";
+const descricao =
+  "Antes e depois de procedimentos realizados no consultório, fotografados na mesma posição e iluminação. Resultado é individual e depende de avaliação clínica.";
+---
+
+<BaseLayout title={titulo} description={descricao} theme="immersive">
+  <Resultados />
+</BaseLayout>

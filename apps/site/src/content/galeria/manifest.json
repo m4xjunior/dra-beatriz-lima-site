@@ -1,0 +1,342 @@
+{
+  "base": "https://storage.googleapis.com/dra-beatriz-lima-estetica/galeria/",
+  "itens": [
+    {
+      "slug": "labial-frontal",
+      "procedimento": "preenchimento-labial",
+      "legenda": "Preenchimento labial — vista frontal",
+      "foco": "50% 55%",
+      "tipo": "comparativo",
+      "lados": {
+        "antes": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.41.19 (1).jpeg",
+          "nativo": {
+            "largura": 1280,
+            "altura": 640
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 360,
+              "webp": "labial-frontal-antes-720.webp",
+              "avif": "labial-frontal-antes-720.avif"
+            },
+            {
+              "largura": 1280,
+              "altura": 640,
+              "webp": "labial-frontal-antes-1280.webp",
+              "avif": "labial-frontal-antes-1280.avif"
+            }
+          ]
+        },
+        "depois": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.41.19 (1).jpeg",
+          "nativo": {
+            "largura": 1280,
+            "altura": 640
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 360,
+              "webp": "labial-frontal-depois-720.webp",
+              "avif": "labial-frontal-depois-720.avif"
+            },
+            {
+              "largura": 1280,
+              "altura": 640,
+              "webp": "labial-frontal-depois-1280.webp",
+              "avif": "labial-frontal-depois-1280.avif"
+            }
+          ]
+        }
+      },
+      "proporcao": 2.0
+    },
+    {
+      "slug": "labial-perfil",
+      "procedimento": "preenchimento-labial",
+      "legenda": "Preenchimento labial — vista de três quartos",
+      "foco": "50% 60%",
+      "tipo": "comparativo",
+      "lados": {
+        "antes": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.41.19.jpeg",
+          "nativo": {
+            "largura": 800,
+            "altura": 1600
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 1440,
+              "webp": "labial-perfil-antes-720.webp",
+              "avif": "labial-perfil-antes-720.avif"
+            },
+            {
+              "largura": 800,
+              "altura": 1600,
+              "webp": "labial-perfil-antes-800.webp",
+              "avif": "labial-perfil-antes-800.avif"
+            }
+          ]
+        },
+        "depois": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.41.19.jpeg",
+          "nativo": {
+            "largura": 800,
+            "altura": 1600
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 1440,
+              "webp": "labial-perfil-depois-720.webp",
+              "avif": "labial-perfil-depois-720.avif"
+            },
+            {
+              "largura": 800,
+              "altura": 1600,
+              "webp": "labial-perfil-depois-800.webp",
+              "avif": "labial-perfil-depois-800.avif"
+            }
+          ]
+        }
+      },
+      "proporcao": 0.5
+    },
+    {
+      "slug": "full-face-terco-medio",
+      "procedimento": "preenchimentos-full-face",
+      "legenda": "Preenchimento full face — terço médio",
+      "foco": "50% 45%",
+      "tipo": "comparativo",
+      "lados": {
+        "antes": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.41.19 (2).jpeg",
+          "nativo": {
+            "largura": 1022,
+            "altura": 640
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 450,
+              "webp": "full-face-terco-medio-antes-720.webp",
+              "avif": "full-face-terco-medio-antes-720.avif"
+            },
+            {
+              "largura": 1022,
+              "altura": 640,
+              "webp": "full-face-terco-medio-antes-1022.webp",
+              "avif": "full-face-terco-medio-antes-1022.avif"
+            }
+          ]
+        },
+        "depois": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.41.19 (2).jpeg",
+          "nativo": {
+            "largura": 1022,
+            "altura": 640
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 450,
+              "webp": "full-face-terco-medio-depois-720.webp",
+              "avif": "full-face-terco-medio-depois-720.avif"
+            },
+            {
+              "largura": 1022,
+              "altura": 640,
+              "webp": "full-face-terco-medio-depois-1022.webp",
+              "avif": "full-face-terco-medio-depois-1022.avif"
+            }
+          ]
+        }
+      },
+      "proporcao": 1.5969
+    },
+    {
+      "slug": "pele-renovada",
+      "procedimento": "limpeza-de-pele",
+      "legenda": "Protocolo de pele — resultado após a primeira sessão",
+      "foco": "50% 40%",
+      "tipo": "composto",
+      "lados": {
+        "unico": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.41.20.jpeg",
+          "nativo": {
+            "largura": 720,
+            "altura": 1280
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 1280,
+              "webp": "pele-renovada-unico-720.webp",
+              "avif": "pele-renovada-unico-720.avif"
+            }
+          ]
+        }
+      },
+      "proporcao": 0.5625
+    },
+    {
+      "slug": "toxina-frontal",
+      "procedimento": "toxina-botulinica",
+      "legenda": "Toxina botulínica — linhas frontais em contração",
+      "foco": "50% 35%",
+      "tipo": "comparativo",
+      "lados": {
+        "antes": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.59.43 (1).jpeg",
+          "nativo": {
+            "largura": 1200,
+            "altura": 1600
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 960,
+              "webp": "toxina-frontal-antes-720.webp",
+              "avif": "toxina-frontal-antes-720.avif"
+            },
+            {
+              "largura": 1200,
+              "altura": 1600,
+              "webp": "toxina-frontal-antes-1200.webp",
+              "avif": "toxina-frontal-antes-1200.avif"
+            }
+          ]
+        },
+        "depois": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.59.43.jpeg",
+          "nativo": {
+            "largura": 1200,
+            "altura": 1600
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 960,
+              "webp": "toxina-frontal-depois-720.webp",
+              "avif": "toxina-frontal-depois-720.avif"
+            },
+            {
+              "largura": 1200,
+              "altura": 1600,
+              "webp": "toxina-frontal-depois-1200.webp",
+              "avif": "toxina-frontal-depois-1200.avif"
+            }
+          ]
+        }
+      },
+      "proporcao": 0.75
+    },
+    {
+      "slug": "pele-textura",
+      "procedimento": "peelings",
+      "legenda": "Peeling — textura e uniformidade da pele",
+      "foco": "45% 50%",
+      "tipo": "comparativo",
+      "lados": {
+        "antes": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.58.43.jpeg",
+          "nativo": {
+            "largura": 899,
+            "altura": 1600
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 1280,
+              "webp": "pele-textura-antes-720.webp",
+              "avif": "pele-textura-antes-720.avif"
+            },
+            {
+              "largura": 898,
+              "altura": 1598,
+              "webp": "pele-textura-antes-898.webp",
+              "avif": "pele-textura-antes-898.avif"
+            }
+          ]
+        },
+        "depois": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.58.43 (1).jpeg",
+          "nativo": {
+            "largura": 635,
+            "altura": 1130
+          },
+          "derivados": [
+            {
+              "largura": 634,
+              "altura": 1128,
+              "webp": "pele-textura-depois-634.webp",
+              "avif": "pele-textura-depois-634.avif"
+            },
+            {
+              "largura": 634,
+              "altura": 1128,
+              "webp": "pele-textura-depois-634.webp",
+              "avif": "pele-textura-depois-634.avif"
+            }
+          ]
+        }
+      },
+      "proporcao": 0.5619
+    },
+    {
+      "slug": "perfiloplastia-contorno",
+      "procedimento": "perfiloplastia",
+      "legenda": "Perfiloplastia — definição de contorno mandibular",
+      "foco": "50% 45%",
+      "tipo": "comparativo",
+      "lados": {
+        "antes": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.58.47.jpeg",
+          "nativo": {
+            "largura": 1280,
+            "altura": 1021
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 574,
+              "webp": "perfiloplastia-contorno-antes-720.webp",
+              "avif": "perfiloplastia-contorno-antes-720.avif"
+            },
+            {
+              "largura": 1280,
+              "altura": 1020,
+              "webp": "perfiloplastia-contorno-antes-1280.webp",
+              "avif": "perfiloplastia-contorno-antes-1280.avif"
+            }
+          ]
+        },
+        "depois": {
+          "origem": "WhatsApp Image 2026-08-05 at 01.58.47 (1).jpeg",
+          "nativo": {
+            "largura": 1005,
+            "altura": 802
+          },
+          "derivados": [
+            {
+              "largura": 720,
+              "altura": 574,
+              "webp": "perfiloplastia-contorno-depois-720.webp",
+              "avif": "perfiloplastia-contorno-depois-720.avif"
+            },
+            {
+              "largura": 1004,
+              "altura": 800,
+              "webp": "perfiloplastia-contorno-depois-1004.webp",
+              "avif": "perfiloplastia-contorno-depois-1004.avif"
+            }
+          ]
+        }
+      },
+      "proporcao": 1.2537
+    }
+  ]
+}

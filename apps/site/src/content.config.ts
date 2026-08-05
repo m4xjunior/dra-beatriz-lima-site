@@ -23,7 +23,15 @@ export const procedimentoSchema = z
       'toxina-harmonizacao',
       'peeling',
       'protocolo-pele',
-    ]), // enum aberto a crescer — cada novo procedimento pode reusar categoria existente
+      // Ampliado 05/08/2026 com a lista fechada de procedimentos que a
+      // Dra. Beatriz realiza hoje. Cada valor vira uma aba de filtro na
+      // galeria — por isso o enum, e não string livre: um typo no .md
+      // criaria uma aba fantasma com um item só.
+      'contorno-facial',
+      'full-face',
+      'capilar',
+      'corporal',
+    ]),
     carroChefe: z.boolean().default(false), // true só em "preenchimento labial" — controla destaque no ServiceCard
     ordem: z.number().int().min(0).default(0), // ordenação manual no catálogo
 
@@ -65,4 +73,85 @@ const procedimentos = defineCollection({
   schema: procedimentoSchema,
 });
 
-export const collections = { procedimentos };
+// ---------------------------------------------------------------------
+// GALERIA DE RESULTADOS
+//
+// REVOGA a decisão de escopo anterior ("nunca antes/depois de paciente"),
+// a pedido do Max em 05/08/2026, com as fotos entregues por ele.
+//
+// A CFBM Res. 330/2020 não proíbe antes/depois em bloco — ela condiciona.
+// Exige consentimento escrito e específico da paciente PARA AQUELA
+// divulgação, veda a promessa de resultado, e veda usar a imagem como
+// chamariz comercial. Por isso `consentimento` é obrigatório no schema e
+// `publicado` nasce FALSE: uma foto sem o termo assinado não sobe por
+// esquecimento, ela simplesmente não renderiza. A barreira é o tipo, não
+// a boa memória de quem edita.
+//
+// Os arquivos de imagem NÃO moram no repo. Vêm do bucket GCS
+// (`gs://dra-beatriz-lima-estetica/galeria/`), com os recortes e
+// derivados gerados por scripts/galeria/processar.py — que também escreve
+// o manifest.json lido aqui. Editar o .json à mão não é o fluxo: mexer
+// no inventário do script e rodar de novo é.
+// ---------------------------------------------------------------------
+
+const ladoSchema = z.object({
+  origem: z.string(),
+  nativo: z.object({ largura: z.number(), altura: z.number() }),
+  derivados: z
+    .array(
+      z.object({
+        largura: z.number(),
+        altura: z.number(),
+        webp: z.string(),
+        avif: z.string(),
+      })
+    )
+    .min(1),
+});
+
+export const galeriaSchema = z.object({
+  slug: z.string(),
+  procedimento: z.string(),
+  legenda: z.string().min(8).max(140),
+  // 'comparativo' = dois lados sobrepostos no slider
+  // 'composto'    = peça única já diagramada (não separar)
+  tipo: z.enum(['comparativo', 'composto']),
+  foco: z.string().default('50% 50%'),
+  proporcao: z.number().positive(),
+  lados: z.object({
+    antes: ladoSchema.optional(),
+    depois: ladoSchema.optional(),
+    unico: ladoSchema.optional(),
+  }),
+  // Preenchido pela clínica, não pelo script. Sem isto, não publica.
+  consentimento: z
+    .object({
+      obtido: z.literal(true),
+      data: z.string(),
+      referencia: z.string().min(3), // nº do termo no prontuário
+    })
+    .optional(),
+  publicado: z.boolean().default(false),
+});
+
+const galeria = defineCollection({
+  // Duas fontes, de propósito. O manifest é máquina (regerado a cada run
+  // do processar.py) e o publicacao.json é humano (a clínica edita
+  // conforme os termos de consentimento chegam). Mantê-los separados é o
+  // que impede o script de apagar a decisão editorial sem querer.
+  loader: async () => {
+    const dados = (await import('./content/galeria/manifest.json')).default;
+    const publicacao: Record<string, Record<string, unknown>> = (
+      await import('./content/galeria/publicacao.json')
+    ).default as never;
+
+    return dados.itens.map((item: Record<string, unknown>) => ({
+      id: item.slug as string,
+      ...item,
+      ...(publicacao[item.slug as string] ?? {}),
+    }));
+  },
+  schema: galeriaSchema,
+});
+
+export const collections = { procedimentos, galeria };
