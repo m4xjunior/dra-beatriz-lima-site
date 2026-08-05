@@ -1,0 +1,17 @@
+# CDN de mídia da Dra. Beatriz Lima.
+#
+# Worker separado do site de propósito: o site é estático (Cloudflare
+# Pages / apps/server), e este só espelha o bucket GCS na borda. Juntar
+# os dois faria um deploy do site derrubar o cache do vídeo.
+#
+# workers.dev ligado porque o domínio ainda não está na conta. Quando
+# drabeatrizlima.com.br entrar no Cloudflare, trocar por uma rota
+# (ex.: midia.drabeatrizlima.com.br) e desligar o workers_dev.
+
+name = "bl-midia"
+main = "src/index.js"
+compatibility_date = "2026-08-05"
+workers_dev = true
+
+[observability]
+enabled = true

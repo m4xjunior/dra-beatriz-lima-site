@@ -1,0 +1,211 @@
+/* AntesDepois — cortina arrastável.
+ *
+ * Só tokens do design system. Nada de literal de cor aqui: a paleta do
+ * ui-ux-pro-max sugeriu teal médico para este tipo de peça e foi descartada,
+ * porque a marca é sand/ink/gold/nude. A sugestão que sobreviveu da skill foi
+ * a estrutural (padrão Before-After) e o motion, não a cor.
+ */
+
+.figura {
+  --ad-corte: 50%;
+
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg, 14px);
+  background: var(--surface-sunken);
+  box-shadow: var(--shadow-raised, 0 1px 2px rgb(0 0 0 / 0.06));
+  touch-action: pan-y; /* o arraste horizontal é nosso; o vertical continua rolando a página */
+  cursor: ew-resize;
+}
+
+/* Moldura uniforme na grade. A foto se ajusta, a foto não é cortada no
+   arquivo — o recorte é de exibição e continua ajustável pelo `foco` do
+   manifest. */
+.figura[data-proporcao='moldura'] {
+  aspect-ratio: 4 / 5;
+}
+
+/* No comparador aberto a proporção volta a ser a real da foto, aplicada
+   inline pelo componente para reservar o espaço antes de a imagem chegar.
+   CLS zero. */
+
+.camada {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* object-position vem do `foco` do item, inline */
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* (1) só a camada de cima é recortada */
+.camadaDepois {
+  clip-path: inset(0 0 0 var(--ad-corte));
+}
+
+.fio {
+  position: absolute;
+  inset-block: 0;
+  left: var(--ad-corte);
+  z-index: 2;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--color-champagne, #f7edd6);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.18);
+  pointer-events: none;
+}
+
+.puxador {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px; /* alvo de toque mínimo, mesmo o input estando por cima */
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid var(--surface-glass-border, rgb(255 255 255 / 0.4));
+  background: var(--surface-glass-strong, rgb(255 255 255 / 0.24));
+  backdrop-filter: blur(10px) saturate(1.3);
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+}
+
+/* As duas setas do puxador, em CSS puro. Sem emoji e sem ícone importado —
+   a regra do projeto é SVG ou forma, nunca emoji como ícone. */
+.puxador::before,
+.puxador::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-top: 1.5px solid var(--color-sand-50, #fbf9f4);
+  border-right: 1.5px solid var(--color-sand-50, #fbf9f4);
+}
+
+.puxador::before {
+  left: 12px;
+  transform: rotate(-135deg);
+}
+
+.puxador::after {
+  right: 12px;
+  transform: rotate(45deg);
+}
+
+.marca {
+  position: absolute;
+  bottom: 10px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-on-inverse, #fbf9f4);
+  background: rgb(26 22 17 / 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.marcaAntes {
+  left: 10px;
+}
+
+.marcaDepois {
+  right: 10px;
+}
+
+.previa {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-900, #1a1611);
+  background: var(--color-gold-300, #dbbe7c);
+  pointer-events: none;
+}
+
+/* (3) o range nativo, invisível e por cima de tudo. opacity 0, nunca
+   display:none — com display:none o teclado e o leitor de tela perdem o
+   controle, que é justamente o motivo de ele ser um input de verdade. */
+.controle {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+.controle::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 44px;
+  height: 100%;
+}
+
+.controle::-moz-range-thumb {
+  width: 44px;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+
+/* O foco não pode sumir: o input é invisível, então o anel vai na figura. */
+.controle:focus-visible {
+  outline: none;
+}
+
+.figura:has(.controle:focus-visible) {
+  outline: 2px solid var(--border-focus, #997438);
+  outline-offset: 3px;
+}
+
+.legenda {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 2.5rem 0.875rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--text-on-inverse, #fbf9f4);
+  /* chão de leitura: o texto nunca disputa com a foto */
+  background: linear-gradient(to top, rgb(26 22 17 / 0.72), rgb(26 22 17 / 0));
+  pointer-events: none;
+}
+
+.unica {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .puxador {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

@@ -1,0 +1,21 @@
+import { chromium } from "playwright";
+const saida = "/private/tmp/claude-501/-Users-maxmeireles-Downloads-Dra--Beatriz-Lima---Design-System/b203ef55-a150-4c05-b5bc-207316f831a2/scratchpad";
+const nav = await chromium.launch({ args: ["--autoplay-policy=no-user-gesture-required"] });
+const erros = [];
+const p = await (await nav.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+p.on("console", (m) => m.type() === "error" && erros.push(m.text()));
+p.on("pageerror", (e) => erros.push("PAGEERROR " + e.message));
+await p.goto("http://localhost:3000/", { waitUntil: "networkidle", timeout: 60000 });
+const sec = p.locator("#procedimentos");
+await sec.scrollIntoViewIfNeeded();
+await p.locator('#procedimentos [role="tab"]').first().click();
+await p.waitForTimeout(2000);
+const t1 = await p.evaluate(() => document.querySelector("#procedimentos video")?.currentTime);
+await p.waitForTimeout(1200);
+console.log(JSON.stringify(await p.evaluate((t1) => {
+  const v = document.querySelector("#procedimentos video");
+  return v ? { arquivo: v.currentSrc.split("/").pop(), tocando: !v.paused, avancou: +(v.currentTime - t1).toFixed(2) + "s", dur: +v.duration.toFixed(2) } : { video: false };
+}, t1)));
+await sec.screenshot({ path: `${saida}/final-galeria.png` });
+console.log("ERROS:", erros.length ? erros : "nenhum");
+await nav.close();

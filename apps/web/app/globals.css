@@ -9,6 +9,10 @@
  */
 @import "../../../styles.css";
 @import "./clinico.css";
+/* Coreografia de entrada por dobra. Tem de estar AQUI em cima: `@import`
+   só é válido antes de qualquer regra, e anexar no fim do arquivo faz o
+   parser de CSS do Turbopack falhar o build inteiro. */
+@import "./revelar.css";
 
 /* Liga os tokens do design system às fontes auto-hospedadas pelo
    next/font. Os nomes --font-* continuam sendo o contrato que os

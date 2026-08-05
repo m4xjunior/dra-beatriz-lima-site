@@ -1,0 +1,341 @@
+/* SecaoProcedimentos — trilho + palco.
+ *
+ * Só tokens do design system. O componente de origem trazia #62B2FE cravado
+ * em cinco lugares e classes de cor do shadcn (bg-background, border-border).
+ * Nada disso sobreviveu: a marca é sand, ink, gold e nude, e o ouro tem UMA
+ * função aqui, marcar o procedimento ativo. Cor com um trabalho é acento;
+ * cor com cinco trabalhos é ruído.
+ */
+
+.secao {
+  position: relative;
+  padding: clamp(3rem, 8vw, 7rem) clamp(1rem, 5vw, 4rem);
+  background: var(--surface-base);
+  color: var(--text-body);
+}
+
+/* ---------- cabeçalho ---------- */
+
+.cabecalho {
+  max-width: 46rem;
+  margin: 0 auto clamp(2rem, 5vw, 3.5rem);
+}
+
+.indice {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+}
+
+.titulo {
+  margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4.5vw, 3rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--text-heading);
+  text-wrap: balance;
+}
+
+.corpo {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 42ch;
+}
+
+/* ---------- painel: trilho + palco ---------- */
+
+.painel {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+/* ---------- trilho ---------- */
+
+/* Altura calculada, não chutada: seis chips de 64px são 384px, e a máscara
+   come as pontas. Com 22rem (352px) o sexto chip ficava fora da caixa e a
+   pessoa via cinco de seis. */
+.trilho {
+  position: relative;
+  height: 28rem;
+  overflow: hidden;
+  /* As duas bordas desvanecem em vez de cortar seco: o chip que sai de cena
+     some, não é decepado. É o que o componente de origem fazia com dois
+     gradientes sobrepostos. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 18%,
+    #000 82%,
+    transparent 100%
+  );
+}
+
+.trilhoInterno {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.chip {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: fit-content;
+  min-height: 44px; /* alvo de toque */
+  padding: 0 1.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  /* --text-muted sobre a superfície escura desta página fica bem abaixo de
+     4,5:1. É o mesmo defeito de contraste que eu cobrei do s000 no eyebrow, e
+     eu cometi nas duas linhas seguintes de CSS. O chip inativo continua
+     recuado em relação ao ativo pela BORDA e pelo brilho, não por apagar o
+     texto até o limite da legibilidade. */
+  color: var(--text-body);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color 220ms ease,
+    color 220ms ease,
+    background-color 220ms ease;
+}
+
+.chip:hover {
+  border-color: var(--border-hairline);
+  color: var(--text-body);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 3px;
+}
+
+.chipAtivo {
+  border-color: var(--color-gold-500);
+  background: var(--surface-raised);
+  color: var(--text-heading);
+  box-shadow: var(--bloom);
+}
+
+.chipNumero {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.chipAtivo .chipNumero {
+  color: var(--text-accent);
+}
+
+.chipRotulo {
+  font-weight: 450;
+}
+
+/* ---------- palco ---------- */
+
+.palco {
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  justify-items: center;
+}
+
+/* O rosto do procedimento. Só existe quando o vídeo existe — enquanto o Max
+   não gerar, este elemento nem entra na árvore e a pilha ocupa o espaço. */
+.rosto {
+  width: 100%;
+  max-width: 26rem;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-lg, 14px);
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+
+/* A caixa da pilha é estável para o layout não pular quando o procedimento
+   troca. O que varia é a foto DENTRO dela, que mantém a própria proporção. */
+.pilha {
+  position: relative;
+  width: 100%;
+  max-width: 26rem;
+  aspect-ratio: 4 / 5;
+}
+
+.cartao {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform-origin: center;
+  /* autoAlpha do GSAP escreve visibility junto com opacity: o cartão oculto
+     sai do alcance do leitor de tela, não só da vista. */
+}
+
+/* Os vizinhos recuam de verdade. Só baixar a opacidade deixava o texto branco
+   deles legível atrás do cartão da frente, competindo pela leitura. Cinza e
+   desfoque tiram a informação sem tirar a presença — é o que dá a sensação de
+   pilha em vez de sobreposição de conteúdo. */
+.cartao[data-vizinho='sim'] {
+  filter: grayscale(1) blur(2px) brightness(0.7);
+}
+
+.cartao[data-vizinho='sim'] .rodapeCartao {
+  opacity: 0;
+}
+
+/* A moldura encolhe até a foto, e o rodapé se ancora nela.
+ *
+ * `height: 100%` com `aspect-ratio` faz a largura derivar da altura. Quando a
+ * foto é panorâmica e a largura derivada estoura, o `max-width` corta e o
+ * aspect-ratio recalcula a altura pra baixo. Assim os DOIS eixos ficam
+ * limitados com uma regra só, e nenhuma proporção vaza da caixa: as sete vão
+ * de 0,5 (retrato de perfil) a 2,0 (panorâmica do labial frontal).
+ *
+ * Sobra é superfície da marca, não tarja preta. */
+.moldura {
+  position: relative;
+  aspect-ratio: var(--prop, 0.8);
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.rodapeCartao {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 5;
+  padding: 3.5rem 1.25rem 1.25rem;
+  /* chão de leitura: o texto nunca disputa com a foto. É a mesma lei que o
+     hero aplica — ver specs/direcao-visual.md. */
+  background: linear-gradient(to top, rgb(26 22 17 / 0.82), rgb(26 22 17 / 0));
+  pointer-events: none;
+}
+
+.selo {
+  display: inline-block;
+  margin: 0 0 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--surface-glass-border, rgb(255 255 255 / 0.25));
+  border-radius: 999px;
+  background: var(--surface-glass-strong, rgb(255 255 255 / 0.16));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-on-inverse, #fbf9f4);
+  font-variant-numeric: tabular-nums;
+  /* Nunca quebra. A moldura encolhe junto com a foto, então a largura do
+     cartão varia por procedimento e não dá pra contar com espaço fixo. Selo
+     em duas linhas empurrava o resumo pra fora da imagem. */
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resumo {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1.4vw, 1.125rem);
+  line-height: 1.35;
+  color: var(--text-on-inverse, #fbf9f4);
+  text-wrap: pretty;
+}
+
+/* ---------- aviso regulatório ---------- */
+
+.aviso {
+  max-width: 46rem;
+  margin: clamp(2rem, 5vw, 3rem) auto 0;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text-subtle);
+}
+
+/* ---------- responsivo ---------- */
+
+@media (max-width: 900px) {
+  .painel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+
+  /* No estreito o trilho encolhe: seis chips empilhados comem a tela toda
+     antes de a foto aparecer, e a foto é o motivo da seção existir. */
+  .trilho {
+    height: 12rem;
+    order: 2;
+  }
+
+  .palco {
+    order: 1;
+  }
+
+  .trilhoInterno {
+    justify-content: center;
+  }
+
+  .chip {
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 1.125rem;
+    font-size: 0.8125rem;
+  }
+
+  .rodapeCartao {
+    padding: 2.5rem 0.875rem 0.875rem;
+  }
+
+  .resumo {
+    font-size: 0.9375rem;
+  }
+}
+
+/* ---------- menos movimento ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  /* O auto-play já é desligado no JS pela mesma consulta. Aqui caem os
+     efeitos que continuariam custando composição mesmo parados. */
+  .chip {
+    transition: none;
+  }
+
+  .selo {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

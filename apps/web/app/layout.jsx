@@ -16,6 +16,9 @@
 
 import { Bricolage_Grotesque, Mulish, Cormorant_Garamond } from "next/font/google";
 import ProvedorScroll from "@/components/ProvedorScroll";
+import Nav from "@/components/Nav";
+import Rodape from "@/components/Rodape";
+import BotaoWhatsapp from "@/components/BotaoWhatsapp";
 import "./globals.css";
 
 // opsz e wdth são eixos que a direção visual usa de verdade: títulos
@@ -64,10 +67,28 @@ export default function RootLayout({ children }) {
       className={`${display.variable} ${corpo.variable} ${serifa.variable}`}
     >
       <head>
-        <link rel="preconnect" href="https://storage.googleapis.com" crossOrigin="" />
+        {/* preconnect ao Worker de borda, que é de onde a mídia sai agora
+            (apps/cdn). O handshake TLS não pode acontecer no meio do
+            primeiro gesto de scroll — é a decisão (c) do mapa do
+            Hungry Tiger. */}
+        <link rel="preconnect" href="https://bl-midia.meireles-maxjunior.workers.dev" crossOrigin="" />
       </head>
       <body>
+        {/* A nav fica FORA do ProvedorScroll: ela é fixa e não participa
+            do fluxo que o Lenis interpola. E antes do children para que
+            o mix-blend-mode dela tenha a página inteira como fundo. */}
+        <Nav />
         <ProvedorScroll>{children}</ProvedorScroll>
+
+        {/* Rodapé fora do ProvedorScroll pela mesma razão da nav: ele não
+            precisa da interpolação do Lenis, e mantê-lo fora evita que o
+            fim da página participe do cálculo do scrub. */}
+        <Rodape />
+
+        {/* O flutuante é o último filho de propósito: ele observa o
+            [data-rodape] para recuar e não tapar o CTA de lá, e o
+            observer precisa que o alvo já exista na montagem. */}
+        <BotaoWhatsapp />
       </body>
     </html>
   );

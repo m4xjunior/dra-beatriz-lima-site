@@ -1,0 +1,130 @@
+/* A primeira dobra.
+ *
+ * Ela chegou do Instagram, onde acabou de ver o antes/depois de alguém.
+ * O hero não pode vender — ela já está considerando. Ele tem que
+ * RECONHECER, e reconhecer é o único movimento que desarma quem tem medo
+ * de ser julgada por querer.
+ *
+ * Por isso não há claim, não há "transforme sua autoestima", não há
+ * botão brilhante. Há uma frase que ela já pensou sozinha no espelho, e
+ * a segunda metade dela é o que a clínica acrescenta.
+ *
+ * SEM ILHA DE VIDRO: a direção é explícita — momentos tipográficos
+ * (títulos gigantes, assinatura) vão SEM caixa, direto sobre o vídeo,
+ * apoiados no véu de gradiente. Vidro é para blocos de leitura densa.
+ * Variar a linguagem é o que separa editorial de template. */
+
+.hero {
+  position: relative;
+  z-index: 2;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--size-7) var(--size-7) var(--size-9);
+  max-width: 62ch;
+}
+
+.eyebrow {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-accent);
+  text-shadow: 0 1px 3px rgba(10, 8, 5, 0.9);
+  margin: 0 0 var(--size-5);
+}
+
+/* Bricolage em opsz alto: o corte display da variável, que é para o que
+   ela existe. wdth 88 aperta a caixa o suficiente para a frase caber em
+   duas linhas sem virar duas colunas. */
+.titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 7vw, var(--font-size-5xl));
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tighter);
+  color: var(--text-heading);
+  font-variation-settings: "opsz" 84, "wdth" 88;
+  text-shadow: 0 2px 24px rgba(10, 8, 5, 0.55);
+}
+
+/* A serifa itálica é a voz humana dentro do grotesco. UMA palavra por
+   headline basta — é a regra escrita, e esticar isso mata o efeito. */
+.humana {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: var(--font-weight-light);
+  font-variation-settings: normal;
+  color: var(--text-accent);
+}
+
+.corpo {
+  margin: var(--size-6) 0 0;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-body);
+  max-width: 40ch;
+  text-shadow: 0 1px 12px rgba(10, 8, 5, 0.7);
+}
+
+/* Pista de scroll: a página inteira é comandada pelo polegar, e a
+   primeira dobra precisa dizer isso sem escrever "role para baixo".
+   Uma hairline que respira. */
+.pista {
+  margin-top: var(--size-7);
+  display: flex;
+  align-items: center;
+  gap: var(--size-4);
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-tecnico);
+}
+
+.pista::after {
+  content: "";
+  width: 74px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--border-instrumento) 0%,
+    transparent 100%
+  );
+  transform-origin: left;
+  animation: respirar 2.8s var(--ease-standard) infinite;
+}
+
+@keyframes respirar {
+  0%,
+  100% {
+    transform: scaleX(0.4);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pista::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
+@media (max-width: 920px) {
+  .hero {
+    padding: var(--size-6) var(--size-5) calc(var(--size-9) + env(safe-area-inset-bottom));
+    max-width: none;
+  }
+
+  .titulo {
+    font-variation-settings: "opsz" 48, "wdth" 94;
+  }
+
+  .corpo {
+    font-size: var(--font-size-base);
+  }
+}

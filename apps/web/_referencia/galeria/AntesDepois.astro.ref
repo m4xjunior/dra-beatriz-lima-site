@@ -1,0 +1,349 @@
+---
+// AntesDepois — comparador de resultado, com cortina arrastável.
+//
+// POR QUE CORTINA E NÃO DUAS FOTOS LADO A LADO:
+// duas fotos lado a lado obrigam o olho a saltar e comparar de memória.
+// A cortina põe as duas no MESMO lugar da tela, então a diferença
+// aparece sozinha quando o dedo passa. É também o formato que a paciente
+// já conhece do Instagram — não precisa aprender nada.
+//
+// POR QUE A PROPORÇÃO VEM POR PROP:
+// cada item tem a sua (2.0 no labial frontal, 0.75 na toxina). Fixar uma
+// só aqui esticaria umas e cortaria outras. O `aspect-ratio` é aplicado
+// inline, com o número que o processar.py mediu, e por isso o espaço já
+// está reservado antes de a primeira imagem chegar — CLS zero.
+//
+// SEM JS o componente continua útil: a cortina é um <input type=range>
+// de verdade. O script só existe para acompanhar com o ponteiro; sem ele
+// o teclado e o arraste no próprio range seguem funcionando.
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  item: CollectionEntry<"galeria">["data"];
+  /** Larguras de CSS que o cartão vai ocupar — alimenta o `sizes`. */
+  sizes?: string;
+  /** A primeira dobra carrega ansioso; o resto é preguiçoso. */
+  prioridade?: boolean;
+}
+
+const { item, sizes = "(min-width: 900px) 33vw, 100vw", prioridade = false } =
+  Astro.props;
+
+const BASE = "https://storage.googleapis.com/dra-beatriz-lima-estetica/galeria/";
+
+type Lado = NonNullable<typeof item.lados.antes>;
+
+/** Monta o srcset de um lado no formato pedido. */
+const srcset = (lado: Lado, formato: "webp" | "avif") =>
+  lado.derivados.map((d) => `${BASE}${d[formato]} ${d.largura}w`).join(", ");
+
+/** Maior derivado — é o que vai no `src` de fallback. */
+const maior = (lado: Lado) => lado.derivados[lado.derivados.length - 1];
+
+const antes = item.lados.antes;
+const depois = item.lados.depois ?? item.lados.unico;
+const comparativo = item.tipo === "comparativo" && !!antes && !!depois;
+
+const carregamento = prioridade ? "eager" : "lazy";
+const decodificacao = prioridade ? "sync" : "async";
+---
+
+<figure
+  class="ad"
+  class:list={[{ "ad--simples": !comparativo }]}
+  style={`aspect-ratio:${item.proporcao}; --ad-foco:${item.foco}`}
+  data-ad
+>
+  {
+    comparativo && (
+      <div class="ad__camada ad__camada--antes">
+        <picture>
+          <source type="image/avif" srcset={srcset(antes, "avif")} sizes={sizes} />
+          <source type="image/webp" srcset={srcset(antes, "webp")} sizes={sizes} />
+          <img
+            src={`${BASE}${maior(antes).webp}`}
+            width={maior(antes).largura}
+            height={maior(antes).altura}
+            alt={`${item.legenda} — antes do procedimento`}
+            loading={carregamento}
+            decoding={decodificacao}
+          />
+        </picture>
+        <span class="ad__rotulo ad__rotulo--antes" aria-hidden="true">Antes</span>
+      </div>
+    )
+  }
+
+  {
+    depois && (
+      <div class="ad__camada ad__camada--depois">
+        <picture>
+          <source type="image/avif" srcset={srcset(depois, "avif")} sizes={sizes} />
+          <source type="image/webp" srcset={srcset(depois, "webp")} sizes={sizes} />
+          <img
+            src={`${BASE}${maior(depois).webp}`}
+            width={maior(depois).largura}
+            height={maior(depois).altura}
+            alt={
+              comparativo
+                ? `${item.legenda} — depois do procedimento`
+                : item.legenda
+            }
+            loading={carregamento}
+            decoding={decodificacao}
+          />
+        </picture>
+        {comparativo && (
+          <span class="ad__rotulo ad__rotulo--depois" aria-hidden="true">
+            Depois
+          </span>
+        )}
+      </div>
+    )
+  }
+
+  {
+    comparativo && (
+      <>
+        <span class="ad__fio" aria-hidden="true">
+          <span class="ad__punho">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path
+                d="M9 6 4 12l5 6M15 6l5 6-5 6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+        </span>
+
+        {/* O controle REAL. Transparente por cima de tudo, com a área de
+            toque inteira do cartão — 44px de alvo é o mínimo, aqui é a
+            figura toda. O rótulo é lido pelo leitor de tela; o visual
+            quem faz é o fio acima. */}
+        <input
+          class="ad__controle"
+          type="range"
+          min="0"
+          max="100"
+          value="50"
+          step="0.1"
+          aria-label={`Comparar antes e depois — ${item.legenda}`}
+        />
+      </>
+    )
+  }
+
+  <figcaption class="ad__legenda">{item.legenda}</figcaption>
+</figure>
+
+<style>
+  .ad {
+    --ad-corte: 50%;
+
+    position: relative;
+    display: block;
+    margin: 0;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: var(--border-width-hairline) solid var(--surface-glass-border);
+    background: var(--color-obsidian-900);
+    /* Container próprio: os rótulos encolhem junto com o cartão sem
+       precisar de media query por breakpoint de página. */
+    container-type: inline-size;
+  }
+
+  .ad__camada {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* O ANTES fica por baixo, inteiro. O DEPOIS por cima, recortado até a
+     posição da cortina. Recortar só a camada de cima significa que a de
+     baixo nunca é repintada durante o arraste — o navegador só recompõe
+     um clip, sem layout e sem decodificar imagem de novo. É o que
+     mantém o gesto a 60fps num celular modesto. */
+  .ad__camada--depois {
+    clip-path: inset(0 0 0 var(--ad-corte));
+    will-change: clip-path;
+  }
+
+  .ad__camada img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--ad-foco);
+    display: block;
+  }
+
+  .ad--simples .ad__camada--depois {
+    clip-path: none;
+  }
+
+  .ad__fio {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--ad-corte);
+    width: 2px;
+    margin-left: -1px;
+    background: var(--gradient-metal);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .ad__punho {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-pill, 999px);
+    background: var(--color-obsidian-900);
+    border: 1px solid var(--color-gold-500);
+    color: var(--color-gold-500);
+    box-shadow: var(--bloom);
+  }
+
+  .ad__rotulo {
+    position: absolute;
+    top: var(--space-inline-sm);
+    z-index: 2;
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    padding: 4px var(--space-inline-sm);
+    border-radius: var(--badge-radius);
+    /* Fundo próprio: sobre pele clara o texto branco sumia. Aqui o
+       contraste não depende da foto que calhar de estar embaixo. */
+    background: rgba(12, 11, 10, 0.62);
+    backdrop-filter: blur(6px);
+    color: var(--color-champagne, #e9d3a3);
+    pointer-events: none;
+  }
+
+  .ad__rotulo--antes {
+    left: var(--space-inline-sm);
+  }
+
+  .ad__rotulo--depois {
+    right: var(--space-inline-sm);
+  }
+
+  /* O range some visualmente mas continua sendo o alvo de ponteiro e de
+     teclado. opacity:0 em vez de display:none — o segundo tiraria o
+     elemento da árvore de foco. */
+  .ad__controle {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    appearance: none;
+    background: transparent;
+  }
+
+  .ad__controle::-webkit-slider-thumb {
+    appearance: none;
+    width: 44px;
+    height: 100%;
+  }
+
+  .ad__controle::-moz-range-thumb {
+    width: 44px;
+    height: 100%;
+    border: 0;
+    background: transparent;
+  }
+
+  .ad__controle:focus-visible ~ .ad__fio .ad__punho {
+    box-shadow: var(--ring-focus);
+  }
+
+  .ad__legenda {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding: var(--space-stack-md) var(--space-inline-sm) var(--space-inline-sm);
+    font-size: var(--font-size-sm);
+    line-height: 1.35;
+    color: var(--color-champagne, #e9d3a3);
+    pointer-events: none;
+    /* Chão de leitura: sem o gradiente a legenda cai sobre pele e some.
+       Só no rodapé, para não escurecer a área de interesse clínico. */
+    background: linear-gradient(
+      to top,
+      rgba(12, 11, 10, 0.9) 0%,
+      rgba(12, 11, 10, 0.62) 55%,
+      transparent 100%
+    );
+  }
+
+  @container (max-width: 260px) {
+    .ad__legenda {
+      font-size: var(--font-size-2xs);
+    }
+
+    .ad__rotulo {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ad__camada--depois {
+      will-change: auto;
+    }
+  }
+</style>
+
+<script>
+  // Acompanhar o ponteiro. O <input type=range> nativo só move o valor
+  // quando o gesto começa EM CIMA do polegar; aqui qualquer ponto do
+  // cartão deve pegar, porque o polegar é invisível.
+  //
+  // Escrever a posição numa custom property (e não em style.clipPath)
+  // deixa o fio e a camada lerem o mesmo valor — uma escrita, dois
+  // efeitos, sem risco de dessincronizar.
+  for (const fig of document.querySelectorAll<HTMLElement>("[data-ad]")) {
+    const controle = fig.querySelector<HTMLInputElement>(".ad__controle");
+    if (!controle) continue;
+
+    let pendente = 0;
+    const aplicar = (pct: number) => {
+      // rAF: durante um arraste chegam mais eventos de ponteiro do que
+      // quadros. Sem isto, a mesma propriedade é reescrita 3× por frame.
+      cancelAnimationFrame(pendente);
+      pendente = requestAnimationFrame(() => {
+        fig.style.setProperty("--ad-corte", `${pct}%`);
+      });
+    };
+
+    controle.addEventListener("input", () => aplicar(Number(controle.value)));
+
+    const seguir = (ev: PointerEvent) => {
+      if (ev.buttons !== 1 && ev.pointerType === "mouse") return;
+      const r = fig.getBoundingClientRect();
+      const pct = Math.min(100, Math.max(0, ((ev.clientX - r.left) / r.width) * 100));
+      controle.value = String(pct);
+      aplicar(pct);
+    };
+
+    fig.addEventListener("pointerdown", (ev) => {
+      (ev.target as Element).setPointerCapture?.(ev.pointerId);
+      seguir(ev);
+    });
+    fig.addEventListener("pointermove", seguir);
+  }
+</script>

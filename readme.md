@@ -2,7 +2,7 @@
 
 Design system parametrizável da marca **Dra. Beatriz Lima — Biomédica Esteta**
 (Goiânia/GO · @biomedica.beatrizz). Consultório próprio de biomedicina estética,
-atendimento individual. O mesmo pacote de tokens serve ao **site público (Astro)**
+atendimento individual. O mesmo pacote de tokens serve ao **site público (Next.js)**
 e aos **sistemas internos (Tauri/ERP)**.
 
 > **Estado — ETAPA 1 (Fundação) concluída na direção nova, aprovada.**
@@ -21,7 +21,7 @@ Construído a partir de **um briefing textual** (direção de arte + arquitetura
 duas rodadas de direção com o cliente. **Nenhum** dos itens abaixo foi fornecido — se
 existirem, anexe pela Import menu e o sistema é refinado sobre o material real:
 
-- ❌ Codebase (Astro/Tauri) — não anexado
+- ❌ Codebase (site público / Tauri) — não anexado
 - ❌ Arquivo Figma / .fig — não anexado
 - ❌ Arquivo de logo/marca (SVG/PNG) — **não fornecido** (ver "Marca / logo")
 - ❌ Fotografias oficiais (retrato editorial, macro clínico) — não fornecidas
@@ -157,7 +157,7 @@ licença GreenSock (não-MIT; código gerado por IA é uso permitido).
 scroll, `scrub`), `bloomPulse` (brilho dourado que respira). Regras de performance:
 animar só transforms (x/y/scale/rotation/opacity); `matchMedia` para responsivo.
 
-**Carregamento (site público / Astro):**
+**Carregamento (site público):**
 ```html
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
@@ -235,7 +235,7 @@ Nada hardcoded. Todo valor visual e (Etapa 3) todo texto é variável, editável
 - **§5.3 Temas derivados.** `brand` · `immersive` · `ops` por `[data-theme]`, dos mesmos
   primitivos. Estrutura pronta para temas adicionais.
 - **§5.4 Conteúdo separado.** *(Etapa 3)* texto/imagem/rótulo/erro vêm de esquema
-  (Astro Content Collections + Zod).
+  validado com Zod.
 - **§5.5 Entidade "procedimento".** *(Etapa 3)* esquema único; cadastrar renderiza a
   página inteira sem código.
 - **§5.6 Páginas = blocos.** *(Etapa 3)* array ordenado de blocos com esquema + estilo.

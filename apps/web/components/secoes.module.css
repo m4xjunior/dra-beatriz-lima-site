@@ -1,0 +1,429 @@
+/* Estilo compartilhado das dobras de LEITURA.
+ *
+ * As seções de procedimento têm CSS próprio porque cada uma comanda um
+ * palco de vídeo. Estas aqui — credencial, como funciona, sobre, FAQ,
+ * localização — são todas o mesmo objeto: uma coluna de texto com um
+ * cabeçalho. Cinco módulos repetindo a mesma medida de coluna é como
+ * nasce a divergência de 2px que ninguém consegue explicar depois.
+ *
+ * O que cada dobra tem de próprio vive no seu módulo. O ritmo vertical,
+ * a largura de leitura e a escada de título vivem aqui. */
+
+.secao {
+  position: relative;
+  /* z-index acima do palco: as seções de procedimento usam position
+     fixed para o vídeo, e sem isto o texto passa por baixo. */
+  z-index: 2;
+  background: var(--surface-base);
+  padding-block: var(--space-section);
+  padding-inline: var(--space-container-pad);
+}
+
+/* Alternância de superfície. Não é decoração: sem um degrau de fundo,
+   sete dobras de texto seguidas viram um rolo único e a pessoa perde a
+   noção de onde uma acaba. */
+.secaoAlt {
+  background: var(--surface-raised);
+}
+
+.inner {
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+/* Coluna de leitura. 62ch é o limite acima do qual o olho erra a volta
+   da linha — mesma medida usada na ColunaClinica. */
+.coluna {
+  max-width: 62ch;
+}
+
+.eyebrow {
+  display: block;
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-accent);
+  margin-bottom: var(--space-stack-xs);
+}
+
+.titulo {
+  font-family: var(--fonte-display), var(--type-display-font);
+  font-variation-settings: "opsz" 44, "wght" 600, "wdth" 96;
+  font-size: clamp(1.8rem, 4.2vw, var(--font-size-3xl));
+  line-height: 1.04;
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-heading);
+  margin: 0 0 var(--space-stack-sm);
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+.corpo {
+  font-size: var(--font-size-md);
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-stack-lg);
+}
+
+/* Grade genérica das dobras que listam itens (credencial, passos, FAQ).
+   auto-fit e não auto-fill: com 3 itens numa tela larga, auto-fill
+   deixaria uma trilha vazia à direita e a linha ficaria torta. */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: var(--space-gutter);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cartao {
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  /* --ficha, e NÃO --surface-glass-strong.
+     Medido em 05/08/2026: no tema `clinico` o token de vidro é
+     rgba(251,249,244,.8) — quase BRANCO, porque ele foi desenhado para o
+     tema `immersive`. Com ele o título do cartão ficava em 1,11:1 e o
+     corpo em 2,10:1, contra o mínimo de 4,5:1. `--ficha` é a superfície
+     de prontuário deste tema e é escura, como o resto da página. */
+  background: var(--ficha);
+  padding: var(--space-stack-md);
+}
+
+.cartaoTitulo {
+  font-family: var(--fonte-display), var(--type-display-font);
+  font-variation-settings: "opsz" 24, "wght" 620;
+  font-size: var(--font-size-lg);
+  color: var(--text-heading);
+  margin: 0 0 var(--size-2);
+  text-wrap: balance;
+}
+
+.cartaoTexto {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Aviso de dado regulatório ainda não preenchido. Só aparece em
+   desenvolvimento — em produção o bloco inteiro é omitido pelo
+   componente, nunca renderizado com placeholder. */
+.pendente {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-accent);
+  border: var(--border-width-hairline) dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--size-2) var(--size-3);
+  margin-top: var(--space-stack-sm);
+}
+
+/* ------------------------------------------------------------------
+   Peças específicas das dobras. Ficam aqui, e não em módulos próprios,
+   porque cada uma é usada por um componente só e criar nove arquivos de
+   três regras espalha o mesmo assunto por nove lugares.
+   ------------------------------------------------------------------ */
+
+/* --- Credencial --------------------------------------------------- */
+
+.registro {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 var(--space-stack-lg);
+  padding: var(--size-3) var(--size-5);
+  border: var(--border-width-hairline) solid var(--color-gold-600, var(--border-subtle));
+  border-radius: var(--radius-md);
+  background: var(--surface-accent-soft);
+}
+
+.registroRotulo {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-accent);
+}
+
+.registroValor {
+  font-family: var(--fonte-display), var(--type-display-font);
+  font-size: var(--font-size-lg);
+  color: var(--text-heading);
+}
+
+/* --- Como funciona ------------------------------------------------ */
+
+/* O número é ornamento tipográfico, não informação: a ordem já está no
+   <ol>. Vazado, para não competir com o título do passo. */
+.passoNumero {
+  display: block;
+  font-family: var(--fonte-display), var(--type-display-font);
+  font-variation-settings: "opsz" 72, "wght" 300;
+  font-size: var(--font-size-3xl);
+  line-height: 0.9;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-gold-600, var(--text-accent));
+  margin-bottom: var(--size-3);
+}
+
+.passoDuracao {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--text-tecnico, var(--text-accent));
+  margin: 0 0 var(--size-3);
+}
+
+/* --- Sobre -------------------------------------------------------- */
+
+.duasColunas {
+  display: grid;
+  gap: var(--space-gutter);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .duasColunas {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
+.retrato {
+  margin: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: var(--border-width-hairline) solid var(--border-subtle);
+  /* Proporção reservada antes de a foto chegar: sem isto a dobra pula de
+     altura quando o retrato carrega. */
+  aspect-ratio: 4 / 5;
+}
+
+.retrato img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.assinatura {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: var(--space-stack-md) 0 0;
+  font-family: var(--fonte-serif), serif;
+  font-style: italic;
+  font-size: var(--font-size-xl);
+  color: var(--text-heading);
+}
+
+.assinaturaTitulo {
+  font-family: var(--fonte-corpo), sans-serif;
+  font-style: normal;
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-accent);
+}
+
+/* --- FAQ ---------------------------------------------------------- */
+
+.faqLista {
+  display: grid;
+  gap: var(--size-2);
+  max-width: 74ch;
+}
+
+.faqItem {
+  border-bottom: var(--border-width-hairline) solid var(--border-subtle);
+}
+
+.faqPergunta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4);
+  /* Altura de alvo confortável: a linha inteira é clicável, não só o
+     texto. */
+  min-height: 56px;
+  padding-block: var(--size-3);
+  font-family: var(--fonte-display), var(--type-display-font);
+  font-variation-settings: "opsz" 20, "wght" 600;
+  font-size: var(--font-size-base);
+  color: var(--text-heading);
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+/* O marcador nativo do <summary> conviveria com a nossa seta. */
+.faqPergunta::-webkit-details-marker {
+  display: none;
+}
+
+.faqPergunta:hover {
+  color: var(--text-accent);
+}
+
+.faqPergunta:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--ring-focus);
+}
+
+.faqSinal {
+  flex: 0 0 auto;
+  color: var(--text-accent);
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+
+details[open] .faqSinal {
+  transform: rotate(180deg);
+}
+
+.faqResposta {
+  margin: 0;
+  padding-bottom: var(--size-5);
+  font-size: var(--font-size-sm);
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 62ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faqSinal {
+    transition: none;
+  }
+}
+
+/* --- Depoimentos -------------------------------------------------- */
+
+.citacao {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack-sm);
+  height: 100%;
+}
+
+.citacaoTexto {
+  margin: 0;
+  font-family: var(--fonte-serif), serif;
+  font-style: italic;
+  font-size: var(--font-size-md);
+  line-height: 1.55;
+  color: var(--text-body);
+}
+
+.citacaoAutor {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+}
+
+.citacaoNome {
+  font-style: normal;
+  font-size: var(--font-size-sm);
+  color: var(--text-heading);
+}
+
+.citacaoContexto {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-accent);
+}
+
+/* --- Localização -------------------------------------------------- */
+
+.horarios {
+  list-style: none;
+  margin: 0 0 var(--space-stack-sm);
+  padding: 0;
+  display: grid;
+  gap: var(--size-2);
+}
+
+.horarioItem {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-4);
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.horarioValor {
+  color: var(--text-tecnico, var(--text-body));
+  font-variant-numeric: tabular-nums;
+}
+
+.linkSimples {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-right: var(--size-4);
+  font-size: var(--font-size-sm);
+  color: var(--text-accent);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.linkSimples:hover {
+  color: var(--text-heading);
+}
+
+.linkSimples:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--ring-focus);
+}
+
+/* --- CTA ---------------------------------------------------------- */
+
+.chamada {
+  text-align: center;
+}
+
+.chamadaInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chamada .titulo {
+  max-width: 24ch;
+}
+
+.chamadaTexto {
+  font-size: var(--font-size-md);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 52ch;
+  margin: 0 0 var(--space-stack-md);
+}
+
+.chamadaBotao {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding-inline: var(--size-7);
+  border-radius: var(--radius-control);
+  background: var(--gradient-gold);
+  color: var(--text-on-accent);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow var(--duration-base) var(--ease-standard);
+}
+
+.chamadaBotao:hover {
+  box-shadow: var(--bloom-gold);
+}
+
+.chamadaBotao:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}

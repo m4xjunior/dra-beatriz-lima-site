@@ -1,5 +1,12 @@
 # build output
 dist/
+# Next.js (apps/web): cache incremental e o export estático.
+# `out/` é o que o apps/server serve via DIST_DIR e o que sobe pro
+# Cloudflare Pages — é gerado pelo build, nunca versionado.
+.next/
+out/
+# saída de QA: screenshots do simulador e do Playwright, regeráveis
+apps/web/scripts/_saida/
 # generated types
 .astro/
 

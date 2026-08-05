@@ -4,21 +4,27 @@ on:
     branches: [main]
   pull_request:
 jobs:
-  site-astro:
-    name: Site (Astro)
+  # Trocado de Astro para Next.js em 05/08/2026, junto com a remoção de
+  # apps/site. O job antigo rodava `npx astro check` dentro de apps/site
+  # e passaria a falhar no primeiro push depois da remoção.
+  site-next:
+    name: Site (Next.js)
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/site
+        working-directory: apps/web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: apps/site/package-lock.json
+          cache-dependency-path: apps/web/package-lock.json
       - run: npm ci
-      - run: npx astro check
+      # Testes do núcleo puro do scrub. Rodam sem navegador de propósito:
+      # os invariantes que eles protegem são aritméticos (clamp do
+      # rubber-band do macOS, NaN de duration antes do loadedmetadata,
+      # índice estourando o array no progresso 1).
       - run: npm test
       - run: npm run build
 

@@ -1,0 +1,226 @@
+/* A RÉGUA DE INSTALAÇÃO — a assinatura desta superfície.
+ *
+ * O default do setor é barra de progresso em % ou bolinhas de seção.
+ * Aqui o polegar dela não está em "40%": está em `DIA 04 · 42 U ·
+ * glabela`. A posição no scroll é uma data no curso real do tratamento,
+ * e o tratamento tem um curso real — toxina instala em 7 a 14 dias, isso
+ * é do domínio e não uma metáfora.
+ *
+ * E ela sobe. Subir volta pro Dia 0, rosto intocado. A reversibilidade é
+ * fato clínico (a toxina metaboliza em 3 a 4 meses) e é o que separa
+ * isto de um filtro: filtro é aplicado em você, aqui ela conduz, nos
+ * dois sentidos.
+ *
+ * `--p` (0..1) é escrito por JS direto no elemento, fora do ciclo do
+ * React. Reposicionar por state a 60fps re-renderizaria a árvore inteira
+ * a cada quadro do scroll. */
+
+.regua {
+  position: fixed;
+  z-index: 3;
+  right: var(--size-5);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: stretch;
+  gap: var(--size-4);
+  pointer-events: none;
+}
+
+/* Trilho: hairline de aço. A regra do squint — some quando você não
+   procura, aparece quando precisa de estrutura. */
+.trilho {
+  position: relative;
+  width: 1px;
+  min-height: 42vh;
+  background: var(--border-subtle);
+}
+
+/* Marca de cada etapa. Fina, aço, sem alarde. */
+.marca {
+  position: absolute;
+  left: -3px;
+  width: 7px;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.marcaPassada {
+  background: var(--text-tecnico-fraco);
+}
+
+/* O AGORA. Único lugar onde o ouro aparece nesta superfície.
+   Uma cor com um trabalho é acento; com cinco, é ruído. */
+.agora {
+  position: absolute;
+  left: -3.5px;
+  top: calc(var(--p, 0) * 100%);
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: var(--radius-pill);
+  background: var(--agora);
+  box-shadow: var(--agora-halo);
+}
+
+/* A leitura. Números em tabular-nums: dose e dia mudam durante o scroll,
+   e sem largura fixa de dígito o bloco inteiro treme a cada troca. */
+.leitura {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 11ch;
+}
+
+.dia {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.fase {
+  margin-top: var(--size-2);
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-tecnico);
+}
+
+.dose {
+  margin-top: var(--size-3);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--text-tecnico-forte);
+  font-variant-numeric: tabular-nums;
+}
+
+.regiao {
+  margin-top: var(--size-1, 4px);
+  font-size: var(--font-size-2xs);
+  color: var(--text-tecnico-fraco);
+}
+
+/* A pista de reversibilidade. Discreta, e é o que desarma o medo. */
+.reversivel {
+  margin-top: var(--size-4);
+  padding-top: var(--size-3);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--font-size-2xs);
+  line-height: var(--line-height-normal);
+  color: var(--text-subtle);
+  max-width: 16ch;
+}
+
+/* Celular: a régua deita no pé, porque o polegar vive ali e porque a
+   coluna de leitura já ocupa a lateral. */
+@media (max-width: 920px) {
+  .regua {
+    right: auto;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
+    flex-direction: column;
+    gap: var(--size-3);
+    padding: var(--size-4) var(--size-5) calc(var(--size-5) + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, transparent 0%, rgba(10, 8, 5, 0.82) 42%);
+  }
+
+  .trilho {
+    width: 100%;
+    min-height: 0;
+    height: 1px;
+  }
+
+  .marca {
+    left: auto;
+    top: -3px;
+    width: 1px;
+    height: 7px;
+  }
+
+  .agora {
+    left: calc(var(--p, 0) * 100%);
+    top: -3.5px;
+    margin-top: 0;
+    margin-left: -4px;
+  }
+
+  /* REGRESSÃO CORRIGIDA (vista em ios-secoes.png, 05/08 14:35):
+     a linha era `flex-direction: row`, e ao entrar o nome do
+     procedimento ela passou a ter 4 filhos disputando 360px. "Dia 00"
+     quebrou em duas linhas e "Toxina botulínica" saiu cortado.
+
+     Grid em vez de flex: o nome do procedimento ganha a própria faixa
+     (span de todas as colunas) e a leitura numérica fica na linha de
+     baixo, com cada campo na sua coluna. `nowrap` no dia porque é o
+     campo que não pode quebrar nunca — é ele que a paciente lê primeiro. */
+  .leitura {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    column-gap: var(--size-4);
+    row-gap: var(--size-2);
+    min-width: 0;
+  }
+
+  .dia {
+    font-size: var(--font-size-xl);
+    white-space: nowrap;
+  }
+
+  .regiao {
+    grid-column: 1 / -1;
+  }
+
+  .fase,
+  .dose,
+  .regiao {
+    margin-top: 0;
+  }
+
+  .reversivel {
+    display: none;
+  }
+}
+
+/* Nome do procedimento ativo. Com uma seção por procedimento, a régua
+   precisa dizer de QUAL rosto ela está falando — sem isso, "Dia 07 ·
+   42 U" fica órfão quando a página tem sete tratamentos diferentes. */
+.procedimento {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--text-tecnico-fraco);
+  margin-bottom: var(--size-2);
+}
+
+/* O ponto do agora ficava cortado pela metade na borda esquerda quando
+   o progresso é 0 (visto no screenshot do iOS). Recuar o trilho em meio
+   ponto dos dois lados devolve o círculo inteiro nos dois extremos. */
+.trilho {
+  margin-block: 5px;
+}
+
+@media (max-width: 920px) {
+  .trilho {
+    margin-block: 0;
+    margin-inline: 5px;
+  }
+
+  /* Faixa própria, largura inteira. Sem isto ele briga por espaço com o
+     dia e volta a cortar. */
+  .procedimento {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+    align-self: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

@@ -1,0 +1,105 @@
+/* PIN POR CSS — agora `sticky` em vez de `fixed`.
+ *
+ * A v1 desta folha usava `position: fixed`, que é o que o Hungry Tiger
+ * faz. Fixed serve quando existe UM palco atravessando a página inteira.
+ * Com um rosto por procedimento (decisão de 05/08/2026) passam a existir
+ * N palcos, e N elementos fixed empilhariam todos na tela ao mesmo tempo.
+ *
+ * `sticky` preserva a propriedade que importa: o palco é preso pelo CSS,
+ * nenhum JavaScript reposiciona nada por quadro, e a classe de jitter que
+ * nasce do pin calculado em JS continua não existindo. A fidelidade à
+ * arquitetura se mantém; só o mecanismo muda de escopo. */
+
+.secao {
+  position: relative;
+}
+
+.palco {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  /* `contain: strict` exige altura explícita, que temos, e tira esta
+     subárvore do escopo de recálculo durante o scroll. */
+  contain: strict;
+  background: var(--palco);
+}
+
+.video,
+.poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 18%;
+}
+
+.poster {
+  background-size: cover;
+  background-position: 62% 18%;
+}
+
+/* SCRIM DIRECIONAL — escurece a coluna à esquerda e dissolve antes do
+   centro-direita, onde o rosto fica nítido. O halo oval atrás do texto
+   foi REPROVADO em 25/07 por tapar o rosto; a política corrigida manda
+   faixa retangular dissolvendo na direção OPOSTA ao rosto. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      97deg,
+      rgba(10, 8, 5, 0.9) 0%,
+      rgba(10, 8, 5, 0.74) 26%,
+      rgba(10, 8, 5, 0.34) 50%,
+      rgba(10, 8, 5, 0.05) 68%,
+      transparent 80%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(10, 8, 5, 0.52) 0%,
+      transparent 20%,
+      transparent 64%,
+      rgba(10, 8, 5, 0.56) 100%
+    );
+}
+
+/* O conteúdo sobe por cima do palco pregado. A margem negativa de uma
+   dobra é o que faz o texto rolar SOBRE o vídeo em vez de depois dele. */
+.conteudo {
+  position: relative;
+  z-index: 1;
+  margin-top: -100svh;
+}
+
+@media (max-width: 920px) {
+  .video,
+  .poster {
+    object-position: 52% 16%;
+  }
+
+  /* CHÃO DE LEITURA. O screenshot do Safari iOS real mostrou o texto
+     atravessando o rosto dela — violação da lei escrita em
+     direcao-visual.md. No retrato ela ocupa o terço médio-superior, então
+     o texto ancora no pé e o scrim ganha chão sólido embaixo. */
+  /* O chão sobe de 72% para 50%.
+     Medido no screenshot do iOS: o bloco de texto é ancorado no pé e
+     ocupa cerca de 45% da altura, então o eyebrow (que fica no TOPO do
+     bloco) caía por volta dos 52%, onde o scrim ainda era 0,34 — sobre
+     a região iluminada do rosto isso não dá 4,5:1.
+     Os 40% de cima continuam quase limpos: o rosto dela é espaço
+     negativo protegido e o chão não pode subir até ele. */
+  .scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(10, 8, 5, 0.5) 0%,
+      rgba(10, 8, 5, 0.2) 24%,
+      rgba(10, 8, 5, 0.3) 40%,
+      rgba(10, 8, 5, 0.74) 52%,
+      rgba(10, 8, 5, 0.9) 76%,
+      rgba(10, 8, 5, 0.95) 100%
+    );
+  }
+}

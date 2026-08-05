@@ -1,0 +1,46 @@
+/* A cascata de entrada, em CSS puro.
+ *
+ * O JS só escreve `data-revelado="1"` no contêiner (ver usarRevelar.js).
+ * Toda a coreografia mora aqui, e é de propósito: transição em CSS roda
+ * no compositor, fora da main thread, e por isso não disputa quadro com
+ * o scrub do vídeo. Animar isto por JS custaria exatamente no momento em
+ * que a página está mais ocupada.
+ *
+ * Só `opacity` e `transform` são animados. Qualquer outra propriedade
+ * (height, top, margin) forçaria layout a cada quadro.
+ *
+ * Easing exponencial, nunca bounce — regra escrita em direcao-visual.md.
+ * `--ease-entrance` do design system é cubic-bezier(0.16, 1, 0.3, 1).
+ */
+
+[data-revelar] > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--duration-slow) var(--ease-entrance),
+    transform var(--duration-slow) var(--ease-entrance);
+}
+
+[data-revelar][data-revelado="1"] > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Cascata: cada filho entra 90ms depois do anterior. Seis passos bastam
+   para qualquer dobra desta página; o sétimo em diante entra junto com o
+   sexto, o que é preferível a uma dobra que leva um segundo para montar. */
+[data-revelar][data-revelado="1"] > *:nth-child(1) { transition-delay: 0ms; }
+[data-revelar][data-revelado="1"] > *:nth-child(2) { transition-delay: 90ms; }
+[data-revelar][data-revelado="1"] > *:nth-child(3) { transition-delay: 180ms; }
+[data-revelar][data-revelado="1"] > *:nth-child(4) { transition-delay: 270ms; }
+[data-revelar][data-revelado="1"] > *:nth-child(5) { transition-delay: 360ms; }
+[data-revelar][data-revelado="1"] > *:nth-child(n + 6) { transition-delay: 450ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-revelar] > *,
+  [data-revelar][data-revelado="1"] > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

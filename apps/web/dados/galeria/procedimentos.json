@@ -1,0 +1,78 @@
+{
+  "_leia": [
+    "Contrato do ROSTO POR PROCEDIMENTO. Decisão do Max em 05/08/2026: cada procedimento tem",
+    "o seu próprio vídeo de rosto animado, e a galeria é o índice que decide qual carrega.",
+    "",
+    "OS CAMPOS DE VÍDEO NASCEM VAZIOS DE PROPÓSITO. O Max ainda vai gerar os rostos. Enquanto",
+    "`rosto.video` for null, a seção renderiza o procedimento normalmente com o cartão",
+    "antes/depois, só sem o palco animado. O componente NÃO pode quebrar por falta de vídeo —",
+    "é o mesmo guard que o projeto já usava com data-frames-total=0.",
+    "",
+    "SÃO 6, NÃO 7. O manifest da galeria tem 7 itens, mas `labial-frontal` e `labial-perfil`",
+    "são o MESMO procedimento (preenchimento-labial) em dois ângulos. Um rosto serve os dois.",
+    "",
+    "Quando um rosto ficar pronto: subir o .mp4 no bucket em rosto/<slug>/, preencher `video`,",
+    "`poster` e `duracao`, e conferir que o mp4 foi encodado para scrub (GOP curto, sem",
+    "B-frames). Os hero-*-scrub.mp4 existentes têm GOP 4 — usar o mesmo perfil de encode.",
+    "",
+    "`ordem` controla a sequência na seção. `itens` liga o procedimento aos slugs do",
+    "manifest.json da galeria (fonte separada, gerada por script, não editar à mão)."
+  ],
+
+  "base_rosto": "https://storage.googleapis.com/dra-beatriz-lima-estetica/rosto/",
+
+  "procedimentos": [
+    {
+      "slug": "toxina-botulinica",
+      "nome": "Toxina botulínica",
+      "resumo": "Suaviza a marca de expressão sem apagar o movimento do rosto.",
+      "ordem": 1,
+      "itens": ["toxina-frontal"],
+      "rosto": {
+        "video": "toxina-botulinica/rosto-1080-scrub-v2.mp4",
+        "poster": "toxina-botulinica/poster-v2.jpg",
+        "duracao": 10.04
+      }
+    },
+    {
+      "slug": "preenchimento-labial",
+      "nome": "Preenchimento labial",
+      "resumo": "Devolve volume e contorno respeitando a proporção do seu rosto.",
+      "ordem": 2,
+      "itens": ["labial-perfil", "labial-frontal"],
+      "rosto": { "video": null, "poster": null, "duracao": null }
+    },
+    {
+      "slug": "perfiloplastia",
+      "nome": "Perfiloplastia",
+      "resumo": "Reorganiza o perfil como conjunto: mento, mandíbula e nariz na mesma leitura.",
+      "ordem": 3,
+      "itens": ["perfiloplastia-contorno"],
+      "rosto": { "video": null, "poster": null, "duracao": null }
+    },
+    {
+      "slug": "preenchimentos-full-face",
+      "nome": "Full face",
+      "resumo": "Repõe o suporte do terço médio em vez de tratar cada área isolada.",
+      "ordem": 4,
+      "itens": ["full-face-terco-medio"],
+      "rosto": { "video": null, "poster": null, "duracao": null }
+    },
+    {
+      "slug": "peelings",
+      "nome": "Peelings",
+      "resumo": "Renova a textura por camadas, no ritmo que a sua pele aguenta.",
+      "ordem": 5,
+      "itens": ["pele-textura"],
+      "rosto": { "video": null, "poster": null, "duracao": null }
+    },
+    {
+      "slug": "limpeza-de-pele",
+      "nome": "Limpeza de pele",
+      "resumo": "A base de tudo. Sem pele em ordem, nenhum procedimento rende o que promete.",
+      "ordem": 6,
+      "itens": ["pele-renovada"],
+      "rosto": { "video": null, "poster": null, "duracao": null }
+    }
+  ]
+}

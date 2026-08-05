@@ -1,0 +1,97 @@
+/* Nav que INVERTE em vez de trocar de cor.
+ *
+ * `mix-blend-mode: difference` é a técnica do header do Hungry Tiger, e
+ * aqui ela resolve um problema que este site tem e a maioria não: o
+ * fundo atrás da nav é VÍDEO, muda a cada quadro do scroll, e nenhuma
+ * cor fixa fica legível sobre ele o tempo todo. Inverter o que está
+ * atrás dá contraste garantido sem precisar saber o que está atrás.
+ *
+ * SEM BARRA DE FUNDO, e isso é a resposta ao aviso do peer de UX: com o
+ * palco ocupando a viewport inteira, uma nav com fundo sólido comeria o
+ * topo do primeiro quadro. Sem barra, nada é coberto — só duas linhas de
+ * texto flutuando na borda, e o rosto continua sendo espaço negativo
+ * protegido. */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--size-4) var(--size-5);
+  padding-top: calc(var(--size-4) + env(safe-area-inset-top));
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+/* Só os alvos clicáveis recolhem o ponteiro. O resto da faixa deixa o
+   scroll passar direto para o palco. */
+.marca,
+.link,
+.contato {
+  pointer-events: auto;
+}
+
+.marca {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  color: #fff; /* difference inverte: sobre escuro fica claro, e vice-versa */
+  text-decoration: none;
+  font-variation-settings: "opsz" 14, "wdth" 88;
+}
+
+.marca em {
+  font-style: normal;
+  opacity: 0.62;
+  font-weight: var(--font-weight-light);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--size-6);
+}
+
+.link {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: #fff;
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+.link:hover {
+  opacity: 0.6;
+}
+
+/* O contato não é botão preenchido: sobre vídeo, um retângulo sólido
+   vira mancha. Hairline com sublinhado que cresce no hover — o mesmo
+   vocabulário de hairline que o resto do sistema usa. */
+.contato {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: #fff;
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-bottom: 1px solid currentColor;
+}
+
+@media (max-width: 920px) {
+  /* No celular só marca e contato. Um menu hambúrguer abriria um painel
+     opaco sobre o rosto, e o site tem treze dobras em sequência — a
+     navegação real aqui é o polegar. */
+  .links {
+    display: none;
+  }
+
+  .nav {
+    padding-inline: var(--size-5);
+  }
+}
