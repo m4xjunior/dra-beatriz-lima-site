@@ -6,7 +6,7 @@
 
 ## Objetivo
 
-Dar ao funil público (Astro) um fluxo real de "enviar foto → pedir simulação →
+Dar ao funil público um fluxo real de "enviar foto → pedir simulação →
 receber um resultado" **sem** depender ainda de uma API paga de terceiro
 (Perfect Corp/YouCam ou equivalente) — o backend Rust expõe um contrato
 estável hoje, e trocar o provedor real entra depois só implementando um
@@ -23,7 +23,7 @@ trait, sem tocar o resto do sistema.
   provedor real depois.
 - Persistência em **PostgreSQL local** (banco `estetica_beatriz`, já criado
   neste Mac via Homebrew — ver "Riscos" sobre produção/VPS) via `sqlx`.
-- Página Astro mínima para disparar o pedido e ver o status.
+- Página mínima no front para disparar o pedido e ver o status.
 
 **Fora (Fase 2/3 do documento do projeto, não desta spec):**
 - Integração real com Perfect Corp/YouCam ou qualquer provedor pago (o
@@ -89,7 +89,7 @@ CREATE TABLE simulacoes (
       (`processando` → `concluido`) após um pequeno delay simulado
       (o mock não precisa ser instantâneo — o objetivo é provar o fluxo
       assíncrono que um provedor real também teria).
-- [ ] Página Astro dispara o POST, faz polling do GET, mostra o
+- [ ] Página do front dispara o POST, faz polling do GET, mostra o
       resultado (mesmo que seja um placeholder) com o aviso regulatório
       obrigatório sempre visível.
 - [ ] Nenhum dado de imagem real é enviado a lugar nenhum fora desta

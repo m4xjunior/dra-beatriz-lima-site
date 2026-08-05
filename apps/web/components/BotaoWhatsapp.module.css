@@ -1,0 +1,66 @@
+.botao {
+  position: fixed;
+  right: var(--size-4);
+  /* safe-area: no iPhone a barra de gestos come o canto inferior e o
+     botão fica meio escondido atrás dela. */
+  bottom: calc(var(--size-4) + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+
+  display: grid;
+  place-items: center;
+  /* 56px, acima dos 44 mínimos. Alvo de contato principal merece folga. */
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-pill);
+
+  background: #25d366;
+  color: #0b1f14;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+
+  /* Nasce escondido e entra quando a pessoa já leu alguma coisa. */
+  opacity: 0;
+  transform: translateY(16px) scale(0.9);
+  pointer-events: none;
+  transition:
+    opacity var(--duration-base) var(--ease-entrance),
+    transform var(--duration-base) var(--ease-entrance);
+}
+
+.botao[data-visivel="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Recua na frente do rodapé para não tapar o CTA e os links legais. */
+.botao[data-recuado="true"] {
+  opacity: 0;
+  transform: translateY(16px) scale(0.9);
+  pointer-events: none;
+}
+
+.botao:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.botao:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus), 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botao {
+    transition: opacity var(--duration-fast) linear;
+    transform: none;
+  }
+
+  .botao[data-visivel="true"],
+  .botao[data-recuado="true"] {
+    transform: none;
+  }
+
+  .botao:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,91 @@
+.rodape {
+  position: relative;
+  z-index: 2;
+  background: var(--surface-sunken);
+  border-top: var(--border-width-hairline) solid var(--border-subtle);
+  padding-block: var(--space-section);
+  padding-inline: var(--space-container-pad);
+  /* Respiro extra embaixo no celular: é onde o botão flutuante de
+     WhatsApp mora, e sem isto ele encosta no último texto. */
+  padding-bottom: calc(var(--space-section) + env(safe-area-inset-bottom, 0px));
+}
+
+.inner {
+  max-width: 68rem;
+  margin-inline: auto;
+  display: grid;
+  gap: var(--space-stack-lg);
+}
+
+.nome {
+  font-family: var(--fonte-display), var(--type-display-font);
+  font-variation-settings: "opsz" 24, "wght" 640;
+  font-size: var(--font-size-lg);
+  color: var(--text-heading);
+  margin: 0;
+}
+
+.titulo {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-accent);
+  margin: var(--size-1) 0 0;
+}
+
+.linha {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin: var(--size-2) 0 0;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2) var(--size-5);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  /* 44px de alvo também aqui. Rodapé é onde mais se erra isso, porque a
+     lista de links parece "texto" e não controle. */
+  min-height: 44px;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.link:hover {
+  color: var(--text-heading);
+}
+
+.link:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--ring-focus);
+}
+
+/* O disclaimer é discreto, nunca invisível: continua acima de 4.5:1
+   contra a superfície. Texto legal ilegível é o mesmo que ausente, e
+   aqui a presença é exigência regulatória. */
+.disclaimer {
+  font-size: var(--font-size-xs);
+  line-height: 1.6;
+  color: var(--text-subtle);
+  max-width: 74ch;
+  margin: 0;
+  padding-top: var(--space-stack-md);
+  border-top: var(--border-width-hairline) solid var(--border-subtle);
+}
+
+.legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-2) var(--size-4);
+  font-size: var(--font-size-xs);
+  color: var(--text-subtle);
+  margin: 0;
+}

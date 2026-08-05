@@ -1,0 +1,172 @@
+/* A coluna de leitura.
+ *
+ * Vive à ESQUERDA e nunca cruza o rosto. Não é preferência de layout: é
+ * a política de proteção de texto de specs/direcao-visual.md, corrigida
+ * em 25/07 depois que o halo oval atrás do texto foi reprovado por tapar
+ * o rosto dela. A composição vem primeiro — o rosto é espaço negativo
+ * protegido, e o scrim direcional do palco faz o contraste.
+ *
+ * Sem ilha de vidro aqui. Vidro existe para legibilidade de texto denso
+ * sobre vídeo em movimento; estes blocos são curtos e o scrim já resolve.
+ * Vidro decorativo é justamente o anti-padrão listado na direção. */
+
+.coluna {
+  position: relative;
+  z-index: 2;
+  max-width: 42ch;
+  margin-left: var(--size-7);
+  padding-block: 46vh;
+  display: flex;
+  flex-direction: column;
+  gap: 58vh;
+}
+
+.bloco {
+  /* Cada bloco ocupa a altura de uma dobra e ancora um marco. */
+  scroll-margin-top: 50vh;
+}
+
+/* O eyebrow é o rótulo mais fraco da coluna e o que mais sofre com o
+   fundo variável: ele fica no TOPO do bloco, que é a parte que sobe mais
+   na foto. Em aço-300 sobre a região iluminada do rosto ele some
+   (reprovado pelo s007 na revisão de 05/08).
+   Aço-200 é o degrau mais claro da família, e o `text-shadow` de 1px
+   garante a borda mesmo quando o quadro do vídeo é claro — é a mesma
+   lógica da política de proteção de texto: contraste medido, não
+   presumido. */
+.etapa {
+  font-size: var(--font-size-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-widest);
+  color: var(--text-tecnico-forte);
+  text-shadow: 0 1px 3px rgba(10, 8, 5, 0.9);
+  display: block;
+  margin-bottom: var(--size-3);
+}
+
+.titulo {
+  margin: 0 0 var(--size-4);
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-heading);
+  font-variation-settings: "opsz" 72, "wdth" 92;
+}
+
+.corpo {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-body);
+}
+
+/* A ficha técnica. Aço, tabular, e só quando existe ponto de aplicação. */
+.ficha {
+  margin-top: var(--size-5);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--size-4);
+  display: grid;
+  gap: var(--size-3);
+}
+
+.ponto {
+  display: grid;
+  grid-template-columns: 2.5ch 1fr auto;
+  gap: var(--size-3);
+  align-items: baseline;
+  font-size: var(--font-size-sm);
+  color: var(--text-tecnico);
+}
+
+.numero {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tecnico-fraco);
+}
+
+.camada {
+  font-size: var(--font-size-2xs);
+  color: var(--text-tecnico-fraco);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.unidade {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tecnico-forte);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Faixa da equimose: a cor honesta do processo, e a única cor não-aço
+   que entra na coluna. Aparece só nos marcos que têm recuperação. */
+.equimose {
+  margin-top: var(--size-4);
+  display: flex;
+  align-items: center;
+  gap: var(--size-3);
+  font-size: var(--font-size-2xs);
+  color: var(--text-subtle);
+}
+
+.amostra {
+  width: var(--size-5);
+  height: 3px;
+  border-radius: var(--radius-pill);
+}
+
+.aviso {
+  margin: 0;
+  font-size: var(--font-size-2xs);
+  line-height: var(--line-height-normal);
+  color: var(--text-subtle);
+  max-width: 34ch;
+}
+
+/* ------------------------------------------------------------
+   MOBILE — CHÃO DE LEITURA.
+   ------------------------------------------------------------
+   A 1ª versão desta folha centrava os blocos na vertical, e o
+   screenshot do Safari iOS real mostrou o texto atravessando o rosto
+   dela. Isso viola a lei escrita em specs/direcao-visual.md: "o rosto é
+   espaço negativo protegido", e a política corrigida em 25/07 diz que a
+   COMPOSIÇÃO vem primeiro — posicionar o bloco fora da zona do rosto,
+   não tapar o rosto com véu.
+
+   No retrato ela ocupa o terço médio-superior (object-position 52% 16%).
+   Então cada bloco vira uma dobra inteira com o texto ancorado no PÉ, e
+   o scrim do palco ganha um chão sólido embaixo. É o mesmo achado do
+   commit 51f4942 no Astro, que não tinha sido portado.
+   ------------------------------------------------------------ */
+@media (max-width: 920px) {
+  .coluna {
+    margin-left: 0;
+    padding-inline: var(--size-5);
+    padding-block: 0;
+    max-width: none;
+    gap: 0;
+  }
+
+  .bloco {
+    /* Uma dobra por marco, texto no pé. O padding-bottom reserva a
+       faixa da régua + a safe area do iPhone. */
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: calc(var(--size-9) + env(safe-area-inset-bottom));
+  }
+
+  .titulo {
+    font-size: var(--font-size-2xl);
+    font-variation-settings: "opsz" 44, "wdth" 96;
+  }
+
+  .corpo {
+    font-size: var(--font-size-base);
+    max-width: 38ch;
+  }
+
+  .aviso {
+    padding-bottom: calc(var(--size-9) + env(safe-area-inset-bottom));
+  }
+}

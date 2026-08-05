@@ -38,16 +38,24 @@ async fn main() -> anyhow::Result<()> {
         std::env::var("DATABASE_URL").unwrap_or_else(|_| DEFAULT_DATABASE_URL.to_string());
     let pool_simulacoes = simulacoes::conectar(&database_url).await;
 
-    // Path do build do Astro, configurável por env (DIST_DIR). Default relativo à
-    // raiz do crate `apps/server/`: `../site/dist` = `apps/site/dist` (saída do
-    // `astro build`). Em Docker define-se DIST_DIR=/app/dist (absoluto). Assim o
-    // caminho não fica preso ao cwd de invocação.
-    let dist_dir = Arc::new(PathBuf::from(std::env::var("DIST_DIR").unwrap_or_else(|_| "../site/dist".to_string())));
+    // Path do build do front, configurável por env (DIST_DIR). Default relativo à
+    // raiz do crate `apps/server/`: `../web/out` = `apps/web/out` (saída do
+    // `next build` com output:'export'). Em Docker define-se DIST_DIR=/app/site
+    // (absoluto). Assim o caminho não fica preso ao cwd de invocação.
+    //
+    // Atualizado em 05/08/2026, quando o front saiu de Astro (`apps/site/dist`)
+    // para Next.js (`apps/web/out`). O default importa mais do que parece: um
+    // DIST_DIR errado NÃO falha em compilação nem na subida. O servidor sobe
+    // limpo e responde 404 na home, o que se parece com bug de rota e manda
+    // quem estiver depurando procurar no lugar errado.
+    let dist_dir = Arc::new(PathBuf::from(
+        std::env::var("DIST_DIR").unwrap_or_else(|_| "../web/out".to_string()),
+    ));
 
     if !dist_dir.is_dir() {
         tracing::warn!(
             dist = %dist_dir.display(),
-            "pasta de build do Astro ainda não existe — servindo 404 até o build ser gerado"
+            "pasta de build do front ainda não existe — servindo 404 até `npm run build` rodar em apps/web"
         );
     }
 

@@ -1,0 +1,183 @@
+---
+// Resultados — a galeria de antes/depois.
+//
+// GRADE UNIFORME, FOTO ÍNTEGRA. As fotos originais chegaram em sete
+// proporções diferentes (2.0 no labial frontal, 0.56 na textura de
+// pele). Jogar isso num grid dá o mosaico irregular que o Max recusou.
+// A saída aqui NÃO é cortar todas para um formato só — cortar destrói
+// pixel e, em foto clínica, muda o que a paciente vê. É fixar a MOLDURA
+// do cartão em 4/5 e deixar cada foto preencher com object-fit:cover
+// ancorado no ponto de interesse que o processar.py registrou. Cartões
+// idênticos, zero distorção, e o recorte continua ajustável depois num
+// campo do manifest em vez de num arquivo reprocessado.
+//
+// No comparador aberto (a peça do topo) a proporção volta a ser a real
+// da foto — ali o enquadramento inteiro importa mais que o alinhamento.
+//
+// PUBLICAÇÃO: só entra item com `publicado: true`, que por sua vez só é
+// aceito pelo schema com o termo de consentimento referenciado. Em
+// desenvolvimento (`import.meta.env.DEV`) os não publicados aparecem
+// marcados como prévia, para o site poder ser revisado antes de os
+// termos existirem — nunca em produção.
+import { getCollection } from "astro:content";
+import AntesDepois from "../AntesDepois.astro";
+import Disclaimer from "../Disclaimer.astro";
+import Button from "../Button.astro";
+
+interface Props {
+  /** Quantos itens mostrar. A home leva um recorte; /resultados leva tudo. */
+  limite?: number;
+  /** A home não repete o cabeçalho de seção da página dedicada. */
+  compacta?: boolean;
+}
+
+const { limite, compacta = false } = Astro.props;
+
+const previa = import.meta.env.DEV;
+const todos = await getCollection("galeria", ({ data }) => data.publicado || previa);
+
+// Ordem estável: o comparativo mais legível primeiro. Sem isto a ordem
+// vem do JSON e muda toda vez que o script roda.
+const PRIORIDADE = [
+  "toxina-frontal",
+  "labial-perfil",
+  "perfiloplastia-contorno",
+  "pele-textura",
+  "labial-frontal",
+  "full-face-terco-medio",
+  "pele-renovada",
+];
+const ordenado = [...todos].sort(
+  (a, b) => PRIORIDADE.indexOf(a.data.slug) - PRIORIDADE.indexOf(b.data.slug)
+);
+const itens = limite ? ordenado.slice(0, limite) : ordenado;
+---
+
+<section class="secao resultados" id="resultados" aria-labelledby="resultados-titulo">
+  <div class="secao__inner">
+    {
+      !compacta && (
+        <div class="lead" data-bl-reveal>
+          <p class="secao__idx brilho">05 — Resultados</p>
+          <h2 id="resultados-titulo" class="resultados__titulo display on-video">
+            O mesmo rosto, com a luz e o ângulo iguais
+          </h2>
+          <p class="resultados__corpo on-video">
+            Cada par abaixo foi fotografado na mesma posição, com a mesma
+            iluminação, antes e depois. Arraste para comparar. Resultado é
+            individual: o que aparece aqui é o que aconteceu com aquela
+            pessoa, não uma previsão do que vai acontecer com você.
+          </p>
+        </div>
+      )
+    }
+
+    {compacta && <h2 id="resultados-titulo" class="sr-only">Resultados</h2>}
+
+    <ul class="resultados__grade" data-bl-reveal>
+      {
+        itens.map((entrada, i) => (
+          <li class="resultados__item" data-previa={!entrada.data.publicado}>
+            <AntesDepois
+              item={entrada.data}
+              prioridade={i === 0}
+              sizes="(min-width: 1100px) 32vw, (min-width: 700px) 46vw, 92vw"
+            />
+            {!entrada.data.publicado && (
+              <p class="resultados__pendente">
+                Prévia — pendente de termo de consentimento
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
+    {
+      limite && ordenado.length > limite && (
+        <div class="resultados__mais lead" data-bl-reveal>
+          <Button href="/resultados" variante="texto">
+            Ver todos os resultados →
+          </Button>
+        </div>
+      )
+    }
+
+    <div class="resultados__nota" data-bl-reveal>
+      <Disclaimer />
+    </div>
+  </div>
+</section>
+
+<style>
+  .resultados__titulo {
+    font-variation-settings: "opsz" 44, "wght" 600, "wdth" 96;
+    font-size: clamp(1.9rem, 4.4vw, var(--font-size-3xl));
+    line-height: 1.02;
+    letter-spacing: var(--type-display-tracking);
+    color: var(--text-heading);
+    margin: var(--space-stack-xs) 0 var(--space-stack-sm);
+    max-width: 18ch;
+    text-wrap: balance;
+  }
+
+  .resultados__corpo {
+    font-size: var(--font-size-md);
+    line-height: var(--type-body-leading);
+    color: var(--text-muted);
+    max-width: 58ch;
+    margin: 0 0 var(--space-stack-lg);
+  }
+
+  .resultados__grade {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    /* Mesma trilha mínima da vitrine de procedimentos — as duas dobras
+       ficam no mesmo ritmo de coluna em qualquer largura. */
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-gutter);
+  }
+
+  /* A moldura uniforme. O AntesDepois traz a proporção real da foto no
+     style inline; aqui ela é sobrescrita para o cartão da grade ficar
+     igual em todos. Só na grade — o comparador em página cheia mantém a
+     proporção nativa. */
+  .resultados__item :global(.ad) {
+    aspect-ratio: 4 / 5 !important;
+  }
+
+  .resultados__item[data-previa="true"] :global(.ad) {
+    border-color: color-mix(in srgb, var(--color-gold-500) 55%, transparent);
+  }
+
+  .resultados__pendente {
+    margin: var(--space-inline-xs) 0 0;
+    font-family: var(--type-eyebrow-font);
+    font-size: var(--font-size-2xs);
+    letter-spacing: var(--type-eyebrow-tracking);
+    text-transform: uppercase;
+    color: var(--text-accent);
+  }
+
+  .resultados__mais {
+    margin-top: var(--space-stack-lg);
+  }
+
+  .resultados__nota {
+    margin-top: var(--space-stack-lg);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

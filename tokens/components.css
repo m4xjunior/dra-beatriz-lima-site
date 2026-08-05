@@ -57,6 +57,7 @@
   --card-glass-bg-strong: var(--surface-glass-strong);
   --card-glass-border: var(--surface-glass-border);
   --card-glass-blur: var(--glass-blur);
+  --card-glass-saturate: var(--glass-saturate);
   --card-glass-sheen: var(--surface-glass-sheen);
   --card-glass-inner: var(--surface-glass-inner);
   --card-glass-tint: var(--surface-glass-tint);
@@ -75,6 +76,7 @@
   --card-service-radius: var(--radius-card);
   --card-service-accent: var(--border-hairline);
   --card-service-pad: var(--size-6);
+  --card-service-bloom-strong: var(--bloom-strong);
 
   /* --- Badge / tag ---------------------------------------- */
   --badge-bg: var(--surface-accent-soft);
@@ -126,9 +128,20 @@
   --viewer3d-bg: var(--surface-sunken);
   --viewer3d-radius: var(--radius-surface);
   --viewer3d-glow: var(--bloom);
+  --viewer3d-glow-strong: var(--bloom-gold-strong);
   --viewer3d-control-bg: var(--surface-glass);
   --viewer3d-control-border: var(--surface-glass-border);
   --viewer3d-label-fg: var(--text-accent);
+  /* Cores do orb — lidas via getComputedStyle em face-viewer-3d-scene.ts
+     (GLSL não lê var(); ver comentário no topo daquele arquivo). Aliasam
+     primitivos de color.css: se a paleta mudar, muda só aqui. */
+  --viewer3d-core-start: var(--color-gold-700);
+  --viewer3d-core-end: var(--color-gold-500);
+  --viewer3d-edge-glow: var(--color-champagne);
+  --viewer3d-void: var(--color-obsidian-900);
+  /* Fallback estático (prefers-reduced-motion / <noscript>) — mesma
+     receita de guidelines/brand-duotom.html, remontada só com tokens. */
+  --viewer3d-orb-static: radial-gradient(38% 38% at 38% 32%, var(--viewer3d-edge-glow) 0%, var(--color-gold-400) 46%, var(--viewer3d-core-start) 78%, var(--viewer3d-void) 100%);
 
   /* --- Disclaimer obrigatório (regulatório) --------------- */
   /* Presença NÃO removível pelo esquema; conteúdo editável. */

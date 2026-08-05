@@ -1,8 +1,17 @@
 # Servidor estático — Dra. Beatriz Lima Design System
 
 Servidor mínimo em Rust (axum + tower-http) para servir em produção o build
-estático gerado por `astro build` (pasta `../dist`), self-hosted — sem
-Vercel/Netlify/Render.
+estático do site público, self-hosted — sem Vercel/Netlify/Render.
+
+A pasta do build é definida pela variável `DIST_DIR`. O front migrou de Astro
+para Next.js em 05/08/2026; o servidor nunca soube qual framework gerou os
+arquivos, e continua não sabendo.
+
+**Atenção ao nome da pasta.** O Astro gerava `dist/`. O Next com
+`output: 'export'` gera **`out/`**. Depois da migração, `DIST_DIR` precisa
+apontar para `../web/out` em dev local. Um `DIST_DIR` apontando para a pasta
+antiga não dá erro de compilação: o servidor sobe normal e responde 404 na
+home, o que se parece com bug de rota e não é.
 
 ## Build
 
@@ -27,30 +36,31 @@ O servidor escuta em `0.0.0.0:<PORT>`.
 
 ## Comportamento
 
-- Serve os arquivos estáticos de `../dist` via `tower_http::services::ServeDir`.
+- Serve os arquivos estáticos da pasta de build (`DIST_DIR`) via
+  `tower_http::services::ServeDir`.
 - Respostas comprimidas automaticamente (`gzip`/`br`/`deflate`/`zstd`) via
   `CompressionLayer`, conforme o `Accept-Encoding` do cliente.
-- Rotas não encontradas: serve `dist/404.html` (a página `404.astro` já
-  compilada pelo `astro build`) se existir; caso contrário, cai para um 404
-  textual simples. Nunca falha em tempo de compilação — só em runtime, e de
-  forma graciosa, se `dist/` ainda não existir (útil quando o build do Astro
-  roda em paralelo, em outra sessão/agente).
+- Rotas não encontradas: serve o `404.html` da pasta de build se existir;
+  caso contrário, cai para um 404 textual simples. Nunca falha em tempo de
+  compilação — só em runtime, e de forma graciosa, se a pasta ainda não
+  existir (útil quando o build do front roda em paralelo, em outra
+  sessão/agente).
 - Logs estruturados via `tracing` (sem `println!`).
 
 ## Deploy self-hosted (ex.: OTUS)
 
-1. `astro build` na raiz do projeto (gera `../dist` relativo a este `server/`).
+1. Build do front (`apps/web`), gerando a pasta estática apontada por `DIST_DIR`.
 2. `cargo build --release` aqui.
 3. Rodar o binário via `systemd`/`pm2`/`tmux` com `PORT` fixo, atrás de um
    reverse proxy (Nginx/Apache) ou túnel (Cloudflare Tunnel) apontando para
    `127.0.0.1:<PORT>`.
-4. Working directory do processo deve ser esta pasta (`server/`), já que o
-   caminho do build é resolvido como `../dist`.
+4. Se `DIST_DIR` for relativo, o working directory do processo precisa ser
+   esta pasta. Em produção prefira um caminho absoluto.
 
 ## Deploy via Docker (qualquer VPS com Docker) — caminho mais simples
 
 `Dockerfile` e `docker-compose.yml` ficam na **raiz do projeto** (não aqui em
-`server/`), porque o build empacota o site Astro + este servidor numa imagem
+`server/`), porque o build empacota o site + este servidor numa imagem
 só. Dimensionado para a infra real do documento do projeto: 4 vCPU / 8 GB RAM,
 sem GPU — só dois serviços leves (Postgres + este binário).
 
@@ -155,6 +165,6 @@ handlers HTTP.
 | `PORT` | `server/` (este binário) | `8080` |
 | `DATABASE_URL` | `server/` (este binário) | `postgres://localhost/estetica_beatriz` |
 | `RUST_LOG` | `server/` (este binário) | `info` |
-| `PUBLIC_API_BASE_URL` | build do Astro (frontend) | `""` (mesma origem — só funciona quando o front e este servidor estão atrás do mesmo domínio; se o site estiver só no Cloudflare Pages, sem este backend por perto, configure a URL pública onde este servidor estiver rodando) |
+| `PUBLIC_API_BASE_URL` | build do front (`apps/web`) | `""` (mesma origem — só funciona quando o front e este servidor estão atrás do mesmo domínio; se o site estiver só no Cloudflare Pages, sem este backend por perto, configure a URL pública onde este servidor estiver rodando) |
 
 Ver `.env.example` na raiz do projeto.

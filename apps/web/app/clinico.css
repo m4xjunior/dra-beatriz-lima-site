@@ -1,0 +1,88 @@
+/* ============================================================
+   TEMA CLÍNICO — a superfície do procedimento.
+   ------------------------------------------------------------
+   Extensão do design system aprovada pelo Max em 05/08/2026,
+   com exceção declarada a specs/direcao-visual.md ("só tokens
+   sand/ink/gold/nude").
+
+   POR QUE A EXCEÇÃO EXISTE:
+   a sala de espera e a sala de procedimento não têm a mesma luz.
+   O tema `immersive` é um registro de LUXO — obsidiana e ouro,
+   feito para a marca se apresentar. Esta superfície é um registro
+   CLÍNICO: aqui a paciente lê dose, profundidade e dia. Usar
+   ouro para marcar informação técnica faria o decorativo e o
+   funcional dividirem a mesma cor, e é exatamente o que apaga a
+   hierarquia num painel de dados.
+
+   A REGRA QUE MANTÉM A MARCA INTEIRA:
+   o ouro continua no sistema, com UMA função só — marcar o agora
+   na régua de instalação. Uma cor com um trabalho é acento; uma
+   cor com cinco trabalhos é ruído.
+
+   DE ONDE VÊM AS CORES (não são "frias" genéricas — são objetos):
+   - aço      : o brilho de uma agulha 30G, azul-cinza dessaturado
+   - luz      : fotóforo clínico a 5000K, o branco que revela
+   - equimose : roxo-ameixa no dia 2, amarelo-esverdeado no dia 5.
+                É a cor honesta do processo, e nenhum site de
+                estética mostra.
+   ============================================================ */
+
+:root {
+  /* --- Aço cirúrgico (instrumento) ------------------------ */
+  --color-aco-200: #C9D6DD;
+  --color-aco-300: #A2B4BE;
+  --color-aco-400: #7C919D;
+  --color-aco-500: #5D707B;
+  --color-aco-600: #45545D;
+  --color-aco-700: #313C43;
+
+  /* --- Luz clínica 5000K ---------------------------------- */
+  --color-luz-clinica: #EDF2F4;
+
+  /* --- Equimose (a janela de recuperação, dia a dia) ------ */
+  --color-equimose-1: #6B4668; /* dia 1–3, ameixa */
+  --color-equimose-2: #75824F; /* dia 4–6, esverdeado */
+  --color-equimose-3: #B5A05C; /* dia 7–10, amarelo */
+}
+
+/* ------------------------------------------------------------
+   Herda tudo de `immersive` (obsidiana quente) e troca só o que
+   carrega significado técnico. Não redeclara superfície nem
+   tipografia: se o DS mudar a base, esta superfície acompanha.
+   ------------------------------------------------------------ */
+[data-theme="clinico"] {
+  /* Escada de superfície, passos de 2–4% de lightness. Quente
+     sempre: obsidiana, nunca cinza — cinza sobre pele fica morto. */
+  --palco: var(--color-obsidian-950);
+  --surface-base: var(--color-obsidian-900);
+  --surface-raised: var(--color-obsidian-850);
+  --surface-sunken: var(--color-obsidian-950);
+  --ficha: var(--color-obsidian-800);
+
+  /* Texto: o corpo continua areia (quente, legível sobre pele).
+     Só o que é MEDIDA vira aço. */
+  --text-body: var(--color-sand-50);
+  --text-heading: var(--color-champagne);
+  --text-muted: #B8AD9A;
+  --text-subtle: #8B8070;
+
+  /* Técnico = aço. Dose, profundidade, região, número do ponto. */
+  --text-tecnico: var(--color-aco-300);
+  --text-tecnico-forte: var(--color-aco-200);
+  --text-tecnico-fraco: var(--color-aco-500);
+
+  /* Bordas: hairline de aço, quase invisível. A regra do squint —
+     some quando você não procura, aparece quando precisa. */
+  --border-subtle: rgba(162, 180, 190, 0.14);
+  --border-strong: rgba(162, 180, 190, 0.28);
+  --border-instrumento: var(--color-aco-400);
+
+  /* OURO: uma função só. O agora na régua. */
+  --agora: var(--color-gold-400);
+  --agora-halo: 0 0 0 1px rgba(201, 166, 92, 0.55), 0 0 18px -6px rgba(201, 166, 92, 0.7);
+
+  /* Recuperação */
+  --equimose-cedo: var(--color-equimose-1);
+  --equimose-meio: var(--color-equimose-2);
+  --equimose-tarde: var(--color-equimose-3);
+}
